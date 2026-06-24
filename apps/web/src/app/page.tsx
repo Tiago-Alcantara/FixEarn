@@ -23,6 +23,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, CSSProperties } from 'react';
 import { useRouter } from 'next/navigation';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -323,6 +324,7 @@ export default function LandingPage() {
   const router = useRouter();
   const [lang, setLang] = useState<Lang>('en');
   const headerRef = useRef<HTMLElement>(null);
+  const isMobile = useIsMobile();
 
   const t = DICT[lang];
   const isEn = lang === 'en';
@@ -532,7 +534,8 @@ export default function LandingPage() {
             </span>
           </a>
 
-          {/* Nav */}
+          {/* Nav — hidden on mobile to avoid overflow */}
+          {!isMobile && (
           <nav
             style={{
               display: 'flex',
@@ -576,28 +579,31 @@ export default function LandingPage() {
               {t.navWhy}
             </a>
           </nav>
+          )}
 
           {/* Right: lang toggle + login + CTA */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '14px',
+              gap: '10px',
               flexShrink: 0,
             }}
           >
             <LangToggle lang={lang} setLang={setLang} />
-            <a
-              href="/login"
-              style={{
-                fontSize: '14.5px',
-                color: '#9A9DA1',
-                textDecoration: 'none',
-                transition: 'color .2s ease',
-              }}
-            >
-              {t.login}
-            </a>
+            {!isMobile && (
+              <a
+                href="/login"
+                style={{
+                  fontSize: '14.5px',
+                  color: '#9A9DA1',
+                  textDecoration: 'none',
+                  transition: 'color .2s ease',
+                }}
+              >
+                {t.login}
+              </a>
+            )}
             <button
               onClick={goLogin}
               className="btn-shine"

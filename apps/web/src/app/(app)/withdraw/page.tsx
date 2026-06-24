@@ -7,6 +7,7 @@ import { Input } from '@/components/Input';
 import { Badge } from '@/components/Badge';
 import { useStellarTx } from '@/lib/useStellarTx';
 import { toBaseUnits } from '@/lib/money';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -27,6 +28,7 @@ function validateAmount(raw: string): string | null {
 
 export default function WithdrawPage() {
   const { withdraw } = useStellarTx();
+  const isMobile = useIsMobile();
 
   const [amountRaw, setAmountRaw] = useState('');
   const [touched, setTouched] = useState(false);
@@ -61,7 +63,7 @@ export default function WithdrawPage() {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '48px 24px',
+          padding: isMobile ? '24px 12px' : '48px 24px',
         }}
       >
         <div style={{ width: 520, maxWidth: '100%' }}>
@@ -158,7 +160,7 @@ export default function WithdrawPage() {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '48px 24px',
+        padding: isMobile ? '24px 12px' : '48px 24px',
       }}
     >
       <div style={{ width: 520, maxWidth: '100%' }}>

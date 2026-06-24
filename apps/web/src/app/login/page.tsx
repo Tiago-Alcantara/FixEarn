@@ -18,6 +18,7 @@
 
 import React, { useState } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── Dictionary (exact copy from reference renderVals()) ───────────────────────
 
@@ -148,6 +149,7 @@ function pwStrength(pw: string): 0 | 1 | 2 | 3 {
 
 export default function LoginPage() {
   const { login } = usePrivy();
+  const isMobile = useIsMobile();
 
   const [lang, setLang] = useState<Lang>('en');
   const [mode, setMode] = useState<Mode>('login');
@@ -293,7 +295,8 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* ── Left: brushed-metal brand panel ──────────────────────────── */}
+        {/* ── Left: brushed-metal brand panel (hidden on mobile) ───────── */}
+        {!isMobile && (
         <section
           className="fx-metal"
           aria-hidden="false"
@@ -328,9 +331,10 @@ export default function LoginPage() {
             ))}
           </div>
         </section>
+        )}
 
         {/* ── Right: form panel ─────────────────────────────────────────── */}
-        <section style={{ flex: '1.15 1 480px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(32px,5vw,64px) 24px', background: '#0c0d0f' }}>
+        <section style={{ flex: '1.15 1 480px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '24px 16px' : 'clamp(32px,5vw,64px) 24px', background: '#0c0d0f', minHeight: '100vh' }}>
           <div className="fx-form" style={{ width: '100%', maxWidth: 404 }}>
 
             {/* Mode segmented toggle */}

@@ -8,6 +8,7 @@ import { Badge } from '@/components/Badge';
 import { ProgressBar } from '@/components/ProgressBar';
 import { useStellarTx } from '@/lib/useStellarTx';
 import { toBaseUnits } from '@/lib/money';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── Tools list (reference: design/ui_kits/fixearn-deposit/index.html) ────────
 const TOOLS: [string, number][] = [
@@ -47,6 +48,7 @@ function StepIndicator({ current }: { current: number }) {
       style={{
         display: 'flex',
         alignItems: 'center',
+        flexWrap: 'wrap',
         gap: 10,
         justifyContent: 'center',
         marginBottom: 22,
@@ -182,6 +184,7 @@ function CurrencySelect({ value, onChange }: { value: string; onChange: (v: stri
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function DepositPage() {
   const { deposit } = useStellarTx();
+  const isMobile = useIsMobile();
 
   const [step, setStep] = useState(0);
   const [amountRaw, setAmountRaw] = useState('18400');
@@ -223,7 +226,7 @@ export default function DepositPage() {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          padding: '48px 24px',
+          padding: isMobile ? '24px 12px' : '48px 24px',
         }}
       >
         <div style={{ width: 520, maxWidth: '100%' }}>
@@ -317,7 +320,7 @@ export default function DepositPage() {
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '48px 24px',
+        padding: isMobile ? '24px 12px' : '48px 24px',
       }}
     >
       <div style={{ width: 520, maxWidth: '100%' }}>

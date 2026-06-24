@@ -7,6 +7,7 @@ import { createApi } from '@/lib/api';
 import { formatUsdc } from '@/lib/money';
 import type { SpendableView, Bill } from '@fixearn/shared';
 import Bills from './Bills';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── i18n dictionary (dashboard-specific, mirrors the reference HTML) ──────────
 
@@ -337,6 +338,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { getAccessToken, logout } = usePrivy();
   const api = useMemo(() => createApi(getAccessToken), [getAccessToken]);
+  const isMobile = useIsMobile();
 
   const [lang, setLang] = useState<Lang>('en');
   const [nav, setNav] = useState('overview');
@@ -488,6 +490,7 @@ export default function DashboardPage() {
     <div
       style={{
         display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
         minHeight: '100vh',
         background: '#0E0F11',
         color: '#F2F3F4',
@@ -497,7 +500,17 @@ export default function DashboardPage() {
     >
       {/* ── Sidebar ───────────────────────────────────────────────────────── */}
       <aside
-        style={{
+        style={isMobile ? {
+          flex: '0 0 auto',
+          background: '#16181B',
+          borderBottom: '1px solid #2A2D31',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '12px 14px',
+          position: 'sticky',
+          top: 0,
+          zIndex: 20,
+        } : {
           flex: '0 0 240px',
           background: '#16181B',
           borderRight: '1px solid #2A2D31',
@@ -517,7 +530,7 @@ export default function DashboardPage() {
             alignItems: 'center',
             gap: 10,
             textDecoration: 'none',
-            padding: '6px 10px 22px',
+            padding: isMobile ? '4px 10px' : '6px 10px 22px',
           }}
         >
           <span
@@ -543,7 +556,14 @@ export default function DashboardPage() {
         </a>
 
         {/* Nav */}
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <nav style={isMobile ? {
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 2,
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
+          paddingBottom: 4,
+        } : { display: 'flex', flexDirection: 'column', gap: 3 }}>
           {NAV_ITEMS.map((item) => {
             const on = nav === item.id;
             function handleNavClick() {
@@ -559,7 +579,24 @@ export default function DashboardPage() {
               <button
                 key={item.id}
                 onClick={handleNavClick}
-                style={{
+                style={isMobile ? {
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 4,
+                  flexShrink: 0,
+                  border: 'none',
+                  cursor: 'pointer',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  fontFamily: 'inherit',
+                  fontSize: 10,
+                  fontWeight: on ? 600 : 500,
+                  color: on ? '#F2F3F4' : '#9A9DA1',
+                  background: on ? '#1f2226' : 'transparent',
+                  whiteSpace: 'nowrap',
+                } : {
                   position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
@@ -577,17 +614,19 @@ export default function DashboardPage() {
                   background: on ? '#1f2226' : 'transparent',
                 }}
               >
-                <span
-                  style={{
-                    position: 'absolute',
-                    left: 0,
-                    top: 8,
-                    bottom: 8,
-                    width: 3,
-                    borderRadius: '0 3px 3px 0',
-                    background: on ? '#C0C2C5' : 'transparent',
-                  }}
-                />
+                {!isMobile && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 8,
+                      bottom: 8,
+                      width: 3,
+                      borderRadius: '0 3px 3px 0',
+                      background: on ? '#C0C2C5' : 'transparent',
+                    }}
+                  />
+                )}
                 <span style={{ display: 'flex', color: on ? '#F2F3F4' : '#9A9DA1' }}>
                   {item.icon}
                 </span>
@@ -598,6 +637,7 @@ export default function DashboardPage() {
         </nav>
 
         {/* User info */}
+        {!isMobile && (
         <div
           style={{
             marginTop: 'auto',
@@ -665,6 +705,7 @@ export default function DashboardPage() {
             <IconLogout />
           </button>
         </div>
+        )}
       </aside>
 
       {/* ── Main content ──────────────────────────────────────────────────── */}
@@ -675,11 +716,12 @@ export default function DashboardPage() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 16,
-            padding: '20px 32px',
+            flexWrap: 'wrap',
+            gap: isMobile ? 8 : 16,
+            padding: isMobile ? '12px 16px' : '20px 32px',
             borderBottom: '1px solid #2A2D31',
             position: 'sticky',
-            top: 0,
+            top: isMobile ? 0 : 0,
             background: 'rgba(14,15,17,.82)',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',
@@ -689,7 +731,7 @@ export default function DashboardPage() {
           <div>
             <div
               style={{
-                fontSize: 20,
+                fontSize: isMobile ? 16 : 20,
                 fontWeight: 700,
                 letterSpacing: '-.015em',
                 color: '#F2F3F4',
@@ -697,7 +739,9 @@ export default function DashboardPage() {
             >
               {t.greeting}
             </div>
-            <div style={{ fontSize: 13.5, color: '#9A9DA1', marginTop: 2 }}>{t.greetingSub}</div>
+            {!isMobile && (
+              <div style={{ fontSize: 13.5, color: '#9A9DA1', marginTop: 2 }}>{t.greetingSub}</div>
+            )}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             {/* Language switcher */}
@@ -793,7 +837,7 @@ export default function DashboardPage() {
         {/* Body */}
         <div
           style={{
-            padding: 32,
+            padding: isMobile ? '16px 12px' : 32,
             maxWidth: 1180,
             width: '100%',
             margin: '0 auto',
@@ -811,17 +855,17 @@ export default function DashboardPage() {
               borderRadius: 20,
               background: 'linear-gradient(135deg,#15171b 0%,#0e0f11 72%)',
               display: 'grid',
-              gridTemplateColumns: '1.45fr 1fr',
+              gridTemplateColumns: isMobile ? '1fr' : '1.45fr 1fr',
             }}
           >
             {/* Left: title + progress + brushed diamond */}
             <div
               style={{
                 position: 'relative',
-                padding: '38px 34px',
+                padding: isMobile ? '24px 20px' : '38px 34px',
                 display: 'flex',
                 flexDirection: 'column',
-                minHeight: 360,
+                minHeight: isMobile ? 'auto' : 360,
               }}
             >
               <h2
@@ -870,6 +914,7 @@ export default function DashboardPage() {
                   }}
                 />
               </div>
+              {!isMobile && (
               <div
                 style={{
                   marginTop: 'auto',
@@ -912,13 +957,15 @@ export default function DashboardPage() {
                   />
                 </div>
               </div>
+              )}
             </div>
 
             {/* Right: 6-task checklist */}
             <div
               style={{
                 background: '#16181B',
-                borderLeft: '1px solid #2A2D31',
+                borderLeft: isMobile ? 'none' : '1px solid #2A2D31',
+                borderTop: isMobile ? '1px solid #2A2D31' : 'none',
                 padding: 10,
                 display: 'flex',
                 flexDirection: 'column',

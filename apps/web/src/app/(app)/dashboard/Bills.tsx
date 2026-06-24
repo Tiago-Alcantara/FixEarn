@@ -7,6 +7,7 @@ import { toBaseUnits, formatUsdc } from '@/lib/money';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import type { Bill, BillType } from '@fixearn/shared';
+import { useIsMobile } from '@/lib/useIsMobile';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -41,6 +42,7 @@ function validateCost(raw: string): string | null {
 export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps) {
   const { getAccessToken } = usePrivy();
   const api = useMemo(() => createApi(getAccessToken), [getAccessToken]);
+  const isMobile = useIsMobile();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -114,14 +116,14 @@ export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps
         </h3>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', flexDirection: isMobile ? 'column' : 'row' }}>
             {/* Vendor */}
             <Input
               label="Vendor"
               value={vendor}
               onChange={(e) => setVendor(e.target.value)}
               placeholder="e.g. OpenAI"
-              style={{ flex: '2 1 160px' }}
+              style={{ flex: isMobile ? '1 1 100%' : '2 1 160px' }}
               aria-label="Vendor"
             />
 
@@ -135,13 +137,13 @@ export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps
                 setCost(e.target.value);
               }}
               placeholder="0.00"
-              style={{ flex: '1 1 120px' }}
+              style={{ flex: isMobile ? '1 1 100%' : '1 1 120px' }}
               hint={costTouched && costError ? costError : undefined}
               aria-label="Monthly cost"
             />
 
             {/* Type select */}
-            <label style={{ display: 'block', flex: '1 1 120px' }}>
+            <label style={{ display: 'block', flex: isMobile ? '1 1 100%' : '1 1 120px' }}>
               <span
                 style={{
                   display: 'block',
