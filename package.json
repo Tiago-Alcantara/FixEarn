@@ -1,0 +1,8 @@
+{
+  "name": "fixearn",
+  "private": true,
+  "scripts": {
+    "api:dev": "pnpm --filter @fixearn/api start:dev",
+    "api:test": "pnpm --filter @fixearn/api test"
+  }
+}
