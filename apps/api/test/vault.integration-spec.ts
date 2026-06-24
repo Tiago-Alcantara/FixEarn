@@ -19,6 +19,8 @@
  * and a seeded vault position are available.
  */
 
+import { SupportedNetworks } from '@defindex/sdk';
+
 const SKIP = process.env.RUN_INTEGRATION !== '1';
 
 // eslint-disable-next-line jest/no-disabled-tests
@@ -31,7 +33,7 @@ const SKIP = process.env.RUN_INTEGRATION !== '1';
   let svc: import('../src/vault/vault.service').VaultService;
 
   beforeAll(async () => {
-    const { DefindexSDK, SupportedNetworks } = await import('@defindex/sdk');
+    const { DefindexSDK } = await import('@defindex/sdk');
     const { VaultService } = await import('../src/vault/vault.service');
 
     sdk = new DefindexSDK({
@@ -60,8 +62,7 @@ const SKIP = process.env.RUN_INTEGRATION !== '1';
     const rawBalance = await sdk.getVaultBalance(
       TESTNET_VAULT_ADDRESS,
       TESTNET_USER_ADDRESS,
-      // SupportedNetworks.TESTNET
-      'testnet' as any,
+      SupportedNetworks.TESTNET,
     );
 
     const positionValue = await svc.getPositionValue(TESTNET_USER_ADDRESS);
@@ -81,9 +82,9 @@ const SKIP = process.env.RUN_INTEGRATION !== '1';
     expect(positionValue).toBe(BigInt(rawBalance.dfTokens));
   });
 
-  it('getApyPercent returns a positive number from the real API', async () => {
+  it('getApyPercent returns a numeric string from the real API', async () => {
     const apy = await svc.getApyPercent();
-    expect(typeof apy).toBe('number');
-    expect(apy).toBeGreaterThanOrEqual(0);
+    expect(typeof apy).toBe('string');
+    expect(Number(apy)).toBeGreaterThanOrEqual(0);
   });
 });

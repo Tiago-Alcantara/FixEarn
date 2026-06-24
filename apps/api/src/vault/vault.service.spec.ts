@@ -39,7 +39,7 @@ describe('VaultService', () => {
 
       expect(sdk.depositToVault).toHaveBeenCalledWith(
         VAULT_ADDR,
-        { amounts: [5_000_000], caller: CALLER, invest: true, slippageBps: 100 },
+        { amounts: [5_000_000], caller: CALLER, invest: true, slippageBps: 50 },
         SupportedNetworks.TESTNET,
       );
       expect(result).toBe('AAAAADEPOSIT==');
@@ -80,7 +80,7 @@ describe('VaultService', () => {
 
       expect(sdk.withdrawFromVault).toHaveBeenCalledWith(
         VAULT_ADDR,
-        { amounts: [2_000_000], caller: CALLER, slippageBps: 100 },
+        { amounts: [2_000_000], caller: CALLER, slippageBps: 50 },
         SupportedNetworks.TESTNET,
       );
       expect(result).toBe('AAAAWITHDRAW==');
@@ -98,7 +98,7 @@ describe('VaultService', () => {
   });
 
   describe('getApyPercent', () => {
-    it('returns apy from SDK as a number', async () => {
+    it('returns apy from SDK as a string', async () => {
       const sdk = makeSdkMock();
       sdk.getVaultAPY.mockResolvedValue({ apy: 7.25 });
       const svc = new VaultService(sdk as any, makeConfig());
@@ -106,7 +106,7 @@ describe('VaultService', () => {
       const apy = await svc.getApyPercent();
 
       expect(sdk.getVaultAPY).toHaveBeenCalledWith(VAULT_ADDR, SupportedNetworks.TESTNET);
-      expect(apy).toBe(7.25);
+      expect(apy).toBe('7.25');
     });
   });
 

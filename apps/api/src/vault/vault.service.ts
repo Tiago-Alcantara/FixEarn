@@ -14,7 +14,7 @@ function toSdkNetwork(network: Env['stellarNetwork']): SupportedNetworks {
   return network === 'testnet' ? SupportedNetworks.TESTNET : SupportedNetworks.MAINNET;
 }
 
-const DEFAULT_SLIPPAGE_BPS = 100;
+const DEFAULT_SLIPPAGE_BPS = 50;
 
 @Injectable()
 export class VaultService {
@@ -75,11 +75,13 @@ export class VaultService {
   }
 
   /**
-   * Get the vault's current APY as a percentage number.
+   * Get the vault's current APY as a percentage string.
+   * Returned as a string because downstream SpendableView.apyPercent is a
+   * string surfaced directly by the dashboard.
    */
-  async getApyPercent(): Promise<number> {
+  async getApyPercent(): Promise<string> {
     const response = await this.sdk.getVaultAPY(this.vaultAddress, this.network);
-    return response.apy;
+    return String(response.apy);
   }
 
   /**
