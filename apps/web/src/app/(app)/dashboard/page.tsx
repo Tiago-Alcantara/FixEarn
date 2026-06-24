@@ -721,7 +721,7 @@ export default function DashboardPage() {
             padding: isMobile ? '12px 16px' : '20px 32px',
             borderBottom: '1px solid #2A2D31',
             position: 'sticky',
-            top: isMobile ? 0 : 0,
+            top: 0,
             background: 'rgba(14,15,17,.82)',
             backdropFilter: 'blur(14px)',
             WebkitBackdropFilter: 'blur(14px)',

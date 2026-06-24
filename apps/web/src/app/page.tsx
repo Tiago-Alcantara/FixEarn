@@ -586,7 +586,7 @@ export default function LandingPage() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '10px',
+              gap: isMobile ? '10px' : '14px',
               flexShrink: 0,
             }}
           >

@@ -334,7 +334,7 @@ export default function LoginPage() {
         )}
 
         {/* ── Right: form panel ─────────────────────────────────────────── */}
-        <section style={{ flex: '1.15 1 480px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '24px 16px' : 'clamp(32px,5vw,64px) 24px', background: '#0c0d0f', minHeight: '100vh' }}>
+        <section style={{ flex: '1.15 1 480px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: isMobile ? '24px 16px' : 'clamp(32px,5vw,64px) 24px', background: '#0c0d0f', minHeight: isMobile ? '100vh' : undefined }}>
           <div className="fx-form" style={{ width: '100%', maxWidth: 404 }}>
 
             {/* Mode segmented toggle */}

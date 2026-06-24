@@ -79,3 +79,15 @@ The `isMobile` flag is `false` on desktop; every style object in the conditional
 1. The mobile nav horizontal strip on the dashboard shows icon + label in a compact vertical format. On very small devices (320px) with 7 nav items this could still be tight — future improvement would be to show only icon on ≤400px.
 2. The login left panel is hidden on mobile. Consider adding a slim brand strip (logo + tagline) at the top of the form on mobile for brand continuity.
 3. The `header` on dashboard is `position: sticky; top: 0` — on mobile, both the sidebar nav bar AND the header are sticky, stacking at the top. This is intentional but uses screen real estate; consider combining them in a future pass.
+
+## Review fixes (follow-up)
+
+Addressed three issues flagged in code review, all restoring desktop-identical behavior:
+
+1. **Landing (`page.tsx`, header right container)** — `gap` was changed to `'10px'` unconditionally, altering desktop spacing (login link + CTA still render on desktop). Restored to `gap: isMobile ? '10px' : '14px'` so desktop keeps the original `14px`.
+2. **Dashboard (`page.tsx`, sticky header)** — `top: isMobile ? 0 : 0` was a no-op ternary. Replaced with plain `top: 0` to match the original.
+3. **Login (`page.tsx`, form section)** — `minHeight: '100vh'` was added unconditionally (not in original). Changed to `minHeight: isMobile ? '100vh' : undefined` so the desktop branch matches the original (no minHeight); mobile still fills the viewport.
+
+Verified each against the original (commit 63157f3): original gap was `14px`, original dashboard had `top: 0`, original login section had no `minHeight`.
+
+Tests: 76/76 pass. Build: clean (Next 16 Turbopack, TypeScript strict).
