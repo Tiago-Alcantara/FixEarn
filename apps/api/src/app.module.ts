@@ -3,9 +3,11 @@ import { AppConfigModule } from './config/config.module';
 import { HealthController } from './health/health.controller';
 import { PrismaModule } from './prisma/prisma.module';
 import { WalletModule } from './wallet/wallet.module';
+import { VaultModule } from './vault/vault.module';
+import { LedgerModule } from './ledger/ledger.module';
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, WalletModule],
+  imports: [AppConfigModule, PrismaModule, WalletModule, VaultModule, LedgerModule],
   controllers: [HealthController],
   providers: [],
 })
