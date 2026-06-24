@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { MetalCard } from './MetalCard';
 import { Badge } from './Badge';
