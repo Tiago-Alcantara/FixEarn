@@ -5,6 +5,7 @@ import type {
   RegisterWalletDto,
   CreateBillDto,
   SpendableView,
+  Bill,
 } from '@fixearn/shared';
 
 export class ApiError extends Error {
@@ -26,8 +27,8 @@ interface ApiMethods {
   buildWithdraw(amount: string): Promise<BuildTxResponse>;
   submitWithdraw(body: SubmitTxDto): Promise<SubmitTxResponse>;
   getDashboard(): Promise<SpendableView>;
-  listBills(): Promise<unknown[]>;
-  createBill(body: CreateBillDto): Promise<unknown>;
+  listBills(): Promise<Bill[]>;
+  createBill(body: CreateBillDto): Promise<Bill>;
   deleteBill(id: string): Promise<void>;
 }
 

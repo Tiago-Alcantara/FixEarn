@@ -5,17 +5,8 @@ import { useRouter } from 'next/navigation';
 import { usePrivy } from '@privy-io/react-auth';
 import { createApi } from '@/lib/api';
 import { formatUsdc } from '@/lib/money';
-import type { SpendableView } from '@fixearn/shared';
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface Bill {
-  id: string;
-  vendor: string;
-  monthlyCost: string;
-  type: string;
-  status: string;
-}
+import type { SpendableView, Bill } from '@fixearn/shared';
+import Bills from './Bills';
 
 // ── i18n dictionary (dashboard-specific, mirrors the reference HTML) ──────────
 
@@ -327,98 +318,6 @@ function StatCard({
   );
 }
 
-function BillCard({ bill, activeBadge }: { bill: Bill; activeBadge: string }) {
-  const initial = bill.vendor.slice(0, 2).toUpperCase();
-  const isActive = bill.status === 'active';
-
-  return (
-    <div
-      style={{
-        position: 'relative',
-        background: '#1A1C1F',
-        borderRadius: 16,
-        padding: 22,
-        border: `1px solid ${isActive ? '#6a6d72' : '#2A2D31'}`,
-        boxShadow: isActive ? '0 0 0 1px rgba(192,194,197,.25), 0 14px 34px rgba(0,0,0,.35)' : 'none',
-        transition: 'border-color .25s ease, transform .25s ease, box-shadow .25s ease',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <span
-          style={{
-            width: 42,
-            height: 42,
-            borderRadius: 11,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'linear-gradient(160deg,#43464b,#1b1d21)',
-            border: '1px solid #4a4d52',
-            fontFamily: "'Geist Mono', monospace",
-            fontSize: 15,
-            fontWeight: 600,
-            color: '#D4D6D9',
-          }}
-        >
-          {initial}
-        </span>
-        {isActive && (
-          <span
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              fontFamily: "'Geist Mono', monospace",
-              fontSize: 10,
-              letterSpacing: '.1em',
-              textTransform: 'uppercase',
-              color: '#D4D6D9',
-              border: '1px solid #4a4d52',
-              borderRadius: 999,
-              padding: '3px 9px',
-            }}
-          >
-            <span
-              style={{
-                width: 5,
-                height: 5,
-                borderRadius: '50%',
-                background: '#D4D6D9',
-                boxShadow: '0 0 6px rgba(212,214,217,.8)',
-              }}
-            />
-            {activeBadge}
-          </span>
-        )}
-      </div>
-      <div style={{ fontSize: 16, fontWeight: 600, color: '#F2F3F4', marginTop: 16 }}>
-        {bill.vendor}
-      </div>
-      <div
-        style={{
-          fontFamily: "'Geist Mono', monospace",
-          fontSize: 13,
-          color: '#9A9DA1',
-          marginTop: 4,
-        }}
-      >
-        {formatUsdc(bill.monthlyCost)}/mo
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginTop: 18,
-        }}
-      >
-        <span style={{ fontSize: 13, fontWeight: 500, color: isActive ? '#C0C2C5' : '#9A9DA1' }}>
-          {isActive ? activeBadge : 'Inactive'}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
@@ -447,7 +346,7 @@ export default function DashboardPage() {
       .then(([dash, billList]) => {
         if (cancelled) return;
         setDashboard(dash);
-        setBills(billList as Bill[]);
+        setBills(billList);
         setLoading(false);
       })
       .catch((err) => {
@@ -461,10 +360,6 @@ export default function DashboardPage() {
   }, []);
 
   const isEn = lang === 'en';
-
-  // Tab filter for bills
-  const visibleBills =
-    tab === 'all' ? bills : bills.filter((b) => b.type === tab);
 
   const tabOrder: Array<{ id: string; label: string }> = [
     { id: 'all', label: t.tabs.all },
@@ -1426,24 +1321,9 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Bill cards grid */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))',
-                gap: 16,
-                marginTop: 20,
-              }}
-            >
-              {visibleBills.length === 0 ? (
-                <p style={{ color: '#9A9DA1', fontSize: 14, gridColumn: '1/-1' }}>
-                  {t.noServices}
-                </p>
-              ) : (
-                visibleBills.map((bill) => (
-                  <BillCard key={bill.id} bill={bill} activeBadge={t.activeBadge} />
-                ))
-              )}
+            {/* Bills management: add form + list + per-bill delete */}
+            <div style={{ marginTop: 20 }}>
+              <Bills />
             </div>
           </div>
 

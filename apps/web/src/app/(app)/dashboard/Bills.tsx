@@ -6,18 +6,9 @@ import { createApi } from '@/lib/api';
 import { toBaseUnits, formatUsdc } from '@/lib/money';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
+import type { Bill, BillType } from '@fixearn/shared';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
-
-interface Bill {
-  id: string;
-  vendor: string;
-  monthlyCost: string;
-  type: string;
-  status: string;
-}
-
-type BillType = 'software' | 'utility' | 'other';
 
 const BILL_TYPES: BillType[] = ['software', 'utility', 'other'];
 
@@ -25,7 +16,7 @@ const BILL_TYPES: BillType[] = ['software', 'utility', 'other'];
 
 /** Returns null if valid, error string if invalid */
 function validateCost(raw: string): string | null {
-  if (!raw || raw === '0' || raw === '') return 'Enter a positive amount';
+  if (!raw || raw === '0') return 'Enter a positive amount';
   const parsed = parseFloat(raw);
   if (isNaN(parsed) || parsed <= 0) return 'Enter a positive amount';
   try {
@@ -62,7 +53,7 @@ export default function Bills() {
       .listBills()
       .then((list) => {
         if (!cancelled) {
-          setBills(list as Bill[]);
+          setBills(list);
           setLoading(false);
         }
       })
@@ -89,7 +80,7 @@ export default function Bills() {
     try {
       const monthlyCost = toBaseUnits(cost);
       const newBill = await api.createBill({ vendor: vendor.trim(), monthlyCost, type });
-      setBills((prev) => [...prev, newBill as Bill]);
+      setBills((prev) => [...prev, newBill]);
       setVendor('');
       setCost('');
       setType('software');
