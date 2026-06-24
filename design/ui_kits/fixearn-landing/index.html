@@ -1,0 +1,158 @@
+<!-- @dsCard group="FixEarn Landing" viewport="1280x880" subtitle="Hero + how it works + CTA, EN/PT toggle" name="Landing page" -->
+<!-- @startingPoint section="FixEarn Landing" subtitle="Full marketing landing — metal direction" viewport="1280x880" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+header{position:sticky;top:0;z-index:50;background:rgba(12,13,15,.74);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--fx-border)}
+.hrow{display:flex;align-items:center;gap:24px;padding:15px 24px;max-width:1200px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.mark{width:11px;height:11px;background:var(--fx-chrome);transform:rotate(45deg);border-radius:2px;box-shadow:var(--fx-glow-silver)}
+.wm{font-family:var(--fx-font-display);font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--fx-text)}
+nav{display:flex;gap:28px;margin:0 auto}
+nav a{font-size:14.5px;color:var(--fx-text-2);text-decoration:none}
+nav a:hover{color:var(--fx-text)}
+.lang{display:inline-flex;border:1px solid var(--fx-border);border-radius:var(--fx-radius-pill);padding:3px;gap:2px;background:var(--fx-surface-2)}
+.lang button{border:none;border-radius:var(--fx-radius-pill);padding:5px 12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:var(--fx-font-display);letter-spacing:.03em;background:transparent;color:var(--fx-text-2)}
+.lang button[aria-pressed=true]{background:#2E3136;color:var(--fx-text-strong)}
+.hero{position:relative;text-align:center;padding:130px 24px 96px;background:radial-gradient(125% 78% at 50% -8%,#232629 0%,#121316 42%,#0c0d0f 70%)}
+.hero h1{font-family:var(--fx-font-display);font-size:clamp(38px,5.6vw,64px);font-weight:700;line-height:1.06;letter-spacing:-.025em;color:var(--fx-text);max-width:840px;margin:22px auto 0;text-shadow:var(--fx-emboss)}
+.hero p{font-size:clamp(16px,1.4vw,19px);line-height:1.6;color:var(--fx-text-2);max-width:600px;margin:24px auto 0}
+.ctas{display:flex;gap:14px;justify-content:center;margin-top:38px;flex-wrap:wrap}
+.floatwrap{display:flex;justify-content:center;margin-top:64px;animation:fx-float var(--fx-dur-float) ease-in-out infinite}
+section.band{padding:var(--fx-section-y) 0}
+.center{text-align:center;max-width:660px;margin:0 auto}
+.kick{font-family:var(--fx-font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--fx-silver);margin-bottom:16px}
+h2{font-family:var(--fx-font-display);font-size:clamp(30px,3.4vw,40px);font-weight:700;letter-spacing:-.02em;color:var(--fx-text);margin:0}
+.lead{font-size:18px;line-height:1.6;color:var(--fx-text-2);margin:14px 0 0}
+.grid3{margin-top:56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(264px,1fr));gap:20px}
+.snum{font-family:var(--fx-font-mono);font-size:34px;font-weight:600;color:var(--fx-silver-bright);text-shadow:0 1px 0 rgba(0,0,0,.5)}
+.shead{display:flex;align-items:center;justify-content:space-between}
+.ctitle{font-family:var(--fx-font-display);font-size:20px;font-weight:600;color:var(--fx-text);margin:24px 0 0}
+.cdesc{font-size:15px;line-height:1.6;color:var(--fx-text-2);margin:10px 0 0}
+.slab{padding:clamp(48px,7vw,72px) 32px;text-align:center}
+.slab h2{font-size:clamp(32px,4.4vw,48px);text-shadow:var(--fx-emboss)}
+@media (prefers-reduced-motion:reduce){.floatwrap{animation:none}}
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+function findNs(name){for(const k of Object.keys(window)){const v=window[k];if(v&&typeof v==='object'&&typeof v[name]!=='undefined')return v;}return window;}
+const NS = findNs('Button');
+const { Button, Eyebrow, StatPanel, MetalCard, IconTile, Badge } = NS;
+const { useState } = React;
+
+const icon = (paths)=>(<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">{paths}</svg>);
+const ICONS = [
+  icon(<><path d="M12 4v9"/><path d="M8.5 9.5l3.5 3.5 3.5-3.5"/><path d="M5 20h14"/></>),
+  icon(<><path d="M4 19h16"/><path d="M6 15l4-4 3 2.5 5-6.5"/><path d="M18 6h-2.5"/><path d="M18 6v2.5"/></>),
+  icon(<><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12l2.3 2.3 4.7-5"/></>),
+];
+
+const COPY = {
+  en: {
+    nav:['How it works','Services','Why FixEarn'], login:'Log in', cta:'Get started',
+    eyebrow:'Banking, reinvented for software',
+    title:'Your capital pays for your software. You spend nothing.',
+    sub:'Deposit once. We put your capital to work, and the returns cover your AI and SaaS subscriptions — automatically. Your money stays yours.',
+    cta2:'See how it works',
+    panel:{label:'Capital working',status:'Active',balance:'$18,400.00',growth:'+8.4% / yr',returnsLabel:'Returns / month',returns:'$214.80',coveredLabel:'Covered',covered:'7 tools'},
+    howKick:'01 — 02 — 03', howTitle:'How it works', howSub:'Three simple steps to put your capital to work.',
+    steps:[
+      ['01','Make your deposit','Deposit between $1,000 and $20,000 via secure transfer.'],
+      ['02','We invest your capital','Your capital is allocated to generate steady, transparent returns.'],
+      ['03','Your software gets paid','The returns automatically cover the subscriptions you choose.'],
+    ],
+    finalTitle:'Put your idle capital to work', finalSub:'Open an account in minutes. Your capital stays yours — your tools stay paid.',
+  },
+  pt: {
+    nav:['Como funciona','Serviços','Por que FixEarn'], login:'Entrar', cta:'Começar',
+    eyebrow:'O banco que paga seus softwares',
+    title:'Seu capital paga seus softwares. Você não gasta nada.',
+    sub:'Deposite uma vez. Colocamos seu capital para trabalhar, e o rendimento cobre suas assinaturas de IA e SaaS — automaticamente. Seu dinheiro continua seu.',
+    cta2:'Veja como funciona',
+    panel:{label:'Capital rendendo',status:'Ativo',balance:'R$ 92.000,00',growth:'+8,4% / ano',returnsLabel:'Rendimento / mês',returns:'R$ 1.074',coveredLabel:'Cobertas',covered:'7 ferramentas'},
+    howKick:'01 — 02 — 03', howTitle:'Como funciona', howSub:'Três passos simples para colocar seu capital para trabalhar.',
+    steps:[
+      ['01','Faça seu aporte','Deposite entre R$5.000 e R$20.000 por transferência segura.'],
+      ['02','Investimos seu capital','Seu capital é alocado para gerar rendimento estável e transparente.'],
+      ['03','Seus softwares são pagos','O rendimento cobre automaticamente as assinaturas que você escolher.'],
+    ],
+    finalTitle:'Coloque seu capital parado para trabalhar', finalSub:'Abra sua conta em minutos. Seu capital continua seu — suas ferramentas continuam pagas.',
+  },
+};
+
+function Landing(){
+  const [lang,setLang]=useState('en');
+  const t=COPY[lang];
+  return (
+    <div>
+      <header>
+        <div className="hrow">
+          <a className="logo" href="#"><span className="mark"></span><span className="wm">FixEarn</span></a>
+          <nav>{t.nav.map((n,i)=><a key={i} href="#">{n}</a>)}</nav>
+          <div style={{display:'flex',alignItems:'center',gap:14}}>
+            <div className="lang" role="group" aria-label="Language">
+              <button aria-pressed={lang==='en'} onClick={()=>setLang('en')}>EN</button>
+              <button aria-pressed={lang==='pt'} onClick={()=>setLang('pt')}>PT</button>
+            </div>
+            <a href="#" style={{fontSize:14.5,color:'var(--fx-text-2)',textDecoration:'none'}}>{t.login}</a>
+            <Button size="sm">{t.cta}</Button>
+          </div>
+        </div>
+      </header>
+
+      <section className="hero">
+        <div className="wrap">
+          <Eyebrow wide style={{display:'block'}}>{t.eyebrow}</Eyebrow>
+          <h1>{t.title}</h1>
+          <p>{t.sub}</p>
+          <div className="ctas">
+            <Button size="lg">{t.cta}</Button>
+            <Button variant="secondary" size="lg" as="a" href="#how">{t.cta2}</Button>
+          </div>
+          <div className="floatwrap"><StatPanel {...t.panel} /></div>
+        </div>
+      </section>
+
+      <section className="band" id="how" style={{background:'radial-gradient(90% 60% at 28% 0%,rgba(192,194,197,.05),transparent 60%)'}}>
+        <div className="wrap">
+          <div className="center">
+            <div className="kick">{t.howKick}</div>
+            <h2>{t.howTitle}</h2>
+            <p className="lead">{t.howSub}</p>
+          </div>
+          <div className="grid3">
+            {t.steps.map((s,i)=>(
+              <MetalCard key={i} sweep="hover">
+                <div className="shead"><span className="snum">{s[0]}</span><span style={{color:'var(--fx-silver)',display:'flex'}}>{ICONS[i]}</span></div>
+                <div className="ctitle">{s[1]}</div>
+                <div className="cdesc">{s[2]}</div>
+              </MetalCard>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="band" style={{paddingTop:0}}>
+        <div className="wrap">
+          <MetalCard sweep="loop" padding={0} radius="var(--fx-radius-3xl)" style={{border:'1px solid var(--fx-border-metal)',boxShadow:'var(--fx-elev-hero)'}}>
+            <div className="slab">
+              <h2>{t.finalTitle}</h2>
+              <p className="lead" style={{maxWidth:520,margin:'20px auto 0'}}>{t.finalSub}</p>
+              <div style={{marginTop:36,display:'flex',justifyContent:'center'}}><Button size="lg">{t.cta}</Button></div>
+            </div>
+          </MetalCard>
+        </div>
+      </section>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Landing/>);
+</script>
+</body></html>

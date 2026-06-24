@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0E0F11;color:#F2F3F4;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:rgba(192,194,197,.25);color:#fff}
+:focus-visible{outline:2px solid #C0C2C5;outline-offset:2px;border-radius:6px}
+.brushed{position:relative;background:linear-gradient(135deg,#3c3f44 0%,#26282c 26%,#16181b 52%,#303338 74%,#1b1d21 100%)}
+.brushed::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(118deg,rgba(255,255,255,.04) 0,rgba(255,255,255,.04) 1px,transparent 1px,transparent 4px);opacity:.5;pointer-events:none}
+.sweep{position:absolute;top:0;bottom:0;left:0;width:42%;z-index:1;background:linear-gradient(90deg,transparent,rgba(255,255,255,.24),transparent);transform:translateX(-130%) skewX(-12deg);animation:fxsweep 7s ease-in-out infinite;pointer-events:none}
+@keyframes fxsweep{0%{transform:translateX(-130%) skewX(-12deg)}55%,100%{transform:translateX(220%) skewX(-12deg)}}
+.btn-shine{position:relative;overflow:hidden}
+.btn-shine::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 26%,rgba(255,255,255,.5) 48%,transparent 68%);transform:translateX(-135%);transition:transform .6s ease;pointer-events:none}
+.btn-shine:hover::before{transform:translateX(135%)}
+.svc:hover{border-color:#5a5d62 !important;transform:translateY(-2px)}
+.svc{transition:border-color .25s ease, transform .25s ease, box-shadow .25s ease}
+.navitem:hover{background:#1c1f23 !important}
+@media (prefers-reduced-motion:reduce){.sweep{animation:none}}
+@media (max-width:900px){.sidebar{display:none !important}}
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh">
+
+  <aside class="sidebar" style="flex:0 0 240px;background:#16181B;border-right:1px solid #2A2D31;display:flex;flex-direction:column;padding:22px 14px;position:sticky;top:0;height:100vh">
+    <a href="FixEarn.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;padding:6px 10px 22px">
+      <span style="width:12px;height:12px;background:linear-gradient(135deg,#E6E8EA,#9A9DA1);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 12px rgba(192,194,197,.35)"></span>
+      <span style="font-size:19px;font-weight:700;letter-spacing:-.01em;color:#F2F3F4">FixEarn</span>
+    </a>
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+        <button class="navitem" onClick="{{ item.onClick }}" style="{{ item.style }}">
+          <span style="position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:{{ item.barColor }}"></span>
+          <span style="display:flex;color:{{ item.iconColor }}">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:11px;padding:12px 10px;border-top:1px solid #2A2D31">
+      <span style="width:34px;height:34px;border-radius:50%;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid #4a4d52;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:12px;color:#D4D6D9">AC</span>
+      <span style="flex:1;min-width:0"><span style="display:block;font-size:13.5px;font-weight:600;color:#F2F3F4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Acme Ltda.</span><span style="display:block;font-family:'Geist Mono',monospace;font-size:10.5px;color:#9A9DA1">Business</span></span>
+      <button onClick="{{ onLogout }}" aria-label="{{ logoutLabel }}" style="background:none;border:none;cursor:pointer;color:#9A9DA1;display:flex;padding:4px" style-hover="color:#F2F3F4"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3"></path><path d="M10 16l4-4-4-4"></path><path d="M14 12H4"></path></svg></button>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <header style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 32px;border-bottom:1px solid #2A2D31;position:sticky;top:0;background:rgba(14,15,17,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:10">
+      <div>
+        <div style="font-size:20px;font-weight:700;letter-spacing:-.015em;color:#F2F3F4">{{ greeting }}</div>
+        <div style="font-size:13.5px;color:#9A9DA1;margin-top:2px">{{ greetingSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div role="group" aria-label="Language" style="display:inline-flex;border:1px solid #2A2D31;border-radius:999px;padding:3px;gap:2px;background:#16181B">
+          <button onClick="{{ setEn }}" aria-pressed="{{ isEn }}" style="{{ enTabStyle }}">EN</button>
+          <button onClick="{{ setPt }}" aria-pressed="{{ isPt }}" style="{{ ptTabStyle }}">PT</button>
+        </div>
+        <button aria-label="Notifications" style="position:relative;width:38px;height:38px;border-radius:50%;border:1px solid #2A2D31;background:#16181B;cursor:pointer;color:#9A9DA1;display:flex;align-items:center;justify-content:center" style-hover="color:#F2F3F4;border-color:#3a3d42"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"></path><path d="M13.7 20a2 2 0 0 1-3.4 0"></path></svg><span style="position:absolute;top:9px;right:10px;width:6px;height:6px;border-radius:50%;background:#D4D6D9;box-shadow:0 0 6px rgba(212,214,217,.8)"></span></button>
+        <span style="width:38px;height:38px;border-radius:50%;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid #4a4d52;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:12px;color:#D4D6D9">AC</span>
+      </div>
+    </header>
+
+    <div style="padding:32px;max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:20px">
+
+      <section style="position:relative;overflow:hidden;border:1px solid #2A2D31;border-radius:20px;background:linear-gradient(135deg,#15171b 0%,#0e0f11 72%);display:grid;grid-template-columns:1.45fr 1fr">
+        <div style="position:relative;padding:38px 34px;display:flex;flex-direction:column;min-height:360px">
+          <h2 style="font-size:clamp(30px,3.8vw,50px);font-weight:800;letter-spacing:-.02em;line-height:1.02;text-transform:uppercase;color:#F2F3F4;margin:0;text-shadow:0 1px 0 rgba(255,255,255,.13),0 -1px 1px rgba(0,0,0,.6);max-width:420px">{{ actTitle }}</h2>
+          <p style="font-size:15.5px;line-height:1.55;color:#9A9DA1;margin:16px 0 0;max-width:380px">{{ actSub }}</p>
+          <div style="height:6px;border-radius:999px;background:#16181B;border:1px solid #2A2D31;overflow:hidden;margin-top:22px;max-width:380px"><div style="{{ actBarStyle }}"></div></div>
+          <div style="margin-top:auto;display:flex;justify-content:center;padding-top:30px;perspective:900px">
+            <div class="brushed" style="position:relative;overflow:hidden;width:clamp(140px,16vw,196px);height:clamp(140px,16vw,196px);border-radius:30px;border:1px solid #4a4d52;box-shadow:0 30px 70px rgba(0,0,0,.6),0 2px 0 rgba(255,255,255,.12) inset;transform:rotateX(15deg) rotateZ(-7deg);display:flex;align-items:center;justify-content:center">
+              <span class="sweep"></span>
+              <span style="position:relative;z-index:2;width:44%;height:44%;background:linear-gradient(135deg,#E6E8EA,#9A9DA1);transform:rotate(45deg);border-radius:10px;box-shadow:0 2px 5px rgba(0,0,0,.45),0 1px 0 rgba(255,255,255,.55) inset"></span>
+            </div>
+          </div>
+        </div>
+        <div style="background:#16181B;border-left:1px solid #2A2D31;padding:10px;display:flex;flex-direction:column;justify-content:center">
+          <sc-for list="{{ activationTasks }}" as="task" hint-placeholder-count="6">
+            <button class="navitem" onClick="{{ task.onClick }}" style="{{ task.rowStyle }}">
+              <span style="width:40px;height:40px;flex-shrink:0;border-radius:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid #4a4d52;color:#D4D6D9">{{ task.icon }}</span>
+              <span style="flex:1;min-width:0">
+                <span style="display:block;font-size:14.5px;font-weight:600;color:#F2F3F4">{{ task.title }}</span>
+                <span style="{{ task.statusStyle }}">{{ task.status }}</span>
+              </span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6e73" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+        <sc-for list="{{ summary }}" as="c" hint-placeholder-count="3">
+          <div style="background:#1A1C1F;border:1px solid #2A2D31;border-radius:18px;padding:24px">
+            <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9A9DA1">{{ c.title }}</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:32px;font-weight:600;color:{{ c.valueColor }};margin-top:14px;letter-spacing:.01em">{{ c.value }}</div>
+            <div style="font-size:13.5px;color:#9A9DA1;margin-top:8px">{{ c.label }}</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:12px;color:#C0C2C5;margin-top:6px">{{ c.sub }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="background:#1A1C1F;border:1px solid #2A2D31;border-radius:18px;padding:26px">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <h2 style="font-size:18px;font-weight:600;color:#F2F3F4;margin:0">{{ barTitle }}</h2>
+          <span style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#9A9DA1">{{ usageText }}</span>
+        </div>
+        <div style="height:14px;border-radius:999px;background:#16181B;border:1px solid #2A2D31;overflow:hidden;margin-top:18px;display:flex">
+          <div style="{{ barFillStyle }}"></div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:22px;margin-top:16px">
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:3px;background:linear-gradient(180deg,#E6E8EA,#A8AAAD)"></span><span style="font-size:13px;color:#9A9DA1">{{ committedLabel }}</span><span style="font-family:'Geist Mono',monospace;font-size:13px;color:#F2F3F4">{{ committedFmt }}</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:3px;background:#2A2D31"></span><span style="font-size:13px;color:#9A9DA1">{{ availableLabel }}</span><span style="font-family:'Geist Mono',monospace;font-size:13px;color:#F2F3F4">{{ availableFmt }}</span></div>
+          <div style="display:flex;align-items:center;gap:8px;margin-left:auto"><span style="font-size:13px;color:#9A9DA1">{{ totalLabel }}</span><span style="font-family:'Geist Mono',monospace;font-size:13px;color:#C0C2C5">{{ monthlyFmt }}</span></div>
+        </div>
+      </div>
+
+      <div class="brushed" style="position:relative;overflow:hidden;border:1px solid #4a4d52;border-radius:20px;box-shadow:0 18px 44px rgba(0,0,0,.4),0 2px 0 rgba(255,255,255,.1) inset">
+        <span class="sweep"></span>
+        <div style="position:relative;z-index:2;padding:26px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
+          <div style="flex:1 1 280px">
+            <h2 style="font-size:19px;font-weight:700;color:#F2F3F4;margin:0;text-shadow:0 1px 0 rgba(0,0,0,.4)">{{ depositTitle }}</h2>
+            <p style="font-size:14.5px;line-height:1.55;color:#9A9DA1;margin:8px 0 0;max-width:360px">{{ depositSub }}</p>
+            <div style="display:flex;gap:9px;margin-top:18px;flex-wrap:wrap">
+              <sc-for list="{{ quickAmounts }}" as="q" hint-placeholder-count="3">
+                <button onClick="{{ q.onClick }}" style="{{ q.style }}">{{ q.label }}</button>
+              </sc-for>
+            </div>
+            <div style="font-family:'Geist Mono',monospace;font-size:12.5px;color:#C0C2C5;margin-top:14px">{{ estReturnText }}</div>
+          </div>
+          <div style="flex:0 0 auto;display:flex;flex-direction:column;gap:10px;min-width:220px">
+            <div style="display:flex;align-items:center;gap:8px;background:#16181B;border:1px solid #2A2D31;border-radius:12px;padding:13px 15px">
+              <span style="font-family:'Geist Mono',monospace;font-size:16px;color:#9A9DA1">R$</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:18px;color:#F2F3F4;font-weight:600">{{ depositAmountFmt }}</span>
+            </div>
+            <button class="btn-shine" style="font-family:inherit;font-size:15px;font-weight:600;color:#0E0F11;background:linear-gradient(180deg,#E6E8EA,#A8AAAD);border:none;border-radius:12px;padding:14px 22px;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 8px 22px rgba(0,0,0,.4);transition:transform .25s ease,box-shadow .25s ease,filter .25s ease" style-hover="transform:translateY(-1px) scale(1.02);filter:brightness(1.04);box-shadow:0 0 0 1px rgba(192,194,197,.5),0 10px 30px rgba(192,194,197,.2),0 1px 0 rgba(255,255,255,.5) inset">{{ depositCta }}</button>
+            <div style="font-size:11.5px;color:#7E8186;text-align:center;line-height:1.4">{{ depositSecurity }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <h2 style="font-size:22px;font-weight:700;letter-spacing:-.015em;color:#F2F3F4;margin:0">{{ servicesTitle }}</h2>
+            <p style="font-size:14.5px;color:#9A9DA1;margin:7px 0 0">{{ servicesSub }}</p>
+          </div>
+          <div style="display:inline-flex;border:1px solid #2A2D31;border-radius:999px;padding:3px;gap:2px;background:#16181B">
+            <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="4">
+              <button onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin-top:20px">
+          <sc-for list="{{ services }}" as="s" hint-placeholder-count="8">
+            <div class="svc" style="{{ s.cardStyle }}">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                <span style="width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid #4a4d52;font-family:'Geist Mono',monospace;font-size:15px;font-weight:600;color:#D4D6D9">{{ s.initial }}</span>
+                <sc-if value="{{ s.isActive }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex;align-items:center;gap:6px;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#D4D6D9;border:1px solid #4a4d52;border-radius:999px;padding:3px 9px"><span style="width:5px;height:5px;border-radius:50%;background:#D4D6D9;box-shadow:0 0 6px rgba(212,214,217,.8)"></span>{{ activeBadge }}</span>
+                </sc-if>
+              </div>
+              <div style="font-size:16px;font-weight:600;color:#F2F3F4;margin-top:16px">{{ s.name }}</div>
+              <div style="font-family:'Geist Mono',monospace;font-size:13px;color:#9A9DA1;margin-top:4px">{{ s.costFmt }}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:18px">
+                <sc-if value="{{ s.unavailable }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:12px;color:#9A9DA1">{{ needsMoreText }}</span>
+                </sc-if>
+                <sc-if value="{{ s.toggleLabelShown }}" hint-placeholder-val="{{ true }}">
+                  <span style="font-size:13px;font-weight:500;color:{{ s.toggleTextColor }}">{{ s.toggleText }}</span>
+                </sc-if>
+                <button role="switch" aria-checked="{{ s.isActive }}" aria-label="{{ s.name }}" disabled="{{ s.unavailable }}" onClick="{{ s.onToggle }}" style="{{ s.switchStyle }}">
+                  <span style="{{ s.knobStyle }}"></span>
+                </button>
+              </div>
+              <sc-if value="{{ s.unavailable }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ s.onIncrease }}" style="margin-top:12px;background:none;border:none;padding:0;cursor:pointer;font-family:'Geist Mono',monospace;font-size:11.5px;letter-spacing:.04em;color:#C0C2C5;text-decoration:underline;text-underline-offset:2px" style-hover="color:#F2F3F4">{{ increaseText }}</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;background:#1A1C1F;border:1px solid #2A2D31;border-radius:20px;padding:26px;margin-top:6px">
+        <div class="brushed" style="position:relative;overflow:hidden;flex:0 0 auto;width:340px;max-width:100%;aspect-ratio:1.6;border-radius:18px;border:1px solid #4a4d52;box-shadow:0 24px 56px rgba(0,0,0,.55),0 2px 0 rgba(255,255,255,.1) inset;padding:24px;display:flex;flex-direction:column;justify-content:space-between">
+          <span class="sweep"></span>
+          <div style="position:relative;z-index:2;display:flex;align-items:flex-start;justify-content:space-between">
+            <span style="display:flex;align-items:center;gap:8px"><span style="width:11px;height:11px;background:linear-gradient(135deg,#E6E8EA,#9A9DA1);transform:rotate(45deg);border-radius:2px"></span><span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.18em;color:#D4D6D9">FIXEARN</span></span>
+            <span style="width:34px;height:25px;border-radius:5px;background:linear-gradient(135deg,#D4D6D9,#8d9094);box-shadow:0 1px 2px rgba(0,0,0,.45) inset"></span>
+          </div>
+          <div style="position:relative;z-index:2;font-family:'Geist Mono',monospace;font-size:18px;letter-spacing:.18em;color:#EDEFF1;text-shadow:0 1px 0 rgba(0,0,0,.5)">•••• •••• •••• 4291</div>
+          <div style="position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:space-between">
+            <span style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.1em;color:#C0C2C5">ACME LTDA.</span>
+            <span style="font-style:italic;font-weight:700;font-size:17px;color:#EDEFF1;letter-spacing:-.02em">VISA</span>
+          </div>
+        </div>
+        <div style="flex:1 1 280px;min-width:240px">
+          <p style="font-size:15px;line-height:1.6;color:#C8CACD;margin:0 0 16px">{{ cardText }}</p>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <sc-for list="{{ paidServices }}" as="p" hint-placeholder-count="3">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid #2A2D31">
+                <span style="font-size:14px;color:#F2F3F4">{{ p.name }}</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:13px;color:#9A9DA1">{{ p.costFmt }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <button style="margin-top:18px;font-family:inherit;font-size:14px;font-weight:500;color:#F2F3F4;background:rgba(255,255,255,.03);border:1px solid #3A3D41;border-radius:10px;padding:11px 20px;cursor:pointer;transition:all .25s ease" style-hover="border-color:#C0C2C5;background:rgba(192,194,197,.06)">{{ cardSettings }}</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    lang: 'en',
+    nav: 'overview',
+    tab: 'all',
+    deposit: 5000,
+    active: { openai: true, notion: true, slack: true },
+  };
+
+  MONTHLY = 142.5;
+
+  SERVICES = [
+    { id: 'openai', name: 'OpenAI', initial: 'AI', cost: 49.9, cat: 'ai' },
+    { id: 'claude', name: 'Anthropic Claude', initial: 'AC', cost: 99.0, cat: 'ai' },
+    { id: 'midjourney', name: 'Midjourney', initial: 'MJ', cost: 59.0, cat: 'ai' },
+    { id: 'notion', name: 'Notion', initial: 'N', cost: 24.9, cat: 'productivity' },
+    { id: 'slack', name: 'Slack', initial: 'SL', cost: 9.5, cat: 'productivity' },
+    { id: 'figma', name: 'Figma', initial: 'Fi', cost: 39.9, cat: 'productivity' },
+    { id: 'github', name: 'GitHub', initial: 'GH', cost: 21.0, cat: 'dev' },
+    { id: 'linear', name: 'Linear', initial: 'Li', cost: 16.0, cat: 'dev' },
+  ];
+
+  fmt(n) {
+    return 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  setLang(l) { if (l !== this.state.lang) this.setState({ lang: l }); }
+
+  toggleService(id) {
+    const s = this.SERVICES.find((x) => x.id === id);
+    const active = { ...this.state.active };
+    if (active[id]) { delete active[id]; this.setState({ active }); return; }
+    const committed = this.committed(this.state.active);
+    if (s.cost <= this.MONTHLY - committed) { active[id] = true; this.setState({ active }); }
+  }
+
+  committed(active) {
+    return this.SERVICES.reduce((sum, s) => sum + (active[s.id] ? s.cost : 0), 0);
+  }
+
+  icon(name) {
+    const R = React.createElement;
+    const S = (ch) => R('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' }, ch);
+    const P = (d, k) => R('path', { d, key: k || d });
+    const Rt = (x, y, w, h, k) => R('rect', { x, y, width: w, height: h, rx: 2, key: k });
+    const map = {
+      overview: S([Rt(3.5, 3.5, 7, 7, 'a'), Rt(13.5, 3.5, 7, 7, 'b'), Rt(3.5, 13.5, 7, 7, 'c'), Rt(13.5, 13.5, 7, 7, 'd')]),
+      deposit: S([P('M12 3v10', 'a'), P('M8 9l4 4 4-4', 'b'), P('M4 19h16', 'c')]),
+      services: S([R('circle', { cx: 7, cy: 7, r: 3.2, key: 'a' }), R('circle', { cx: 17, cy: 7, r: 3.2, key: 'b' }), R('circle', { cx: 7, cy: 17, r: 3.2, key: 'c' }), R('circle', { cx: 17, cy: 17, r: 3.2, key: 'd' })]),
+      card: S([Rt(3, 5.5, 18, 13, 'a'), P('M3 9.5h18', 'b')]),
+      transactions: S([P('M5 7h14', 'a'), P('M5 12h14', 'b'), P('M5 17h9', 'c')]),
+      settings: S([R('circle', { cx: 12, cy: 12, r: 3.2, key: 'a' }), P('M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1', 'b')]),
+      business: S([Rt(5, 4, 14, 16, 'a'), P('M9 9h2M13 9h2M9 13h2M13 13h2M10 20v-3h4v3', 'b')]),
+      taxid: S([Rt(3, 6, 18, 12, 'a'), P('M7 10.5h4M7 14h8', 'b')]),
+      bank: S([P('M4 10h16', 'a'), P('M5 10l7-4.5 7 4.5', 'b'), P('M6.5 10v7M10 10v7M14 10v7M17.5 10v7', 'c'), P('M4 20h16', 'd')]),
+    };
+    return map[name];
+  }
+
+  renderVals() {
+    const T = {
+      en: {
+        nav: { overview: 'Overview', deposit: 'My deposit', services: 'Services', card: 'Virtual card', transactions: 'Transactions', settings: 'Settings' },
+        logout: 'Log out',
+        greeting: 'Welcome back, Acme', greetingSub: 'Your capital is working. Returns are covering your tools.',
+        summary: [
+          { title: 'Your deposit', value: this.fmt(15000), label: 'Total capital', sub: 'Your money, always', silver: false },
+          { title: 'Monthly returns', value: this.fmt(this.MONTHLY), label: 'Generated this month', sub: '▲ +3.2% vs last month', silver: true },
+          { title: 'Available to spend', value: null, label: 'After active subscriptions', sub: 'Unused returns are reinvested', silver: false },
+        ],
+        barTitle: 'Your returns at a glance', usage: (p) => "You're using " + p + '% of your monthly returns',
+        committedLabel: 'Committed', availableLabel: 'Available', totalLabel: 'Total monthly return',
+        depositTitle: 'Add to your deposit', depositSub: 'More capital means more returns to cover your tools.',
+        estReturn: (v) => 'Estimated extra return: ~' + this.fmt(v) + '/month', depositCta: 'Deposit via PIX',
+        depositSecurity: 'Secure transfer · Funds invested automatically',
+        servicesTitle: 'Available services', servicesSub: 'Activate the tools your returns can cover.',
+        tabs: { all: 'All', ai: 'AI tools', productivity: 'Productivity', dev: 'Dev' },
+        activeBadge: 'Active', needsMore: 'Needs more capital', increase: 'Increase deposit',
+        on: 'On', activate: 'Activate',
+        cardText: 'This card pays for your active subscriptions automatically, funded by your returns.',
+        cardSettings: 'Card settings',
+        actTitle: 'Activate your account',
+        actSub: "You're almost there. Complete the remaining 3 tasks to activate your account.",
+        actDone: 'Submitted', actAction: 'Requires action',
+        tasks: [
+          ['business', 'Business details', 'done', null],
+          ['taxid', 'Tax ID', 'done', null],
+          ['bank', 'Bank connection', 'done', null],
+          ['deposit', 'Make your first deposit', 'action', 'deposit'],
+          ['services', 'Choose your tools', 'action', 'services'],
+          ['card', 'Activate virtual card', 'action', 'card'],
+        ],
+      },
+      pt: {
+        nav: { overview: 'Visão geral', deposit: 'Meu aporte', services: 'Serviços', card: 'Cartão virtual', transactions: 'Transações', settings: 'Configurações' },
+        logout: 'Sair',
+        greeting: 'Bem-vindo, Acme', greetingSub: 'Seu capital está rendendo. O rendimento cobre suas ferramentas.',
+        summary: [
+          { title: 'Seu aporte', value: this.fmt(15000), label: 'Capital total', sub: 'Sempre seu', silver: false },
+          { title: 'Rendimento mensal', value: this.fmt(this.MONTHLY), label: 'Gerado este mês', sub: '▲ +3,2% vs mês anterior', silver: true },
+          { title: 'Disponível para usar', value: null, label: 'Após assinaturas ativas', sub: 'A sobra é reinvestida', silver: false },
+        ],
+        barTitle: 'Seu rendimento de relance', usage: (p) => 'Você está usando ' + p + '% do seu rendimento mensal',
+        committedLabel: 'Comprometido', availableLabel: 'Disponível', totalLabel: 'Rendimento mensal total',
+        depositTitle: 'Aumentar seu aporte', depositSub: 'Mais capital significa mais rendimento para cobrir suas ferramentas.',
+        estReturn: (v) => 'Rendimento extra estimado: ~' + this.fmt(v) + '/mês', depositCta: 'Aportar via PIX',
+        depositSecurity: 'Transferência segura · Capital investido automaticamente',
+        servicesTitle: 'Serviços disponíveis', servicesSub: 'Ative as ferramentas que seu rendimento pode pagar.',
+        tabs: { all: 'Todos', ai: 'IA', productivity: 'Produtividade', dev: 'Dev' },
+        activeBadge: 'Ativo', needsMore: 'Requer mais capital', increase: 'Aumentar aporte',
+        on: 'Ativo', activate: 'Ativar',
+        cardText: 'Este cartão paga suas assinaturas ativas automaticamente, com o seu rendimento.',
+        cardSettings: 'Configurações do cartão',
+        actTitle: 'Ative sua conta',
+        actSub: 'Você está quase lá. Conclua as 3 tarefas restantes para ativar sua conta.',
+        actDone: 'Enviado', actAction: 'Requer ação',
+        tasks: [
+          ['business', 'Dados da empresa', 'done', null],
+          ['taxid', 'CNPJ', 'done', null],
+          ['bank', 'Conexão bancária', 'done', null],
+          ['deposit', 'Faça seu primeiro aporte', 'action', 'deposit'],
+          ['services', 'Escolha suas ferramentas', 'action', 'services'],
+          ['card', 'Ative o cartão virtual', 'action', 'card'],
+        ],
+      },
+    };
+
+    const t = T[this.state.lang];
+    const isEn = this.state.lang === 'en';
+    const committed = this.committed(this.state.active);
+    const available = this.MONTHLY - committed;
+    const pct = Math.round((committed / this.MONTHLY) * 100);
+
+    const actDoneCount = t.tasks.filter((x) => x[2] === 'done').length;
+    const actPct = Math.round((actDoneCount / t.tasks.length) * 100);
+    const activationTasks = t.tasks.map(([ic, title, st, route]) => ({
+      icon: this.icon(ic), title,
+      status: st === 'done' ? t.actDone : t.actAction,
+      statusStyle: { display: 'block', fontFamily: "'Geist Mono', monospace", fontSize: '12px', marginTop: '3px', color: st === 'done' ? '#9A9DA1' : '#C2A06A' },
+      rowStyle: { display: 'flex', alignItems: 'center', gap: '14px', width: '100%', textAlign: 'left', border: 'none', borderBottom: '1px solid #2A2D31', background: 'transparent', cursor: 'pointer', padding: '13px 14px', borderRadius: '10px', fontFamily: 'inherit' },
+      onClick: route ? (() => this.setState({ nav: route })) : (() => {}),
+    }));
+
+    const navOrder = ['overview', 'deposit', 'services', 'card', 'transactions', 'settings'];
+    const navItems = navOrder.map((id) => {
+      const on = this.state.nav === id;
+      return {
+        id, label: t.nav[id], icon: this.icon(id),
+        onClick: () => this.setState({ nav: id }),
+        iconColor: on ? '#F2F3F4' : '#9A9DA1',
+        barColor: on ? '#C0C2C5' : 'transparent',
+        style: { position: 'relative', display: 'flex', alignItems: 'center', gap: '12px', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', borderRadius: '10px', padding: '11px 12px', fontFamily: 'inherit', fontSize: '14.5px', fontWeight: on ? 600 : 500, color: on ? '#F2F3F4' : '#9A9DA1', background: on ? '#1f2226' : 'transparent' },
+      };
+    });
+
+    const summary = t.summary.map((c) => ({
+      title: c.title,
+      value: c.value === null ? this.fmt(available) : c.value,
+      valueColor: c.silver ? '#C0C2C5' : '#F2F3F4',
+      label: c.label, sub: c.sub,
+    }));
+
+    const quickDefs = [5000, 10000, 20000];
+    const quickAmounts = quickDefs.map((a) => {
+      const on = this.state.deposit === a;
+      return {
+        label: '+' + this.fmt(a).replace(',00', '').replace('R$\u00a0', 'R$ '),
+        onClick: () => this.setState({ deposit: a }),
+        style: { fontFamily: "'Geist Mono', monospace", fontSize: '13px', cursor: 'pointer', borderRadius: '999px', padding: '9px 15px', border: '1px solid ' + (on ? '#C0C2C5' : '#2A2D31'), background: on ? 'rgba(192,194,197,.08)' : '#16181B', color: on ? '#F2F3F4' : '#9A9DA1', transition: 'all .2s ease' },
+      };
+    });
+    const estExtra = this.state.deposit * (this.MONTHLY / 15000);
+
+    const tabOrder = ['all', 'ai', 'productivity', 'dev'];
+    const tabs = tabOrder.map((id) => {
+      const on = this.state.tab === id;
+      return {
+        label: t.tabs[id], onClick: () => this.setState({ tab: id }),
+        style: { border: 'none', borderRadius: '999px', padding: '7px 14px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', background: on ? '#2E3136' : 'transparent', color: on ? '#F2F3F4' : '#9A9DA1', transition: 'all .2s ease' },
+      };
+    });
+
+    const visible = this.SERVICES.filter((s) => this.state.tab === 'all' || s.cat === this.state.tab);
+    const services = visible.map((s) => {
+      const isActive = !!this.state.active[s.id];
+      const fits = s.cost <= available;
+      const unavailable = !isActive && !fits;
+      const cardStyle = {
+        position: 'relative', background: '#1A1C1F', borderRadius: '16px', padding: '22px',
+        border: '1px solid ' + (isActive ? '#6a6d72' : '#2A2D31'),
+        boxShadow: isActive ? '0 0 0 1px rgba(192,194,197,.25), 0 14px 34px rgba(0,0,0,.35)' : 'none',
+        opacity: unavailable ? 0.5 : 1,
+      };
+      const switchStyle = {
+        width: '42px', height: '24px', borderRadius: '999px', position: 'relative', flexShrink: 0,
+        border: '1px solid ' + (isActive ? 'transparent' : '#3a3d42'),
+        background: isActive ? 'linear-gradient(180deg,#E6E8EA,#A8AAAD)' : '#16181B',
+        cursor: unavailable ? 'not-allowed' : 'pointer', transition: 'background .25s ease, border-color .25s ease', padding: 0,
+      };
+      const knobStyle = {
+        position: 'absolute', top: '2px', left: isActive ? '20px' : '2px', width: '18px', height: '18px',
+        borderRadius: '50%', background: isActive ? '#0E0F11' : '#9A9DA1', transition: 'left .25s ease',
+      };
+      return {
+        id: s.id, name: s.name, initial: s.initial, costFmt: this.fmt(s.cost) + (isEn ? '/mo' : '/mês'),
+        isActive, unavailable, cardStyle, switchStyle, knobStyle,
+        toggleLabelShown: !unavailable, toggleText: isActive ? t.on : t.activate,
+        toggleTextColor: isActive ? '#C0C2C5' : '#9A9DA1',
+        onToggle: () => this.toggleService(s.id),
+        onIncrease: () => this.setState({ nav: 'deposit' }),
+      };
+    });
+
+    const paidServices = this.SERVICES.filter((s) => this.state.active[s.id]).map((s) => ({ name: s.name, costFmt: this.fmt(s.cost) }));
+
+    const tabBase = { border: 'none', borderRadius: '999px', padding: '5px 12px', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '.03em' };
+
+    return {
+      navItems, logoutLabel: t.logout,
+      onLogout: () => { window.location.href = 'FixEarn%20Auth.dc.html'; },
+      greeting: t.greeting, greetingSub: t.greetingSub,
+      actTitle: t.actTitle, actSub: t.actSub,
+      actBarStyle: { width: actPct + '%', height: '100%', background: 'linear-gradient(90deg,#A8AAAD,#E6E8EA)', borderRadius: '999px' },
+      activationTasks,
+      summary,
+      barTitle: t.barTitle, usageText: t.usage(pct),
+      committedLabel: t.committedLabel, availableLabel: t.availableLabel, totalLabel: t.totalLabel,
+      committedFmt: this.fmt(committed), availableFmt: this.fmt(available), monthlyFmt: this.fmt(this.MONTHLY),
+      barFillStyle: { width: pct + '%', height: '100%', background: 'linear-gradient(90deg,#A8AAAD,#E6E8EA)', borderRadius: '999px', transition: 'width .4s cubic-bezier(.2,.65,.2,1)' },
+      depositTitle: t.depositTitle, depositSub: t.depositSub,
+      quickAmounts, depositAmountFmt: this.state.deposit.toLocaleString('pt-BR'),
+      estReturnText: t.estReturn(estExtra), depositCta: t.depositCta, depositSecurity: t.depositSecurity,
+      servicesTitle: t.servicesTitle, servicesSub: t.servicesSub, tabs, services,
+      activeBadge: t.activeBadge, needsMoreText: t.needsMore, increaseText: t.increase,
+      cardText: t.cardText, paidServices, cardSettings: t.cardSettings,
+      isEn, isPt: !isEn,
+      enTabStyle: { ...tabBase, background: isEn ? '#2E3136' : 'transparent', color: isEn ? '#F2F3F4' : '#9A9DA1' },
+      ptTabStyle: { ...tabBase, background: !isEn ? '#2E3136' : 'transparent', color: !isEn ? '#F2F3F4' : '#9A9DA1' },
+      setEn: () => this.setLang('en'), setPt: () => this.setLang('pt'),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!-- @dsCard group="Components" viewport="700x440" subtitle="The investment hero panel: balance, yield, growth chart, stats" name="StatPanel" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>body{margin:0;padding:26px;display:flex;justify-content:center}</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+function findNs(name){for(const k of Object.keys(window)){const v=window[k];if(v&&typeof v==='object'&&typeof v[name]!=='undefined')return v;}return window;}
+const { StatPanel } = findNs('StatPanel');
+ReactDOM.createRoot(document.getElementById('root')).render(<StatPanel />);
+</script>
+</body></html>

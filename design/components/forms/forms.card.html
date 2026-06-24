@@ -1,0 +1,29 @@
+<!-- @dsCard group="Components" viewport="700x300" subtitle="Input, Select, Switch, Segmented control" name="Forms" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>body{margin:0;padding:26px;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+function findNs(name){for(const k of Object.keys(window)){const v=window[k];if(v&&typeof v==='object'&&typeof v[name]!=='undefined')return v;}return window;}
+const NS = findNs('Input');
+const { Input, Select, Switch, SegmentedControl } = NS;
+const { useState } = React;
+function Demo(){
+  const [on,setOn]=useState(true); const [lang,setLang]=useState('en');
+  return (<>
+    <div style={{display:'flex',flexDirection:'column',gap:18}}>
+      <Input label="Deposit amount" prefix="$" placeholder="10,000" hint="Between $1,000 and $20,000" />
+      <Select label="Currency" options={['USD','BRL']} />
+    </div>
+    <div style={{display:'flex',flexDirection:'column',gap:20}}>
+      <SegmentedControl value={lang} onChange={setLang} options={[{value:'en',label:'EN'},{value:'pt',label:'PT'}]} />
+      <Switch checked={on} onChange={setOn} label="Auto-pay subscriptions" />
+    </div>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script>
+</body></html>

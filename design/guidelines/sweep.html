@@ -1,0 +1,11 @@
+<!-- @dsCard group="Brand" viewport="700x200" subtitle="The light-sweep motif that makes metal feel real (loops)" name="Metal sweep" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../styles.css">
+<style>body{padding:24px;font-family:var(--fx-font-mono)}
+.panel{position:relative;height:120px;border-radius:var(--fx-radius-2xl);border:1px solid var(--fx-border-metal);background:var(--fx-metal);overflow:hidden;box-shadow:var(--fx-shadow-panel)}
+.panel::after{content:"";position:absolute;inset:0;background:var(--fx-metal-grain);opacity:.5}
+.sweep{position:absolute;top:0;bottom:0;left:0;width:42%;background:var(--fx-sweep);transform:translateX(-130%) skewX(-12deg);animation:fx-sweep var(--fx-dur-sweep) ease-in-out infinite}
+.tag{position:absolute;left:18px;bottom:14px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--fx-silver-bright);z-index:2}
+@media (prefers-reduced-motion:reduce){.sweep{animation:none}}</style>
+</head><body>
+<div class="panel"><span class="sweep"></span><div class="tag">@keyframes fx-sweep · --fx-sweep</div></div>
+</body></html>

@@ -1,0 +1,9 @@
+/* FixEarn Design System — global entry point.
+   Consumers link THIS file. It is an @import list only. */
+@import "./tokens/typography.css";
+@import "./tokens/colors.css";
+@import "./tokens/spacing.css";
+@import "./tokens/radius.css";
+@import "./tokens/shadows.css";
+@import "./tokens/motion.css";
+@import "./tokens/base.css";

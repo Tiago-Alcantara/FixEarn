@@ -1,0 +1,129 @@
+<!-- @dsCard group="FixEarn Deposit" viewport="820x740" subtitle="3-step deposit flow with live returns projection" name="Deposit flow" -->
+<!-- @startingPoint section="FixEarn Deposit" subtitle="Capital deposit / onboarding flow" viewport="820x740" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+*{box-sizing:border-box}
+body{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:48px 24px;background:radial-gradient(120% 70% at 50% -10%,#202327 0%,#121316 44%,#0c0d0f 72%)}
+.shell{width:520px;max-width:100%}
+.brand{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:26px}
+.mark{width:12px;height:12px;background:var(--fx-chrome);transform:rotate(45deg);border-radius:2px;box-shadow:var(--fx-glow-silver)}
+.wm{font-family:var(--fx-font-display);font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--fx-text)}
+.steps{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:22px;font-family:var(--fx-font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.step{display:flex;align-items:center;gap:7px;color:var(--fx-text-3)}
+.step.on{color:var(--fx-silver-bright)}
+.dot{width:20px;height:20px;border-radius:50%;border:1px solid var(--fx-border-metal);display:flex;align-items:center;justify-content:center;font-size:10px}
+.step.on .dot{background:var(--fx-chrome);color:#0E0F11;border-color:transparent}
+.pad{padding:30px}
+h2{font-family:var(--fx-font-display);font-size:24px;font-weight:700;letter-spacing:-.02em;color:var(--fx-text);margin:0;text-shadow:var(--fx-emboss)}
+.sub{color:var(--fx-text-2);font-size:14.5px;margin:8px 0 0;line-height:1.55}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{font-family:var(--fx-font-mono);font-size:13px;color:var(--fx-text-2);background:var(--fx-surface-2);border:1px solid var(--fx-border);border-radius:var(--fx-radius-pill);padding:8px 14px;cursor:pointer}
+.chip.on{color:var(--fx-text);border-color:var(--fx-silver)}
+.proj{display:flex;align-items:center;justify-content:space-between;margin-top:22px;padding-top:18px;border-top:1px solid var(--fx-border)}
+.proj .k{font-family:var(--fx-font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--fx-text-3)}
+.proj .v{font-family:var(--fx-font-mono);font-size:20px;color:var(--fx-text-strong);margin-top:5px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:11px 0}
+.rl{display:flex;align-items:center;gap:11px}
+.tlogo{width:30px;height:30px;border-radius:8px;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid var(--fx-border-metal);display:flex;align-items:center;justify-content:center;font-family:var(--fx-font-mono);font-size:11px;color:var(--fx-silver-bright)}
+.actions{display:flex;gap:12px;justify-content:flex-end;margin-top:26px}
+.confirm-num{font-family:var(--fx-font-mono);font-size:40px;font-weight:600;color:var(--fx-text-strong);text-align:center;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+function findNs(name){for(const k of Object.keys(window)){const v=window[k];if(v&&typeof v==='object'&&typeof v[name]!=='undefined')return v;}return window;}
+const NS = findNs('Input');
+const { Input, Select, SegmentedControl, Switch, MetalCard, ProgressBar, Button, Badge, Divider } = NS;
+const { useState } = React;
+
+const TOOLS = [['OpenAI',20],['Anthropic',20],['Notion',16],['Figma',12],['GitHub',21],['Linear',8],['Slack',15]];
+const fmt = n => '$' + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function Flow(){
+  const [step,setStep]=useState(0);
+  const [amount,setAmount]=useState(18400);
+  const [picked,setPicked]=useState(()=>({OpenAI:true,Anthropic:true,Notion:true,Figma:true,GitHub:true,Linear:true,Slack:true}));
+  const monthly = amount*0.084/12;
+  const pickedTotal = TOOLS.filter(t=>picked[t[0]]).reduce((s,t)=>s+t[1],0);
+  const steps=['Deposit','Tools','Confirm'];
+
+  return (
+    <div className="shell">
+      <div className="brand"><span className="mark"></span><span className="wm">FixEarn</span></div>
+      <div className="steps">
+        {steps.map((s,i)=>(<React.Fragment key={s}>
+          <span className={"step"+(i<=step?" on":"")}><span className="dot">{i<step?'✓':i+1}</span>{s}</span>
+          {i<2 && <span style={{width:22,height:1,background:'var(--fx-border)'}}></span>}
+        </React.Fragment>))}
+      </div>
+
+      <MetalCard sweep="loop" padding={0} radius="var(--fx-radius-2xl)" style={{border:'1px solid var(--fx-border-metal)',boxShadow:'var(--fx-elev-hero)'}}>
+        <div className="pad">
+          {step===0 && (<>
+            <h2>How much capital?</h2>
+            <p className="sub">Deposit once. Your capital stays yours and can be withdrawn anytime — only the returns pay for your tools.</p>
+            <div style={{display:'flex',gap:12,marginTop:20}}>
+              <Input label="Deposit amount" prefix="$" value={amount} onChange={e=>setAmount(Number(e.target.value.replace(/[^0-9]/g,''))||0)} style={{flex:1}} />
+              <Select label="Currency" options={['USD','BRL']} style={{width:120}} />
+            </div>
+            <div className="chips">
+              {[5000,10000,18400,20000].map(a=>(
+                <span key={a} className={"chip"+(amount===a?" on":"")} onClick={()=>setAmount(a)}>{fmt(a).replace('.00','')}</span>
+              ))}
+            </div>
+            <div className="proj">
+              <div><div className="k">Projected returns</div><div className="v">{fmt(monthly)} <span style={{fontSize:13,color:'var(--fx-silver)'}}>/ mo</span></div></div>
+              <div style={{textAlign:'right'}}><div className="k">Covers up to</div><div className="v">{Math.max(0,Math.floor(monthly/16))} tools</div></div>
+            </div>
+            <div className="actions"><Button onClick={()=>setStep(1)}>Continue</Button></div>
+          </>)}
+
+          {step===1 && (<>
+            <h2>Which tools should returns cover?</h2>
+            <p className="sub">Pick the subscriptions to auto-pay. You can change these anytime.</p>
+            <div style={{marginTop:16}}>
+              {TOOLS.map((t,i)=>(<React.Fragment key={t[0]}>
+                <div className="row">
+                  <span className="rl"><span className="tlogo">{t[0].slice(0,2)}</span><span style={{fontSize:15,color:'var(--fx-text)'}}>{t[0]}</span></span>
+                  <span style={{display:'flex',alignItems:'center',gap:14}}>
+                    <span style={{fontFamily:'var(--fx-font-mono)',fontSize:13,color:'var(--fx-text-2)'}}>{fmt(t[1])}</span>
+                    <Switch checked={!!picked[t[0]]} onChange={v=>setPicked(p=>({...p,[t[0]]:v}))} />
+                  </span>
+                </div>
+                {i<TOOLS.length-1 && <Divider/>}
+              </React.Fragment>))}
+            </div>
+            <div className="proj">
+              <div><div className="k">Monthly cost</div><div className="v">{fmt(pickedTotal)}</div></div>
+              <div style={{textAlign:'right'}}><div className="k">Covered by returns</div><div className="v" style={{color: monthly>=pickedTotal?'var(--fx-silver-bright)':'var(--fx-text-3)'}}>{monthly>=pickedTotal?'Fully covered':'Add capital'}</div></div>
+            </div>
+            <div style={{marginTop:16}}><ProgressBar label="Returns vs. cost" value={Math.min(100,Math.round(monthly/Math.max(1,pickedTotal)*100))} /></div>
+            <div className="actions"><Button variant="secondary" onClick={()=>setStep(0)}>Back</Button><Button onClick={()=>setStep(2)}>Review</Button></div>
+          </>)}
+
+          {step===2 && (<>
+            <h2 style={{textAlign:'center'}}>Confirm your deposit</h2>
+            <p className="sub" style={{textAlign:'center'}}>Your capital is transferred securely and starts working immediately.</p>
+            <div className="confirm-num" style={{marginTop:22}}>{fmt(amount)}</div>
+            <div style={{display:'flex',justifyContent:'center',marginTop:10}}><Badge dot>Capital stays yours</Badge></div>
+            <div style={{marginTop:24}}>
+              <div className="row"><span style={{color:'var(--fx-text-2)',fontSize:14}}>Projected returns</span><span style={{fontFamily:'var(--fx-font-mono)',color:'var(--fx-text)'}}>{fmt(monthly)} / mo</span></div>
+              <Divider/>
+              <div className="row"><span style={{color:'var(--fx-text-2)',fontSize:14}}>Tools auto-paid</span><span style={{fontFamily:'var(--fx-font-mono)',color:'var(--fx-text)'}}>{TOOLS.filter(t=>picked[t[0]]).length}</span></div>
+              <Divider/>
+              <div className="row"><span style={{color:'var(--fx-text-2)',fontSize:14}}>From your cash</span><span style={{fontFamily:'var(--fx-font-mono)',color:'var(--fx-silver)'}}>$0.00</span></div>
+            </div>
+            <div className="actions"><Button variant="secondary" onClick={()=>setStep(1)}>Back</Button><Button onClick={()=>setStep(0)}>Confirm deposit</Button></div>
+          </>)}
+        </div>
+      </MetalCard>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Flow/>);
+</script>
+</body></html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" role="img" aria-label="FixEarn mark">
+  <defs>
+    <linearGradient id="fxMark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6E8EA"></stop>
+      <stop offset="1" stop-color="#9A9DA1"></stop>
+    </linearGradient>
+  </defs>
+  <rect x="4.5" y="4.5" width="13" height="13" rx="2" transform="rotate(45 11 11)" fill="url(#fxMark)"></rect>
+</svg>

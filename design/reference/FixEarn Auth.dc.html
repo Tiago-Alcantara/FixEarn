@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0c0d0f;color:#EDEFF1;font-family:'Hanken Grotesk',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+::selection{background:rgba(192,194,197,.25);color:#fff}
+input::placeholder{color:#6b6e73}
+:focus-visible{outline:2px solid #C0C2C5;outline-offset:2px;border-radius:6px}
+.metal{background:#0a0b0d}
+.metal::before{content:"";position:absolute;inset:-45%;background:linear-gradient(122deg,#090a0c 0%,#1c1f23 22%,#41454c 46%,#23262b 60%,#0c0d0f 82%,#090a0c 100%);background-size:230% 230%;animation:metalShift 22s ease-in-out infinite}
+.metal::after{content:"";position:absolute;inset:0;background:radial-gradient(72% 56% at 28% 20%,rgba(212,214,217,.14),transparent 58%),radial-gradient(90% 75% at 84% 108%,rgba(0,0,0,.6),transparent 60%);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.brand-grain{position:absolute;inset:0;z-index:1;background:repeating-linear-gradient(118deg,rgba(255,255,255,.035) 0,rgba(255,255,255,.035) 1px,transparent 1px,transparent 5px);opacity:.55;pointer-events:none}
+.brand-sweep{position:absolute;top:0;bottom:0;left:0;width:48%;z-index:1;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transform:skewX(-12deg) translateX(-150%);animation:brandSweep 9.5s ease-in-out infinite;pointer-events:none}
+@keyframes metalShift{0%{background-position:100% 0%}50%{background-position:0% 100%}100%{background-position:100% 0%}}
+@keyframes brandSweep{0%{transform:skewX(-12deg) translateX(-160%)}58%,100%{transform:skewX(-12deg) translateX(280%)}}
+@keyframes fxspin{to{transform:rotate(360deg)}}
+@keyframes fxfade{from{transform:translateY(7px)}to{transform:translateY(0)}}
+.btn-shine{position:relative;overflow:hidden}
+.btn-shine::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 26%,rgba(255,255,255,.5) 48%,transparent 68%);transform:translateX(-135%);transition:transform .6s ease;pointer-events:none}
+.btn-shine:hover::before{transform:translateX(135%)}
+.fx-form{animation:fxfade .4s ease both}
+@media (prefers-reduced-motion:reduce){.metal::before,.brand-sweep,.fx-form{animation:none}}
+</style>
+</helmet>
+<div style="display:flex;flex-wrap:wrap;min-height:100vh;position:relative">
+
+  <div style="position:absolute;top:20px;right:22px;z-index:20">
+    <div role="group" aria-label="Language" style="display:inline-flex;border:1px solid #2A2D31;border-radius:999px;padding:3px;gap:2px;background:rgba(22,24,27,.7);backdrop-filter:blur(8px)">
+      <button onClick="{{ setEn }}" aria-pressed="{{ isEn }}" style="{{ enTabStyle }}">EN</button>
+      <button onClick="{{ setPt }}" aria-pressed="{{ isPt }}" style="{{ ptTabStyle }}">PT</button>
+    </div>
+  </div>
+
+  <section class="metal" aria-hidden="false" style="position:relative;overflow:hidden;flex:1 1 420px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(32px,4vw,56px);border-right:1px solid #1A1C1F">
+    <span class="brand-grain" aria-hidden="true"></span>
+    <span class="brand-sweep" aria-hidden="true"></span>
+    <a href="FixEarn.dc.html" style="position:relative;z-index:2;display:inline-flex;align-items:center;gap:10px;text-decoration:none;width:max-content">
+      <span style="width:13px;height:13px;background:linear-gradient(135deg,#E6E8EA,#9A9DA1);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 12px rgba(192,194,197,.35)"></span>
+      <span style="font-size:20px;font-weight:700;letter-spacing:-.01em;color:#EDEFF1">FixEarn</span>
+    </a>
+    <div style="position:relative;z-index:2;padding:48px 0">
+      <h2 style="font-size:clamp(30px,3.6vw,46px);font-weight:700;line-height:1.08;letter-spacing:-.025em;color:#EDEFF1;margin:0;max-width:420px;text-shadow:0 1px 0 rgba(255,255,255,.13),0 -1px 1px rgba(0,0,0,.6)">{{ brandTitle }}</h2>
+      <p style="font-size:17px;line-height:1.6;color:#9A9DA1;margin:20px 0 0;max-width:400px">{{ brandSub }}</p>
+    </div>
+    <div style="position:relative;z-index:2;display:flex;flex-wrap:wrap;gap:20px">
+      <sc-for list="{{ seals }}" as="seal" hint-placeholder-count="3">
+        <span style="display:inline-flex;align-items:center;gap:9px;font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.04em;color:#C0C2C5">
+          <span style="color:#C0C2C5;display:flex">{{ seal.icon }}</span>{{ seal.label }}
+        </span>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="flex:1.15 1 480px;display:flex;align-items:center;justify-content:center;padding:clamp(32px,5vw,64px) 24px;background:#0c0d0f">
+    <div class="fx-form" ref="{{ setFormRef }}" style="width:100%;max-width:404px">
+      <h1 style="font-size:clamp(26px,3vw,32px);font-weight:700;letter-spacing:-.02em;color:#EDEFF1;margin:0;text-shadow:0 1px 0 rgba(255,255,255,.1)">{{ title }}</h1>
+      <p style="font-size:15px;line-height:1.55;color:#9A9DA1;margin:9px 0 0">{{ subtitle }}</p>
+
+      <form onSubmit="{{ onSubmit }}" novalidate="true" style="margin-top:28px;display:flex;flex-direction:column;gap:16px">
+        <sc-for list="{{ fields }}" as="field" hint-placeholder-count="2">
+          <div>
+            <label for="{{ field.id }}" style="display:block;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8d91;margin-bottom:8px">{{ field.label }}</label>
+            <div style="position:relative">
+              <input id="{{ field.id }}" type="{{ field.inputType }}" value="{{ field.value }}" placeholder="{{ field.placeholder }}" onChange="{{ field.onChange }}" onBlur="{{ field.onBlur }}" autoComplete="{{ field.autoComplete }}" aria-invalid="{{ field.hasError }}" style="{{ field.inputStyle }}" style-focus="border-color:#C0C2C5;box-shadow:0 0 0 3px rgba(192,194,197,.13)">
+              <sc-if value="{{ field.isPassword }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ field.toggleShow }}" aria-label="{{ field.eyeLabel }}" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9A9DA1;padding:6px;display:flex;align-items:center" style-hover="color:#EDEFF1">{{ field.eyeIcon }}</button>
+              </sc-if>
+              <sc-if value="{{ field.showCheck }}" hint-placeholder-val="{{ false }}">
+                <span aria-hidden="true" style="{{ field.checkStyle }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0E0F11" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"></path></svg></span>
+              </sc-if>
+            </div>
+            <sc-if value="{{ field.showStrength }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:9px">
+                <div style="height:4px;background:#16181B;border:1px solid #2A2D31;border-radius:999px;overflow:hidden">
+                  <div style="{{ field.strengthFill }}"></div>
+                </div>
+                <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#9A9DA1;margin-top:6px">{{ field.strengthLabel }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ field.note }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;color:#7E8186;margin-top:7px">{{ field.note }}</div>
+            </sc-if>
+            <sc-if value="{{ field.hasError }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:#D98A8A;margin-top:7px">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 8v5"></path><path d="M12 16.5v.01"></path></svg>
+                {{ field.error }}
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;justify-content:flex-end;margin-top:-4px">
+            <a href="#" style="font-size:13.5px;color:#9A9DA1;text-decoration:none" style-hover="color:#C0C2C5">{{ forgot }}</a>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isSignup }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:2px">
+            <button type="button" onClick="{{ toggleAgree }}" style="display:flex;align-items:flex-start;gap:11px;background:none;border:none;padding:0;cursor:pointer;text-align:left">
+              <span style="{{ agreeBoxStyle }}"><sc-if value="{{ agree }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0E0F11" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4 10-11"></path></svg></sc-if></span>
+              <span style="font-size:13.5px;line-height:1.5;color:#9A9DA1">{{ termsPrefix }}<a href="#" style="color:#C0C2C5;text-decoration:underline;text-underline-offset:2px">{{ termsLink }}</a>{{ termsMid }}<a href="#" style="color:#C0C2C5;text-decoration:underline;text-underline-offset:2px">{{ privacyLink }}</a></span>
+            </button>
+            <sc-if value="{{ agreeError }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="font-size:12.5px;color:#D98A8A;margin-top:7px">{{ agreeErrorText }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <button type="submit" class="btn-shine" disabled="{{ loading }}" style="{{ primaryStyle }}" style-hover="transform:translateY(-1px) scale(1.02);box-shadow:0 0 0 1px rgba(192,194,197,.5),0 10px 34px rgba(192,194,197,.2),0 1px 0 rgba(255,255,255,.5) inset;filter:brightness(1.04)">
+          <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+            <span aria-hidden="true" style="width:16px;height:16px;border:2px solid rgba(14,15,17,.3);border-top-color:#0E0F11;border-radius:50%;display:inline-block;animation:fxspin .7s linear infinite"></span>
+          </sc-if>
+          <sc-if value="{{ notLoading }}" hint-placeholder-val="{{ true }}">{{ primaryCta }}</sc-if>
+        </button>
+      </form>
+
+      <div style="display:flex;align-items:center;gap:14px;margin:22px 0">
+        <span style="flex:1;height:1px;background:#2A2D31"></span>
+        <span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7E8186">{{ orText }}</span>
+        <span style="flex:1;height:1px;background:#2A2D31"></span>
+      </div>
+
+      <button type="button" onClick="{{ google }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:11px;font-family:inherit;font-size:15px;font-weight:500;color:#EDEFF1;background:rgba(255,255,255,.025);border:1px solid #3A3D41;border-radius:12px;padding:13px;cursor:pointer;transition:all .25s ease" style-hover="border-color:#C0C2C5;background:rgba(192,194,197,.06)">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"></path><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"></path><path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.2l-6.3-5.3C29.3 35 26.8 36 24 36c-5.3 0-9.7-3.1-11.3-7.6l-6.5 5C9.6 39.6 16.2 44 24 44z"></path><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.3 5.3C41.4 36.2 44 30.6 44 24c0-1.3-.1-2.3-.4-3.5z"></path></svg>
+        {{ googleText }}
+      </button>
+
+      <p style="text-align:center;font-size:14px;color:#9A9DA1;margin:24px 0 0">{{ switchPrompt }} <button type="button" onClick="{{ toggleMode }}" style="background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;color:#C0C2C5" style-hover="color:#EDEFF1">{{ switchAction }}</button></p>
+    </div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { lang: 'en', mode: 'login', show: false, loading: false, agree: false, values: {}, touched: {}, submitted: false };
+
+  setVal(key, val) {
+    this.setState((s) => ({ values: { ...s.values, [key]: val } }));
+  }
+  setTouched(key) {
+    this.setState((s) => ({ touched: { ...s.touched, [key]: true } }));
+  }
+  setLang(lang) { if (lang !== this.state.lang) this.setState({ lang }); }
+  toggleMode() {
+    this.setState((s) => ({ mode: s.mode === 'login' ? 'signup' : 'login', submitted: false, touched: {}, loading: false }));
+    if (this.formEl) { this.formEl.style.animation = 'none'; void this.formEl.offsetWidth; this.formEl.style.animation = ''; }
+  }
+
+  rules() {
+    const emailOk = (s) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s || '');
+    return {
+      email: (s) => emailOk(s),
+      password: (s) => (s || '').length >= 8,
+      company: (s) => (s || '').trim().length >= 2,
+      taxid: (s) => (s || '').trim().length >= 4,
+      name: (s) => (s || '').trim().length >= 2,
+    };
+  }
+
+  pwStrength(pw) {
+    let sc = 0;
+    if ((pw || '').length >= 8) sc++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) sc++;
+    if (/[0-9]/.test(pw) || /[^A-Za-z0-9]/.test(pw)) sc++;
+    return sc;
+  }
+
+  eye(open) {
+    const R = React.createElement;
+    if (open) {
+      return R('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
+        R('path', { d: 'M3 3l18 18' }), R('path', { d: 'M10.6 10.6a2 2 0 0 0 2.8 2.8' }),
+        R('path', { d: 'M9.4 5.3A9 9 0 0 1 12 5c6 0 9.5 7 9.5 7a16 16 0 0 1-3.3 4' }),
+        R('path', { d: 'M6.2 7.2A16 16 0 0 0 2.5 12S6 19 12 19a8.7 8.7 0 0 0 3.8-.9' }));
+    }
+    return R('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' },
+      R('path', { d: 'M2.5 12S6 5 12 5s9.5 7 9.5 7-3.5 7-9.5 7-9.5-7-9.5-7z' }), R('circle', { cx: 12, cy: 12, r: 2.6 }));
+  }
+
+  sealIcon(name) {
+    const R = React.createElement;
+    const S = (ch) => R('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': 'true' }, ch);
+    if (name === 'shield') return S([R('path', { key: 1, d: 'M12 3.5l7 2.6v5.4c0 4-3 6.7-7 7.9-4-1.2-7-3.9-7-7.9V6.1z' }), R('path', { key: 2, d: 'M9 12l2 2 4-4.5' })]);
+    if (name === 'cube') return S([R('path', { key: 1, d: 'M12 3.5l7.5 4.2v8.6L12 20.5l-7.5-4.2V7.7z' }), R('path', { key: 2, d: 'M12 3.5v17' }), R('path', { key: 3, d: 'M4.5 7.7L12 12l7.5-4.3' })]);
+    return S([R('path', { key: 1, d: 'M6.5 10.5h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z' }), R('path', { key: 2, d: 'M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5' })]);
+  }
+
+  validateAll(keys) {
+    const r = this.rules();
+    const v = this.state.values;
+    return keys.every((k) => r[k](v[k]));
+  }
+
+  componentDidMount() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'signup' && this.state.mode !== 'signup') this.setState({ mode: 'signup' });
+    } catch (err) {}
+  }
+
+  goDashboard() { window.location.href = 'FixEarn%20Dashboard%20Cliente.dc.html'; }
+
+  onSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const isLogin = this.state.mode === 'login';
+    const keys = isLogin ? ['email', 'password'] : ['company', 'taxid', 'name', 'email', 'password'];
+    this.setState({ submitted: true });
+    const ok = this.validateAll(keys) && (isLogin || this.state.agree);
+    if (!ok) return;
+    this.setState({ loading: true });
+    clearTimeout(this._lt);
+    this._lt = setTimeout(() => this.goDashboard(), 1300);
+  }
+
+  componentWillUnmount() { clearTimeout(this._lt); }
+
+  renderVals() {
+    const L = {
+      en: {
+        brandTitle: 'Put your idle capital to work.',
+        brandSub: 'The returns on your deposit cover the software your business runs on.',
+        seals: [['shield', 'Capital protected'], ['lock', 'Bank-grade security'], ['cube', 'Blockchain-powered']],
+        login: { title: 'Welcome back', subtitle: 'Log in to your FixEarn account', cta: 'Log in', google: 'Continue with Google' },
+        signup: { title: 'Create your business account', subtitle: 'Start putting your capital to work in minutes', cta: 'Create account', google: 'Sign up with Google' },
+        forgot: 'Forgot password?', or: 'or',
+        loginSwitchPrompt: "Don't have an account?", loginSwitchAction: 'Sign up',
+        signupSwitchPrompt: 'Already have an account?', signupSwitchAction: 'Log in',
+        meta: {
+          email: { label: 'Work email', placeholder: 'you@company.com', auto: 'email' },
+          password: { label: 'Password', placeholder: '••••••••', auto: 'current-password' },
+          company: { label: 'Company name', placeholder: 'Acme Inc.', auto: 'organization' },
+          taxid: { label: 'Tax ID', placeholder: '00.000.000/0000-00', auto: 'off', note: 'Format depends on your country (e.g. CNPJ in Brazil, EIN in the US).' },
+          name: { label: 'Full name', placeholder: 'Jordan Avery', auto: 'name' },
+        },
+        err: { email: 'Enter a valid email', password: 'Use at least 8 characters', company: 'Enter your company name', taxid: 'Enter a valid Tax ID', name: 'Enter your full name' },
+        strength: ['Too short', 'Weak password', 'Fair password', 'Strong password'],
+        terms: { prefix: 'I agree to the ', link: 'Terms', mid: ' and ', privacy: 'Privacy Policy', error: 'Please accept the Terms to continue.' },
+        showPw: 'Show password', hidePw: 'Hide password',
+      },
+      pt: {
+        brandTitle: 'Coloque seu capital parado para trabalhar.',
+        brandSub: 'O rendimento do seu aporte cobre os softwares que sua empresa usa.',
+        seals: [['shield', 'Capital protegido'], ['lock', 'Segurança bancária'], ['cube', 'Tecnologia blockchain']],
+        login: { title: 'Bem-vindo de volta', subtitle: 'Acesse sua conta FixEarn', cta: 'Entrar', google: 'Continuar com Google' },
+        signup: { title: 'Crie sua conta empresarial', subtitle: 'Comece a colocar seu capital para trabalhar em minutos', cta: 'Criar conta', google: 'Cadastrar com Google' },
+        forgot: 'Esqueceu a senha?', or: 'ou',
+        loginSwitchPrompt: 'Não tem uma conta?', loginSwitchAction: 'Criar conta',
+        signupSwitchPrompt: 'Já tem uma conta?', signupSwitchAction: 'Entrar',
+        meta: {
+          email: { label: 'E-mail corporativo', placeholder: 'voce@empresa.com', auto: 'email' },
+          password: { label: 'Senha', placeholder: '••••••••', auto: 'current-password' },
+          company: { label: 'Nome da empresa', placeholder: 'Acme Ltda.', auto: 'organization' },
+          taxid: { label: 'CNPJ', placeholder: '00.000.000/0000-00', auto: 'off', note: 'O formato depende do país (ex.: CNPJ no Brasil, EIN nos EUA).' },
+          name: { label: 'Nome completo', placeholder: 'Jordan Avery', auto: 'name' },
+        },
+        err: { email: 'Digite um e-mail válido', password: 'Use ao menos 8 caracteres', company: 'Digite o nome da empresa', taxid: 'Digite um CNPJ válido', name: 'Digite seu nome completo' },
+        strength: ['Muito curta', 'Senha fraca', 'Senha razoável', 'Senha forte'],
+        terms: { prefix: 'Concordo com os ', link: 'Termos', mid: ' e a ', privacy: 'Política de Privacidade', error: 'Aceite os Termos para continuar.' },
+        showPw: 'Mostrar senha', hidePw: 'Ocultar senha',
+      },
+    };
+
+    const t = L[this.state.lang];
+    const isLogin = this.state.mode === 'login';
+    const m = isLogin ? t.login : t.signup;
+    const keys = isLogin ? ['email', 'password'] : ['company', 'taxid', 'name', 'email', 'password'];
+    const r = this.rules();
+    const v = this.state.values;
+    const touched = this.state.touched;
+    const submitted = this.state.submitted;
+    const strengthColors = ['#6b6e73', '#9A9DA1', '#C0C2C5', '#E6E8EA'];
+
+    const inputBase = {
+      width: '100%', background: '#16181B', border: '1px solid #2A2D31', borderRadius: '12px',
+      padding: '13px 14px', color: '#F2F3F4', fontFamily: "'Geist Mono', monospace", fontSize: '15px',
+      outline: 'none', transition: 'border-color .2s ease, box-shadow .2s ease',
+    };
+
+    const fields = keys.map((key) => {
+      const value = v[key] || '';
+      const valid = r[key](value);
+      const reveal = touched[key] || submitted;
+      const hasError = !!(reveal && !valid && (value.length > 0 || submitted));
+      const isPassword = key === 'password';
+      const showCheck = valid && value.length > 0 && !isPassword;
+      const inputType = isPassword ? (this.state.show ? 'text' : 'password') : (key === 'email' ? 'email' : 'text');
+      const padRight = isPassword ? '44px' : (showCheck ? '40px' : '14px');
+      const inputStyle = { ...inputBase, borderColor: hasError ? '#A24A4A' : '#2A2D31', paddingRight: padRight };
+      const sc = this.pwStrength(value);
+      const showStrength = isPassword && !isLogin && value.length > 0;
+      return {
+        key, id: 'fx-' + key, label: t.meta[key].label, placeholder: t.meta[key].placeholder,
+        autoComplete: t.meta[key].auto, note: (!isLogin && key === 'taxid') ? t.meta[key].note : '',
+        inputType, value, inputStyle, hasError, error: t.err[key], isPassword,
+        showCheck,
+        checkStyle: { position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', width: '20px', height: '20px', borderRadius: '50%', background: 'linear-gradient(180deg,#E6E8EA,#A8AAAD)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
+        eyeIcon: this.eye(this.state.show), eyeLabel: this.state.show ? t.hidePw : t.showPw,
+        toggleShow: () => this.setState((s) => ({ show: !s.show })),
+        showStrength,
+        strengthFill: { height: '100%', width: ((sc / 3) * 100) + '%', background: 'linear-gradient(90deg,#A8AAAD,#E6E8EA)', borderRadius: '999px', transition: 'width .3s ease' },
+        strengthLabel: t.strength[sc],
+        onChange: (e) => this.setVal(key, e.target.value),
+        onBlur: () => this.setTouched(key),
+      };
+    });
+
+    const tabBase = { border: 'none', borderRadius: '999px', padding: '5px 12px', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '.03em' };
+    const isEn = this.state.lang === 'en';
+
+    const primaryStyle = {
+      fontFamily: 'inherit', fontSize: '15px', fontWeight: 600, color: '#0E0F11',
+      background: 'linear-gradient(180deg,#E6E8EA,#A8AAAD)', border: 'none', borderRadius: '12px',
+      padding: '15px', cursor: this.state.loading ? 'default' : 'pointer', marginTop: '4px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', minHeight: '50px',
+      boxShadow: '0 1px 0 rgba(255,255,255,.5) inset, 0 8px 24px rgba(0,0,0,.4)',
+      transition: 'transform .25s ease, box-shadow .25s ease, filter .25s ease',
+      opacity: this.state.loading ? 0.85 : 1,
+    };
+
+    const agreeBoxStyle = {
+      width: '20px', height: '20px', flexShrink: 0, borderRadius: '6px', marginTop: '1px',
+      border: '1px solid ' + (this.state.agree ? 'transparent' : (submitted && !this.state.agree ? '#A24A4A' : '#3A3D41')),
+      background: this.state.agree ? 'linear-gradient(180deg,#E6E8EA,#A8AAAD)' : '#16181B',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all .2s ease',
+    };
+
+    return {
+      brandTitle: t.brandTitle, brandSub: t.brandSub,
+      seals: t.seals.map(([icon, label]) => ({ icon: this.sealIcon(icon), label })),
+      title: m.title, subtitle: m.subtitle, primaryCta: m.cta, googleText: m.google,
+      forgot: t.forgot, orText: t.or,
+      fields,
+      isLogin, isSignup: !isLogin,
+      loading: this.state.loading, notLoading: !this.state.loading,
+      agree: this.state.agree, toggleAgree: () => this.setState((s) => ({ agree: !s.agree })),
+      agreeBoxStyle, agreeError: submitted && !isLogin && !this.state.agree, agreeErrorText: t.terms.error,
+      termsPrefix: t.terms.prefix, termsLink: t.terms.link, termsMid: t.terms.mid, privacyLink: t.terms.privacy,
+      switchPrompt: isLogin ? t.loginSwitchPrompt : t.signupSwitchPrompt,
+      switchAction: isLogin ? t.loginSwitchAction : t.signupSwitchAction,
+      primaryStyle,
+      isEn, isPt: !isEn,
+      enTabStyle: { ...tabBase, background: isEn ? '#2E3136' : 'transparent', color: isEn ? '#F2F3F4' : '#9A9DA1' },
+      ptTabStyle: { ...tabBase, background: !isEn ? '#2E3136' : 'transparent', color: !isEn ? '#F2F3F4' : '#9A9DA1' },
+      setEn: () => this.setLang('en'), setPt: () => this.setLang('pt'),
+      toggleMode: () => this.toggleMode(),
+      onSubmit: (e) => this.onSubmit(e),
+      google: () => this.goDashboard(),
+      setFormRef: (el) => { this.formEl = el; },
+    };
+  }
+}
+</script>
+</body>
+</html>

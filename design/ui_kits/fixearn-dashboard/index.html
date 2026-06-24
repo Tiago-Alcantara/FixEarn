@@ -1,0 +1,101 @@
+<!-- @dsCard group="FixEarn Dashboard" viewport="1280x900" subtitle="Overview: capital, returns, subscriptions paid" name="Dashboard overview" -->
+<!-- @startingPoint section="FixEarn Dashboard" subtitle="Product overview dashboard" viewport="1280x900" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+*{box-sizing:border-box}
+.appbar{position:sticky;top:0;z-index:40;background:rgba(12,13,15,.74);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--fx-border)}
+.abrow{max-width:1200px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;gap:22px}
+.logo{display:flex;align-items:center;gap:10px}
+.mark{width:11px;height:11px;background:var(--fx-chrome);transform:rotate(45deg);border-radius:2px;box-shadow:var(--fx-glow-silver)}
+.wm{font-family:var(--fx-font-display);font-size:18px;font-weight:700;letter-spacing:-.01em;color:var(--fx-text)}
+.tabs{display:flex;gap:4px;margin-left:18px}
+.tab{font-size:14px;color:var(--fx-text-2);text-decoration:none;padding:7px 13px;border-radius:var(--fx-radius-pill)}
+.tab.on{background:var(--fx-surface-2);color:var(--fx-text)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(160deg,#43464b,#1b1d21);border:1px solid var(--fx-border-metal);display:flex;align-items:center;justify-content:center;font-family:var(--fx-font-mono);font-size:12px;color:var(--fx-silver-bright);box-shadow:var(--fx-inset-edge-soft)}
+.wrap{max-width:1200px;margin:0 auto;padding:36px 24px 80px}
+.greet{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.greet h1{font-family:var(--fx-font-display);font-size:30px;font-weight:700;letter-spacing:-.02em;color:var(--fx-text);margin:0;text-shadow:var(--fx-emboss)}
+.greet p{margin:8px 0 0;color:var(--fx-text-2);font-size:15px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+.cols{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;margin-top:20px;align-items:start}
+.panelpad{padding:26px 28px}
+.ph{display:flex;align-items:center;justify-content:space-between}
+.pt{font-family:var(--fx-font-display);font-size:18px;font-weight:600;color:var(--fx-text)}
+.foot{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--fx-text-3)}
+@media(max-width:880px){.tiles{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+</style>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+</head><body><div id="root"></div>
+<script type="text/babel">
+function findNs(name){for(const k of Object.keys(window)){const v=window[k];if(v&&typeof v==='object'&&typeof v[name]!=='undefined')return v;}return window;}
+const NS = findNs('StatPanel');
+const { StatPanel, StatTile, MetalCard, SubscriptionRow, ProgressBar, Button, Badge, Divider } = NS;
+const { useState } = React;
+
+const SUBS = [
+  ['OpenAI','$20.00',true],['Anthropic','$20.00',true],['Notion','$16.00',true],
+  ['Figma','$12.00',true],['GitHub','$21.00',true],['Linear','$8.00',true],['Slack','$15.00',true],
+];
+
+function Dashboard(){
+  const [tab,setTab]=useState('Overview');
+  const tabs=['Overview','Subscriptions','Activity','Settings'];
+  return (
+    <div>
+      <div className="appbar"><div className="abrow">
+        <div className="logo"><span className="mark"></span><span className="wm">FixEarn</span></div>
+        <div className="tabs">{tabs.map(t=><a key={t} className={"tab"+(t===tab?" on":"")} href="#" onClick={e=>{e.preventDefault();setTab(t);}}>{t}</a>)}</div>
+        <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:14}}>
+          <Button size="sm">Add capital</Button>
+          <div className="avatar">AC</div>
+        </div>
+      </div></div>
+
+      <div className="wrap">
+        <div className="greet">
+          <div>
+            <h1>Good morning, Acme Inc.</h1>
+            <p>Your capital is working. Every subscription below is paid by returns.</p>
+          </div>
+          <Badge dot>All systems active</Badge>
+        </div>
+
+        <div className="tiles">
+          <StatTile label="Capital working" value="$18,400" />
+          <StatTile label="Returns / month" value="$214.80" sub="▲ +8.4% / yr" />
+          <StatTile label="Paid this month" value="$112.00" sub="7 subscriptions" />
+          <StatTile label="From your cash" value="$0.00" sub="covered by returns" />
+        </div>
+
+        <div className="cols">
+          <MetalCard sweep="none" padding={0}>
+            <div className="panelpad">
+              <div className="ph">
+                <span className="pt">Subscriptions paid by returns</span>
+                <Badge>7 active</Badge>
+              </div>
+              <div style={{marginTop:18}}><ProgressBar label="Monthly returns used" value={52} /></div>
+              <div style={{marginTop:16}}>
+                {SUBS.map((s,i)=>(<React.Fragment key={s[0]}>
+                  <SubscriptionRow name={s[0]} price={s[1]} paid={s[2]} />
+                  {i<SUBS.length-1 && <Divider/>}
+                </React.Fragment>))}
+              </div>
+              <div style={{height:1,background:'var(--fx-border)',margin:'18px 0'}}></div>
+              <div className="foot"><span>Total paid from your cash</span><span style={{fontFamily:'var(--fx-font-mono)',color:'var(--fx-silver)'}}>$0.00</span></div>
+            </div>
+          </MetalCard>
+
+          <StatPanel width="100%" label="Capital working" status="Active" balance="$18,400.00" growth="+8.4% / yr" returns="$214.80" covered="7 tools" />
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Dashboard/>);
+</script>
+</body></html>
