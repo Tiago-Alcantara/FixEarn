@@ -5,9 +5,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { WalletModule } from './wallet/wallet.module';
 import { VaultModule } from './vault/vault.module';
 import { LedgerModule } from './ledger/ledger.module';
+import { StellarModule } from './stellar/stellar.module';
 
 @Module({
-  imports: [AppConfigModule, PrismaModule, WalletModule, VaultModule, LedgerModule],
+  imports: [AppConfigModule, PrismaModule, WalletModule, VaultModule, LedgerModule, StellarModule],
   controllers: [HealthController],
   providers: [],
 })
