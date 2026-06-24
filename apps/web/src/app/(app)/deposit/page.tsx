@@ -121,12 +121,72 @@ function Divider() {
   );
 }
 
+// ── Currency select (reference: <Select label="Currency" options={['USD','BRL']}/>) ──
+const CURRENCIES = ['USD', 'BRL'];
+
+function CurrencySelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const mono = 'var(--fx-font-mono)';
+  return (
+    <label style={{ display: 'block', width: 120 }}>
+      <span
+        style={{
+          display: 'block',
+          fontFamily: mono,
+          fontSize: 11,
+          letterSpacing: '.12em',
+          textTransform: 'uppercase',
+          color: 'var(--fx-text-3)',
+          marginBottom: 8,
+        }}
+      >
+        Currency
+      </span>
+      <span
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          background: 'var(--fx-surface-2)',
+          border: '1px solid var(--fx-border)',
+          borderRadius: 'var(--fx-radius-md)',
+          padding: '12px 14px',
+        }}
+      >
+        <select
+          aria-label="Currency"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+            color: 'var(--fx-text)',
+            fontFamily: mono,
+            fontSize: 16,
+            cursor: 'pointer',
+            appearance: 'none',
+          }}
+        >
+          {CURRENCIES.map((c) => (
+            <option key={c} value={c} style={{ background: 'var(--fx-surface-2)', color: 'var(--fx-text)' }}>
+              {c}
+            </option>
+          ))}
+        </select>
+      </span>
+    </label>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function DepositPage() {
   const { deposit } = useStellarTx();
 
   const [step, setStep] = useState(0);
   const [amountRaw, setAmountRaw] = useState('18400');
+  const [touched, setTouched] = useState(false);
+  const [currency, setCurrency] = useState('USD');
   const [picked, setPicked] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(TOOLS.map(([name]) => [name, true])),
   );
@@ -317,16 +377,20 @@ export default function DepositPage() {
                   Deposit once. Your capital stays yours and can be withdrawn anytime — only the returns pay for your tools.
                 </p>
 
-                {/* Amount input */}
-                <div style={{ marginTop: 20 }}>
+                {/* Amount input + currency select */}
+                <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
                   <Input
                     label="Deposit amount"
                     prefix="$"
                     value={amountRaw}
-                    onChange={(e) => setAmountRaw(e.target.value)}
+                    onChange={(e) => {
+                      setTouched(true);
+                      setAmountRaw(e.target.value);
+                    }}
                     style={{ flex: 1 }}
-                    hint={validationError && amountRaw !== '18400' ? validationError : undefined}
+                    hint={touched && validationError ? validationError : undefined}
                   />
+                  <CurrencySelect value={currency} onChange={setCurrency} />
                 </div>
 
                 {/* Quick-select chips */}
@@ -334,7 +398,10 @@ export default function DepositPage() {
                   {CHIPS.map((a) => (
                     <span
                       key={a}
-                      onClick={() => setAmountRaw(String(a))}
+                      onClick={() => {
+                        setTouched(true);
+                        setAmountRaw(String(a));
+                      }}
                       style={{
                         fontFamily: 'var(--fx-font-mono)',
                         fontSize: 13,

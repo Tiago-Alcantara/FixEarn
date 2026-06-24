@@ -49,6 +49,26 @@ describe('Deposit onboarding flow', () => {
     expect(screen.getByText(/84\.00/)).toBeInTheDocument();
   });
 
+  it('renders the Currency select (default USD) next to the amount input', () => {
+    setup();
+    const select = screen.getByLabelText(/currency/i) as HTMLSelectElement;
+    expect(select).toBeInTheDocument();
+    expect(select.value).toBe('USD');
+    // can switch to BRL (display-only, does not affect deposit behavior)
+    fireEvent.change(select, { target: { value: 'BRL' } });
+    expect((screen.getByLabelText(/currency/i) as HTMLSelectElement).value).toBe('BRL');
+  });
+
+  it('does not show a validation hint until the field is touched', () => {
+    setup();
+    // pristine: no hint even though we have not interacted
+    expect(screen.queryByText(/positive amount/i)).not.toBeInTheDocument();
+    const input = screen.getByLabelText(/deposit amount/i);
+    fireEvent.change(input, { target: { value: '0' } });
+    // touched + invalid → hint appears
+    expect(screen.getByText(/positive amount/i)).toBeInTheDocument();
+  });
+
   it('blocks Continue when amount is 0', () => {
     setup();
     const input = screen.getByLabelText(/deposit amount/i);
