@@ -31,9 +31,9 @@ export class VaultService {
 
   /**
    * Build a deposit transaction XDR.
-   * Returns the unsigned XDR string for the caller to sign and submit.
+   * Returns { xdr } for the caller to sign and submit.
    */
-  async buildDeposit(caller: string, amount: bigint): Promise<string> {
+  async buildDeposit(caller: string, amount: bigint): Promise<{ xdr: string }> {
     const response = await this.sdk.depositToVault(
       this.vaultAddress,
       {
@@ -49,7 +49,7 @@ export class VaultService {
       throw new Error('depositToVault returned null xdr');
     }
 
-    return response.xdr;
+    return { xdr: response.xdr };
   }
 
   /**

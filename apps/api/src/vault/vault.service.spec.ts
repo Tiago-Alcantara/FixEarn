@@ -42,7 +42,7 @@ describe('VaultService', () => {
         { amounts: [5_000_000], caller: CALLER, invest: true, slippageBps: 50 },
         SupportedNetworks.TESTNET,
       );
-      expect(result).toBe('AAAAADEPOSIT==');
+      expect(result).toEqual({ xdr: 'AAAAADEPOSIT==' });
     });
 
     it('calls depositToVault with MAINNET when stellarNetwork=public', async () => {
