@@ -40,7 +40,7 @@ export function useStellarTx(): {
     });
 
     // 4. Submit the signed transaction
-    const response = await api.submitDeposit({
+    const { txHash } = await api.submitDeposit({
       xdr,
       signatureHex: signature,
       stellarAddress: address,
@@ -48,7 +48,7 @@ export function useStellarTx(): {
     });
 
     // 5. Return transaction hash
-    return (response as any).txHash;
+    return txHash;
   }
 
   async function withdraw(amountBaseUnits: string): Promise<string> {
@@ -66,7 +66,7 @@ export function useStellarTx(): {
     });
 
     // 4. Submit the signed transaction
-    const response = await api.submitWithdraw({
+    const { txHash } = await api.submitWithdraw({
       xdr,
       signatureHex: signature,
       stellarAddress: address,
@@ -74,7 +74,7 @@ export function useStellarTx(): {
     });
 
     // 5. Return transaction hash
-    return (response as any).txHash;
+    return txHash;
   }
 
   return { deposit, withdraw };

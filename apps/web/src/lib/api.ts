@@ -1,6 +1,7 @@
 import type {
   BuildTxResponse,
   SubmitTxDto,
+  SubmitTxResponse,
   RegisterWalletDto,
   CreateBillDto,
   SpendableView,
@@ -21,9 +22,9 @@ type GetToken = () => Promise<string | null>;
 interface ApiMethods {
   registerWallet(body: RegisterWalletDto): Promise<void>;
   buildDeposit(amount: string): Promise<BuildTxResponse>;
-  submitDeposit(body: SubmitTxDto): Promise<void>;
+  submitDeposit(body: SubmitTxDto): Promise<SubmitTxResponse>;
   buildWithdraw(amount: string): Promise<BuildTxResponse>;
-  submitWithdraw(body: SubmitTxDto): Promise<void>;
+  submitWithdraw(body: SubmitTxDto): Promise<SubmitTxResponse>;
   getDashboard(): Promise<SpendableView>;
   listBills(): Promise<unknown[]>;
   createBill(body: CreateBillDto): Promise<unknown>;
