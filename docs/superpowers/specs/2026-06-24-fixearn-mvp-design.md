@@ -14,6 +14,13 @@ trabalha. O capital continua sendo da empresa, sacável a qualquer momento.
 
 **As três promessas da marca:** você não gasta nada · seu dinheiro continua seu · saque quando quiser.
 
+**Escopo do que o rendimento paga.** O posicionamento de marca e a comunicação do MVP são
+**software-first** (*"seu capital paga seu software"*) — narrativa afiada e ponta de entrada. Mas o
+**backend é genérico desde já**: o rendimento pode cobrir qualquer **conta recorrente** (software,
+conta de luz, internet, outros serviços mensais). Software é apenas uma **categoria**, não o
+conceito todo. Isso permite ampliar o mercado e pivotar o posicionamento depois — com dados — sem
+refazer a arquitetura. O motor de "gastável" é agnóstico ao tipo de conta.
+
 ---
 
 ## 2. Decisões de arquitetura (travadas)
@@ -49,9 +56,10 @@ As duas pontes fiat são o pedaço mais pesado e regulado do projeto inteiro. **
 
 - **On-ramp (BRL → USDC para fundear):** o MVP assume a carteira já fundeada em USDC
   (ou opera em testnet). Conversão fiat de entrada = fase 2.
-- **Off-ramp / pagamento real do SaaS:** o MVP mostra o rendimento como **"crédito de software"**
-  e o cadastro de assinaturas. Pagamento real = **concierge manual** no Ciclo 1. Motor de
-  pagamento automático (cartão virtual via Stripe Issuing/Bridge, ou payout PIX) = **fase 2**.
+- **Off-ramp / pagamento real das contas:** o MVP mostra o rendimento como **"crédito"** e o
+  cadastro de contas recorrentes (software, luz, etc.). Pagamento real = **concierge manual** no
+  Ciclo 1. Motor de pagamento automático por trilho (boleto/PIX para contas BRL, cartão virtual
+  USD para SaaS) = **fase 2**.
 
 **O que o MVP prova:** `onboard → depósito no DeFindex → rendimento visível → saque do principal`.
 
@@ -86,8 +94,9 @@ Cada módulo tem propósito único e interface clara:
   `getBalance()`, `getApy()`. Esconde detalhes do SDK do resto do sistema.
 - **ledger** — registra principal vs rendimento; persiste snapshots diários; calcula gastável.
   Fonte de verdade dos números mostrados no dashboard.
-- **subscriptions** — CRUD das assinaturas que o cliente quer cobrir. **Só cadastro no MVP**; o
-  engine de pagamento é um stub documentado (fase 2).
+- **bills** — CRUD das **contas recorrentes** que o cliente quer cobrir, genérico por `type`
+  (`software | utility | other`). **Só cadastro no MVP**; o engine de pagamento é um stub
+  documentado (fase 2). UI do MVP destaca a categoria `software` (branding software-first).
 - **jobs** — cron de snapshot diário de rendimento.
 
 Limites: o `vault` é a única parte que conhece o DeFindex; o `ledger` é a única fonte dos números;
@@ -113,7 +122,8 @@ React de produção, mantendo os tokens (`--fx-*`), o material metal escovado e 
 - `Wallet` — `privyId`, `stellarAddress`, FK para `Company`.
 - `Deposit` — `amount`, `txHash`, data, FK para `Company`.
 - `YieldSnapshot` — `date`, `vaultValue`, `principal`, `spendable` (calculado), FK para `Company`.
-- `Subscription` — `vendor`, `monthlyCost`, `status`. Só cadastro no MVP.
+- `RecurringBill` — `vendor`, `monthlyCost`, `status`, `type` (`software | utility | other`).
+  Só cadastro no MVP. Software é uma categoria; o modelo já aceita outras contas recorrentes.
 
 ---
 
@@ -141,5 +151,10 @@ React de produção, mantendo os tokens (`--fx-*`), o material metal escovado e 
 
 1. **Ciclo 1 (este spec):** loop on-chain — onboard, depósito DeFindex, rendimento visível, saque.
    Pagamento de SaaS = concierge.
-2. **Fase 2:** ponte fiat — on-ramp (BRL→USDC) e motor de pagamento automático de assinaturas
-   (cartão virtual ou payout PIX), sem tocar o principal.
+2. **Fase 2:** ponte fiat — on-ramp (BRL→USDC) e motor de pagamento automático de contas
+   recorrentes, sem tocar o principal. Trilho por tipo de conta:
+   - `utility`/`other` (luz, internet, boletos BRL) → **boleto/PIX** — nativo do Brasil, mais viável.
+   - `software` (SaaS cobrado em USD) → **cartão virtual USD** (Stripe Issuing/Bridge) — mais pesado.
+
+   Generalizar para contas recorrentes **destrava** a fase 2 no Brasil: o trilho boleto/PIX é mais
+   simples que emissão de cartão USD.
