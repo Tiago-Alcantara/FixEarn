@@ -1,6 +1,7 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { DepositService } from './deposit.service';
+import { parseBaseUnits } from '../common/parse-money';
 import type { SubmitTxDto } from '@fixearn/shared';
 
 @Controller('deposit')
@@ -10,7 +11,7 @@ export class DepositController {
 
   @Post('build')
   build(@Req() req: any, @Body() body: { amount: string }) {
-    return this.deposits.build(req.companyId, BigInt(body.amount));
+    return this.deposits.build(req.companyId, parseBaseUnits(body.amount));
   }
 
   @Post('submit')

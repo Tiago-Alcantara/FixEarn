@@ -111,11 +111,11 @@ describe('VaultService', () => {
   });
 
   describe('getPositionValue', () => {
-    it('returns dfTokens as bigint (PLACEHOLDER — raw shares, not underlying USDC)', async () => {
+    it('returns dfTokens as bigint on testnet (PLACEHOLDER — raw shares, not underlying USDC)', async () => {
       const sdk = makeSdkMock();
       // dfTokens is number per VaultBalanceResponse
       sdk.getVaultBalance.mockResolvedValue({ dfTokens: 123456, underlyingBalance: [123456] });
-      const svc = new VaultService(sdk as any, makeConfig());
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
 
       const result = await svc.getPositionValue('GUSER...');
 
@@ -127,6 +127,48 @@ describe('VaultService', () => {
       // PLACEHOLDER: returns raw share count as bigint; must be replaced with
       // real shares→underlying conversion once DeFindex testnet credentials exist.
       expect(result).toBe(123456n);
+    });
+
+    it('throws on mainnet (I4 guard: placeholder must not serve fake USDC)', async () => {
+      const sdk = makeSdkMock();
+      const svc = new VaultService(sdk as any, makeConfig('public'));
+
+      await expect(svc.getPositionValue('GUSER...')).rejects.toThrow(
+        'getPositionValue: shares→USDC conversion not yet implemented; refusing to report placeholder value on mainnet',
+      );
+      expect(sdk.getVaultBalance).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('buildDeposit / buildWithdraw — safe integer guard (I3)', () => {
+    it('throws when deposit amount exceeds MAX_SAFE_INTEGER', async () => {
+      const sdk = makeSdkMock();
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
+      const tooLarge = BigInt(Number.MAX_SAFE_INTEGER) + 1n;
+
+      await expect(svc.buildDeposit(CALLER, tooLarge)).rejects.toThrow(
+        'amount exceeds safe integer range for SDK',
+      );
+      expect(sdk.depositToVault).not.toHaveBeenCalled();
+    });
+
+    it('throws when withdraw amount exceeds MAX_SAFE_INTEGER', async () => {
+      const sdk = makeSdkMock();
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
+      const tooLarge = BigInt(Number.MAX_SAFE_INTEGER) + 1n;
+
+      await expect(svc.buildWithdraw(CALLER, tooLarge)).rejects.toThrow(
+        'amount exceeds safe integer range for SDK',
+      );
+      expect(sdk.withdrawFromVault).not.toHaveBeenCalled();
+    });
+
+    it('does NOT throw at exactly MAX_SAFE_INTEGER', async () => {
+      const sdk = makeSdkMock();
+      sdk.depositToVault.mockResolvedValue({ xdr: 'XDROK', simulationResponse: {} });
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
+
+      await expect(svc.buildDeposit(CALLER, BigInt(Number.MAX_SAFE_INTEGER))).resolves.toBeDefined();
     });
   });
 });

@@ -16,6 +16,12 @@ function toSdkNetwork(network: Env['stellarNetwork']): SupportedNetworks {
 
 const DEFAULT_SLIPPAGE_BPS = 50;
 
+function assertSafeInteger(amount: bigint): void {
+  if (amount > BigInt(Number.MAX_SAFE_INTEGER)) {
+    throw new Error('amount exceeds safe integer range for SDK');
+  }
+}
+
 @Injectable()
 export class VaultService {
   private readonly network: SupportedNetworks;
@@ -34,6 +40,7 @@ export class VaultService {
    * Returns { xdr } for the caller to sign and submit.
    */
   async buildDeposit(caller: string, amount: bigint): Promise<{ xdr: string }> {
+    assertSafeInteger(amount);
     const response = await this.sdk.depositToVault(
       this.vaultAddress,
       {
@@ -57,6 +64,7 @@ export class VaultService {
    * Returns { xdr } for the caller to sign and submit.
    */
   async buildWithdraw(caller: string, amount: bigint): Promise<{ xdr: string }> {
+    assertSafeInteger(amount);
     const response = await this.sdk.withdrawFromVault(
       this.vaultAddress,
       {
@@ -97,6 +105,11 @@ export class VaultService {
    * integration test that pins this conversion.
    */
   async getPositionValue(userAddress: string): Promise<bigint> {
+    if (this.cfg.stellarNetwork === 'public') {
+      throw new Error(
+        'getPositionValue: shares→USDC conversion not yet implemented; refusing to report placeholder value on mainnet',
+      );
+    }
     const response = await this.sdk.getVaultBalance(
       this.vaultAddress,
       userAddress,

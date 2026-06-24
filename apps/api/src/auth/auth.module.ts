@@ -6,6 +6,6 @@ import { CompanyModule } from '../company/company.module';
 @Module({
   imports: [CompanyModule],
   providers: [PrivyService, AuthGuard],
-  exports: [PrivyService, AuthGuard],
+  exports: [PrivyService, AuthGuard, CompanyModule],
 })
 export class AuthModule {}

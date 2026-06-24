@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import type { CreateBillDto } from '@fixearn/shared';
 import { PrismaService } from '../prisma/prisma.service';
+import { parseBaseUnits } from '../common/parse-money';
 
 @Injectable()
 export class BillsService {
@@ -8,7 +9,7 @@ export class BillsService {
 
   create(companyId: string, dto: CreateBillDto) {
     return this.prisma.recurringBill.create({
-      data: { companyId, vendor: dto.vendor, monthlyCost: BigInt(dto.monthlyCost), type: dto.type },
+      data: { companyId, vendor: dto.vendor, monthlyCost: parseBaseUnits(dto.monthlyCost), type: dto.type },
     });
   }
 
