@@ -4,7 +4,7 @@ export function formatUsdc(baseUnits: string): string {
   const neg = baseUnits.startsWith('-');
   const digits = (neg ? baseUnits.slice(1) : baseUnits).padStart(DECIMALS + 1, '0');
   const whole = digits.slice(0, digits.length - DECIMALS);
-  let frac = digits.slice(digits.length - DECIMALS).replace(/0+$/, '');
+  const frac = digits.slice(digits.length - DECIMALS).replace(/0+$/, '');
   const out = frac ? `${whole}.${frac}` : whole;
   return neg ? `-${out}` : out;
 }

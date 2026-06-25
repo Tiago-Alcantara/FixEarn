@@ -1,6 +1,7 @@
 'use client';
 
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
+import type { BuildTxResponse, SubmitTxDto, SubmitTxResponse } from '@fixearn/shared';
 import { useWallet } from './useWallet';
 import { createApi } from './api';
 import { usePrivy } from '@privy-io/react-auth';
@@ -12,6 +13,9 @@ import { usePrivy } from '@privy-io/react-auth';
  * 3. Sign the hash with Privy
  * 4. Submit the signed transaction
  * 5. Return the transaction hash
+ *
+ * deposit e withdraw seguem exatamente o mesmo fluxo, mudando apenas quais
+ * endpoints de build/submit são chamados — por isso compartilham `runStellarTx`.
  *
  * Non-custodial: private key signing is entirely Privy's responsibility.
  * Errors propagate to the caller (UI catches them).
@@ -25,12 +29,16 @@ export function useStellarTx(): {
   const { signRawHash } = useSignRawHash();
   const api = createApi(getAccessToken);
 
-  async function deposit(amountBaseUnits: string): Promise<string> {
+  async function runStellarTx(
+    build: (amountBaseUnits: string) => Promise<BuildTxResponse>,
+    submit: (body: SubmitTxDto) => Promise<SubmitTxResponse>,
+    amountBaseUnits: string,
+  ): Promise<string> {
     // 1. Ensure wallet exists
     const address = await ensureWallet();
 
     // 2. Build transaction
-    const { xdr, hash } = await api.buildDeposit(amountBaseUnits);
+    const { xdr, hash } = await build(amountBaseUnits);
 
     // 3. Sign the hash
     const { signature } = await signRawHash({
@@ -40,7 +48,7 @@ export function useStellarTx(): {
     });
 
     // 4. Submit the signed transaction
-    const { txHash } = await api.submitDeposit({
+    const { txHash } = await submit({
       xdr,
       signatureHex: signature,
       stellarAddress: address,
@@ -51,31 +59,10 @@ export function useStellarTx(): {
     return txHash;
   }
 
-  async function withdraw(amountBaseUnits: string): Promise<string> {
-    // 1. Ensure wallet exists
-    const address = await ensureWallet();
-
-    // 2. Build transaction
-    const { xdr, hash } = await api.buildWithdraw(amountBaseUnits);
-
-    // 3. Sign the hash
-    const { signature } = await signRawHash({
-      address,
-      chainType: 'stellar',
-      hash: hash as `0x${string}`,
-    });
-
-    // 4. Submit the signed transaction
-    const { txHash } = await api.submitWithdraw({
-      xdr,
-      signatureHex: signature,
-      stellarAddress: address,
-      amount: amountBaseUnits,
-    });
-
-    // 5. Return transaction hash
-    return txHash;
-  }
-
-  return { deposit, withdraw };
+  return {
+    deposit: (amountBaseUnits) =>
+      runStellarTx(api.buildDeposit, api.submitDeposit, amountBaseUnits),
+    withdraw: (amountBaseUnits) =>
+      runStellarTx(api.buildWithdraw, api.submitWithdraw, amountBaseUnits),
+  };
 }

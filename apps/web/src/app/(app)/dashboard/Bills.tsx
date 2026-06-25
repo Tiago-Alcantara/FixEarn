@@ -8,6 +8,8 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import type { Bill, BillType } from '@fixearn/shared';
 import { useIsMobile } from '@/lib/useIsMobile';
+import { validateAmount } from '@/lib/validateAmount';
+import { getErrorMessage } from '@/lib/errors';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -20,21 +22,6 @@ export interface BillsProps {
   onBillsChanged: () => void;
   /** Active category filter ('all' | 'software' | 'utility' | 'other'). Defaults to 'all'. */
   tab?: string;
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
-
-/** Returns null if valid, error string if invalid */
-function validateCost(raw: string): string | null {
-  if (!raw || raw === '0') return 'Enter a positive amount';
-  const parsed = parseFloat(raw);
-  if (isNaN(parsed) || parsed <= 0) return 'Enter a positive amount';
-  try {
-    toBaseUnits(raw);
-    return null;
-  } catch {
-    return 'Max 7 decimal places';
-  }
 }
 
 // ── Bills component ────────────────────────────────────────────────────────────
@@ -54,11 +41,14 @@ export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  const costError = validateCost(cost);
+  const costError = validateAmount(cost);
   const isValid = vendor.trim().length > 0 && costError === null;
 
-  // Filter bills by tab
-  const visibleBills = tab === 'all' ? bills : bills.filter((b) => b.type === tab);
+  // Filter bills by tab (memoized: evita refiltrar a cada render do dashboard)
+  const visibleBills = useMemo(
+    () => (tab === 'all' ? bills : bills.filter((b) => b.type === tab)),
+    [bills, tab],
+  );
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,7 +64,7 @@ export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps
       setCostTouched(false);
       onBillsChanged();
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : 'Failed to add bill');
+      setFormError(getErrorMessage(err, 'Failed to add bill'));
     } finally {
       setSubmitting(false);
     }
@@ -85,7 +75,7 @@ export default function Bills({ bills, onBillsChanged, tab = 'all' }: BillsProps
       await api.deleteBill(id);
       onBillsChanged();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete bill');
+      setError(getErrorMessage(err, 'Failed to delete bill'));
     }
   }
 
