@@ -670,9 +670,10 @@ export default function LandingPage() {
               }}
             >
               {heroWords.map((word, i) => (
-                <span key={i} className="h-word">
-                  {word}{' '}
-                </span>
+                <React.Fragment key={i}>
+                  <span className="h-word">{word}</span>
+                  {i < heroWords.length - 1 ? ' ' : ''}
+                </React.Fragment>
               ))}
             </h1>
 
