@@ -4,7 +4,7 @@ import { StellarService } from '../stellar/stellar.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { WalletService } from '../wallet/wallet.service';
 import { parseBaseUnits } from '../common/parse-money';
-import { BuildTxResponse, SubmitTxDto } from '@fixearn/shared';
+import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
 @Injectable()
 export class DepositService {

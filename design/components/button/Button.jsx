@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * FixEarn primary action. Polished-chrome primary, hairline secondary, quiet ghost.
+ * Yield2Pay primary action. Polished-chrome primary, hairline secondary, quiet ghost.
  * Renders a <button> by default; pass as="a" for links.
  */
 export function Button({ variant = 'primary', size = 'md', as = 'button', children, style = {}, ...rest }) {

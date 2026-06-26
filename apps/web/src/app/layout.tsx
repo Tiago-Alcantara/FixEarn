@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FixEarn",
-  description: "FixEarn — fixed-income yield on USDC",
+  title: "Yield2Pay",
+  description: "Yield2Pay — fixed-income yield on USDC",
 };
 
 export default function RootLayout({

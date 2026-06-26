@@ -74,7 +74,7 @@ export function Header({
               color: 'var(--fx-text)',
             }}
           >
-            FixEarn
+            Yield2Pay
           </span>
         </a>
         <nav style={{ display: 'flex', gap: 28, margin: '0 auto' }}>

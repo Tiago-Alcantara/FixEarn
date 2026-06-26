@@ -2,9 +2,9 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_DB: fixearn
-      POSTGRES_USER: fixearn
-      POSTGRES_PASSWORD: fixearn
+      POSTGRES_DB: yield2pay
+      POSTGRES_USER: yield2pay
+      POSTGRES_PASSWORD: yield2pay
     ports:
       - "5433:5432"
     volumes:

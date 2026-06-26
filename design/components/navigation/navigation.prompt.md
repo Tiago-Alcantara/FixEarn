@@ -1,7 +1,7 @@
 Page-level navigation & chrome.
 
 ```jsx
-<Header nav={['How it works','Services','Why FixEarn']} lang={lang} onLang={setLang} />
+<Header nav={['How it works','Services','Why Yield2Pay']} lang={lang} onLang={setLang} />
 
 <Marquee items={['OpenAI','Anthropic','Notion','Figma','GitHub','Linear','Slack']} />
 

@@ -1,5 +1,5 @@
-<!-- @dsCard group="FixEarn Dashboard" viewport="1280x900" subtitle="Overview: capital, returns, subscriptions paid" name="Dashboard overview" -->
-<!-- @startingPoint section="FixEarn Dashboard" subtitle="Product overview dashboard" viewport="1280x900" -->
+<!-- @dsCard group="Yield2Pay Dashboard" viewport="1280x900" subtitle="Overview: capital, returns, subscriptions paid" name="Dashboard overview" -->
+<!-- @startingPoint section="Yield2Pay Dashboard" subtitle="Product overview dashboard" viewport="1280x900" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../../styles.css">
 <style>
@@ -47,7 +47,7 @@ function Dashboard(){
   return (
     <div>
       <div className="appbar"><div className="abrow">
-        <div className="logo"><span className="mark"></span><span className="wm">FixEarn</span></div>
+        <div className="logo"><span className="mark"></span><span className="wm">Yield2Pay</span></div>
         <div className="tabs">{tabs.map(t=><a key={t} className={"tab"+(t===tab?" on":"")} href="#" onClick={e=>{e.preventDefault();setTab(t);}}>{t}</a>)}</div>
         <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:14}}>
           <Button size="sm">Add capital</Button>

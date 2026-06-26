@@ -12,7 +12,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 /**
- * FixEarn primary action. Polished-chrome primary, hairline secondary, quiet ghost.
+ * Yield2Pay primary action. Polished-chrome primary, hairline secondary, quiet ghost.
  * "chrome" is an alias for "primary".
  */
 export function Button({

@@ -14,7 +14,7 @@ export default defineConfig({
     include: ['src/**/*.spec.ts'],
     setupFiles: ['./test/setup-env.ts'],
     alias: {
-      '@fixearn/shared': new URL(
+      '@yield2pay/shared': new URL(
         '../../packages/shared/src/index.ts',
         import.meta.url,
       ).pathname,

@@ -1,6 +1,6 @@
-# FixEarn Design System
+# Yield2Pay Design System
 
-FixEarn is a B2B fintech: a company makes a **single capital deposit**, FixEarn puts that
+Yield2Pay is a B2B fintech: a company makes a **single capital deposit**, Yield2Pay puts that
 capital to work, and the **returns automatically pay for the company's software** (AI tools
 and SaaS subscriptions). The company never spends its own cash on those tools — only the
 yield works for it — and the capital stays the company's, withdrawable anytime.
@@ -10,8 +10,8 @@ with: sober, premium, monochrome **black + polished silver**, with **brushed-met
 as the signature material. It is reserved and confident — closer to a metal charge card or a
 private-bank statement than a loud crypto startup.
 
-> **Source of truth:** this system was derived from the FixEarn marketing landing page
-> (`FixEarn.dc.html` in the originating project — the "Material / metal" art direction).
+> **Source of truth:** this system was derived from the Yield2Pay marketing landing page
+> (`Yield2Pay.dc.html` in the originating project — the "Material / metal" art direction).
 > There is no external codebase or Figma; the landing page is the canonical reference.
 
 ---
@@ -31,9 +31,9 @@ private-bank statement than a loud crypto startup.
   - `display/` **Divider · StatTile · ProgressBar · SubscriptionRow · SectionHeading**
   - `navigation/` **Header · Footer · Marquee**
 - **`ui_kits/`** — high-fidelity, interactive recreations composed from the primitives:
-  - `fixearn-landing/` — marketing landing (EN/PT toggle).
-  - `fixearn-dashboard/` — logged-in product overview (capital, returns, subscriptions paid).
-  - `fixearn-deposit/` — 3-step capital-deposit / onboarding flow with live returns projection.
+  - `yield2pay-landing/` — marketing landing (EN/PT toggle).
+  - `yield2pay-dashboard/` — logged-in product overview (capital, returns, subscriptions paid).
+  - `yield2pay-deposit/` — 3-step capital-deposit / onboarding flow with live returns projection.
 - **`assets/`** — `logo-mark.svg` (the silver diamond mark).
 - **`SKILL.md`** — portable skill manifest (for Claude Code / Agent Skills).
 
@@ -135,8 +135,8 @@ source for any icon not already in the system; match the thin stroke and rounded
 
 - **No emoji**, ever. **No filled/duotone icons** — line only.
 - Unicode is used sparingly for tiny inline marks: `▲` for a positive return, `◆` (silver
-  rotated square) as the FixEarn logo mark, `·` as a separator.
-- The **logo** is the wordmark "FixEarn" (Hanken Grotesk 700, `-0.01em`) preceded by a small
+  rotated square) as the Yield2Pay logo mark, `·` as a separator.
+- The **logo** is the wordmark "Yield2Pay" (Hanken Grotesk 700, `-0.01em`) preceded by a small
   silver gradient diamond (an 11px rotated, radius-2 square with a soft glow). See
   `assets/logo.svg`.
 

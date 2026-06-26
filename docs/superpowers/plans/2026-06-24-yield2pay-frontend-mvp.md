@@ -1,17 +1,17 @@
-# FixEarn Frontend MVP — Implementation Plan
+# Yield2Pay Frontend MVP — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Build the Next.js web app that lets a company log in with Privy (invisible Stellar embedded wallet), deposit USDC into the DeFindex vault by signing the backend-built transaction, see its capital / accrued yield ("spendable") / APY on a dashboard, register recurring bills, and withdraw — consuming the existing `apps/api` backend.
 
-**Architecture:** Next.js 15 App Router (`apps/web`) in the existing pnpm monorepo. Privy (`@privy-io/react-auth` + `/extended-chains`) handles auth and the Stellar embedded wallet client-side. The backend builds unsigned XDR and returns the hash to sign; the app signs it with Privy `signRawHash` and posts the signature back — the app never sees a private key. A typed fetch client attaches the Privy access token as a Bearer and speaks the shared DTOs from `@fixearn/shared`. The visual layer ports the existing brushed-metal design system (CSS tokens in `design/tokens/` + React primitives in `design/components/`).
+**Architecture:** Next.js 15 App Router (`apps/web`) in the existing pnpm monorepo. Privy (`@privy-io/react-auth` + `/extended-chains`) handles auth and the Stellar embedded wallet client-side. The backend builds unsigned XDR and returns the hash to sign; the app signs it with Privy `signRawHash` and posts the signature back — the app never sees a private key. A typed fetch client attaches the Privy access token as a Bearer and speaks the shared DTOs from `@yield2pay/shared`. The visual layer ports the existing brushed-metal design system (CSS tokens in `design/tokens/` + React primitives in `design/components/`).
 
-**Tech Stack:** TypeScript (strict), Next.js 15 (App Router), React 19, `@privy-io/react-auth`, `@fixearn/shared`, Vitest + React Testing Library + `@testing-library/jest-dom` for unit/component tests. Styling: plain CSS + the existing `--fx-*` custom-property tokens (NO Tailwind — the design system is token/CSS-var based; matching it faithfully is the requirement).
+**Tech Stack:** TypeScript (strict), Next.js 15 (App Router), React 19, `@privy-io/react-auth`, `@yield2pay/shared`, Vitest + React Testing Library + `@testing-library/jest-dom` for unit/component tests. Styling: plain CSS + the existing `--fx-*` custom-property tokens (NO Tailwind — the design system is token/CSS-var based; matching it faithfully is the requirement).
 
 ## Global Constraints
 
 - **TypeScript strict** everywhere (`strict: true`).
-- **Monorepo:** app lives in `apps/web`, named `@fixearn/web`; reuses `@fixearn/shared` for API types via the same workspace mechanism `apps/api` uses.
+- **Monorepo:** app lives in `apps/web`, named `@yield2pay/web`; reuses `@yield2pay/shared` for API types via the same workspace mechanism `apps/api` uses.
 - **Non-custodial:** the app NEVER handles a private key. Signing is exclusively via Privy `signRawHash`. No seed/secret is ever stored, logged, or passed to the backend.
 - **Money display:** all money from the API is **USDC base units (7 decimals) as decimal strings**. Never parse to JS `number` for precision-sensitive math; format for display via a dedicated `formatUsdc` helper (integer/fraction split on the string). Amounts sent to the API are base-unit decimal strings too.
 - **Backend contract (from `apps/api`, all JSON, Bearer Privy token required except none are public here):**
@@ -24,10 +24,10 @@
 - **Privy Stellar specifics:** wallet creation via `useCreateWallet({ chainType: 'stellar' })` from `@privy-io/react-auth/extended-chains`; signing via `signRawHash({ address, chainType: 'stellar', hash })` (hash is the `0x`-prefixed hex the backend returns). Access token via `getAccessToken()` from `usePrivy()`.
 - **Design fidelity — EXACT reproduction of `design/reference/` (hard requirement):** the screens MUST be **visually identical** to the canonical references in `design/reference/`. These `.dc.html` files (inline-styled, per the `design/docs/GUIA-IA-TELAS.md` format) are the single source of truth — NOT the `ui_kits/` (those are secondary). Reproduce each reference's **markup structure, inline styles, exact hex values, spacing, typography, and the `<helmet>` CSS** (brushed-metal `.brushed`, `.sweep`, `.msheen`, `.btn-shine`, keyframes) verbatim in JSX. Swap ONLY the dynamic parts for React: state, event handlers, and data from the API. Keep each reference's built-in **EN/PT dictionary** (`en`/`pt` in `renderVals()`) as the i18n source. Do not redesign, "improve", or substitute components — match pixel-for-pixel.
 - **Canonical screen → route map (`design/reference/`):**
-  - `FixEarn.dc.html` → `/` landing (nav: How it works / Services / Why FixEarn; hero with light-sweep).
-  - `FixEarn Auth.dc.html` → `/login` (state `mode: 'login' | 'signup'` toggle; password show/hide eye).
-  - `FixEarn Dashboard Cliente.dc.html` → `/dashboard` (state `nav: 'overview'`, subscription `tab` categories; capital/returns/spendable/APY + subscriptions list).
-  - `FixEarn-App.html` (bundled) → integrated reference for the deposit/app flow and cross-screen nav; use it to confirm transitions and the deposit screens.
+  - `Yield2Pay.dc.html` → `/` landing (nav: How it works / Services / Why Yield2Pay; hero with light-sweep).
+  - `Yield2Pay Auth.dc.html` → `/login` (state `mode: 'login' | 'signup'` toggle; password show/hide eye).
+  - `Yield2Pay Dashboard Cliente.dc.html` → `/dashboard` (state `nav: 'overview'`, subscription `tab` categories; capital/returns/spendable/APY + subscriptions list).
+  - `Yield2Pay-App.html` (bundled) → integrated reference for the deposit/app flow and cross-screen nav; use it to confirm transitions and the deposit screens.
 - **Tokens / primitives are a means, not the spec:** the `--fx-*` tokens in `design/tokens/*.css` and primitives in `design/components/` may be used to DRY repeated markup, but the rendered result must equal the reference. Where the reference uses a literal inline style, reproducing it literally is acceptable and preferred over forcing a primitive that drifts from the reference.
 - **Per-screen fidelity gate:** each screen task ends with a visual check — render the React route and compare side-by-side against the reference `.dc.html` opened in a browser (the reference runs via `design/support.js`). Use the Playwright MCP to screenshot both and diff layout/spacing/color. Flag any visible deviation as a fix before the task is done. (Deferred to when the app can run locally; note it explicitly if skipped.)
 - **Secrets:** `NEXT_PUBLIC_PRIVY_APP_ID` and `NEXT_PUBLIC_API_BASE_URL` via env; no secret keys in the frontend (Privy app secret stays server-side in `apps/api`).
@@ -38,9 +38,9 @@
 
 ```
 apps/web/
-  package.json                      # @fixearn/web
+  package.json                      # @yield2pay/web
   next.config.ts
-  tsconfig.json                     # strict; @fixearn/shared path alias
+  tsconfig.json                     # strict; @yield2pay/shared path alias
   vitest.config.ts
   test/setup.ts                     # jest-dom + env
   .env.local.example                # NEXT_PUBLIC_PRIVY_APP_ID, NEXT_PUBLIC_API_BASE_URL
@@ -90,10 +90,10 @@ Run:
 ```bash
 cd apps && pnpm create next-app@latest web --ts --app --no-tailwind --eslint --src-dir --import-alias "@/*" --use-pnpm
 ```
-Set `"name": "@fixearn/web"` in `apps/web/package.json`. Add `@fixearn/shared` as `workspace:*`. Add the `@fixearn/shared` path alias to `apps/web/tsconfig.json` (`"@fixearn/shared": ["../../packages/shared/src"]`). Add deps:
+Set `"name": "@yield2pay/web"` in `apps/web/package.json`. Add `@yield2pay/shared` as `workspace:*`. Add the `@yield2pay/shared` path alias to `apps/web/tsconfig.json` (`"@yield2pay/shared": ["../../packages/shared/src"]`). Add deps:
 ```bash
-pnpm --filter @fixearn/web add @privy-io/react-auth
-pnpm --filter @fixearn/web add -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
+pnpm --filter @yield2pay/web add @privy-io/react-auth
+pnpm --filter @yield2pay/web add -D vitest @testing-library/react @testing-library/jest-dom @testing-library/user-event jsdom
 ```
 
 - [ ] **Step 2: Vitest config + setup**
@@ -105,7 +105,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   test: { environment: 'jsdom', setupFiles: ['./test/setup.ts'], globals: true },
-  resolve: { alias: { '@fixearn/shared': new URL('../../packages/shared/src', import.meta.url).pathname } },
+  resolve: { alias: { '@yield2pay/shared': new URL('../../packages/shared/src', import.meta.url).pathname } },
 });
 ```
 (Add `@vitejs/plugin-react` to devDeps.) `apps/web/test/setup.ts`: `import '@testing-library/jest-dom';`. Add `"test": "vitest run"` to `apps/web/package.json` scripts.
@@ -144,7 +144,7 @@ describe('toBaseUnits', () => {
 
 - [ ] **Step 4: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/web test -- money`
+Run: `pnpm --filter @yield2pay/web test -- money`
 Expected: FAIL — module not found.
 
 - [ ] **Step 5: Implement `money.ts` (string math, no float)**
@@ -172,12 +172,12 @@ export function toBaseUnits(human: string): string {
 
 - [ ] **Step 6: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/web test -- money`
+Run: `pnpm --filter @yield2pay/web test -- money`
 Expected: PASS.
 
 - [ ] **Step 7: Tokens + global css + minimal landing**
 
-`apps/web/src/app/globals.css`: `@import` the design tokens (copy `design/tokens/*.css` into `apps/web/src/app/tokens/` or reference them) and add the body reset + the full `<helmet>` CSS block from `design/docs/GUIA-IA-TELAS.md` / the reference files (`background: var(--fx-bg)`, Hanken Grotesk + Geist Mono fonts, `.brushed`/`.sweep`/`.msheen`/`.btn-shine` classes and their keyframes) — this is shared by every reference screen, so it belongs in `globals.css` verbatim. `layout.tsx` loads the fonts and imports `globals.css`. `page.tsx` is a temporary placeholder here; **Task 10 reproduces the real landing from `design/reference/FixEarn.dc.html` exactly.**
+`apps/web/src/app/globals.css`: `@import` the design tokens (copy `design/tokens/*.css` into `apps/web/src/app/tokens/` or reference them) and add the body reset + the full `<helmet>` CSS block from `design/docs/GUIA-IA-TELAS.md` / the reference files (`background: var(--fx-bg)`, Hanken Grotesk + Geist Mono fonts, `.brushed`/`.sweep`/`.msheen`/`.btn-shine` classes and their keyframes) — this is shared by every reference screen, so it belongs in `globals.css` verbatim. `layout.tsx` loads the fonts and imports `globals.css`. `page.tsx` is a temporary placeholder here; **Task 10 reproduces the real landing from `design/reference/Yield2Pay.dc.html` exactly.**
 
 - [ ] **Step 8: Commit**
 
@@ -233,13 +233,13 @@ it('shows label and value', () => {
 });
 ```
 
-- [ ] **Step 2: Run, verify fail** — `pnpm --filter @fixearn/web test -- components` → FAIL.
+- [ ] **Step 2: Run, verify fail** — `pnpm --filter @yield2pay/web test -- components` → FAIL.
 
 - [ ] **Step 3: Implement primitives**
 
 Port each from `design/components/<name>/<Name>.jsx`, converting to `.tsx` with typed props (the `.d.ts` files already define the prop types — use them). Replace any inline literal colors with the `--fx-*` token vars. Keep the brushed-metal/sheen effect classes in `globals.css`. Each component is a small focused file.
 
-- [ ] **Step 4: Run, verify pass** — `pnpm --filter @fixearn/web test -- components` → PASS.
+- [ ] **Step 4: Run, verify pass** — `pnpm --filter @yield2pay/web test -- components` → PASS.
 
 - [ ] **Step 5: Commit**
 
@@ -310,7 +310,7 @@ Wrap `children` in `layout.tsx`.
 - Test: `apps/web/src/lib/api.test.ts`
 
 **Interfaces:**
-- Consumes: `@fixearn/shared` types, a token-getter `() => Promise<string|null>`.
+- Consumes: `@yield2pay/shared` types, a token-getter `() => Promise<string|null>`.
 - Produces: `createApi(getToken)` returning `{ registerWallet, buildDeposit, submitDeposit, buildWithdraw, submitWithdraw, getDashboard, listBills, createBill, deleteBill }`, each calling the right endpoint with the Bearer header and typed body/response. Throws `ApiError` on non-2xx.
 
 - [ ] **Step 1: Failing test (fetch mocked)**
@@ -346,7 +346,7 @@ it('throws ApiError on non-2xx', async () => {
 
 - [ ] **Step 3: Implement `api.ts`**
 
-A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `Authorization: Bearer <token>` (when present) + `Content-Type: application/json`, throws `ApiError(status, body)` on `!ok`, returns typed JSON. Each method is a thin typed wrapper using the `@fixearn/shared` DTOs.
+A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `Authorization: Bearer <token>` (when present) + `Content-Type: application/json`, throws `ApiError(status, body)` on `!ok`, returns typed JSON. Each method is a thin typed wrapper using the `@yield2pay/shared` DTOs.
 
 - [ ] **Step 4: Run, verify pass.**
 
@@ -374,7 +374,7 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 `useWallet`: read `user.linkedAccounts` for a `chainType==='stellar'` embedded wallet; if missing call `createWallet`. After obtaining the address, `await api.registerWallet({ stellarAddress: address })` (backend upserts, so idempotent). `AuthGate` (`'use client'`): `const { ready, authenticated } = usePrivy()`; redirect to `/login` when `ready && !authenticated`; when authenticated, call `ensureWallet()` in an effect (once).
 
-`/login/page.tsx` — **reproduce `design/reference/FixEarn Auth.dc.html` EXACTLY**: the centered brushed-metal auth card, the `mode: 'login' | 'signup'` segmented toggle, the email/password inputs with the password show/hide eye icon (the two eye SVGs are in the reference), the chrome submit button, and the EN/PT dictionary from the reference. Wire the submit/login action to Privy `login()` (replace the prototype's mock auth), keep the `mode` toggle as React state. Match markup, inline styles, and hex to the reference.
+`/login/page.tsx` — **reproduce `design/reference/Yield2Pay Auth.dc.html` EXACTLY**: the centered brushed-metal auth card, the `mode: 'login' | 'signup'` segmented toggle, the email/password inputs with the password show/hide eye icon (the two eye SVGs are in the reference), the chrome submit button, and the EN/PT dictionary from the reference. Wire the submit/login action to Privy `login()` (replace the prototype's mock auth), keep the `mode` toggle as React state. Match markup, inline styles, and hex to the reference.
 
 - [ ] **Step 4: Run, verify pass.**
 
@@ -414,7 +414,7 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 **Interfaces:**
 - Consumes: `useStellarTx`, `toBaseUnits`, `formatUsdc`, primitives, i18n.
-- Produces: a 3-step flow mirroring `design/ui_kits/fixearn-deposit` — (1) enter amount with a live returns projection, (2) review, (3) confirm → calls `deposit(toBaseUnits(amount))`, shows the resulting txHash / success. Validates the amount client-side (positive, ≤7 decimals) before enabling continue.
+- Produces: a 3-step flow mirroring `design/ui_kits/yield2pay-deposit` — (1) enter amount with a live returns projection, (2) review, (3) confirm → calls `deposit(toBaseUnits(amount))`, shows the resulting txHash / success. Validates the amount client-side (positive, ≤7 decimals) before enabling continue.
 
 - [ ] **Step 1: Failing component test**
 
@@ -422,9 +422,9 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 - [ ] **Step 2: Run, verify fail.**
 
-- [ ] **Step 3: Implement the flow** — **reproduce the deposit screens EXACTLY** from `design/reference/FixEarn-App.html` (the bundled app contains the 3-step deposit/onboarding; cross-check against `design/ui_kits/fixearn-deposit` for the same composition). Match markup, inline styles, hex, the step indicator/progress, and the live returns projection. Wire only the confirm action to `useStellarTx().deposit` and the amount field to React state. Keep the reference's EN/PT strings.
+- [ ] **Step 3: Implement the flow** — **reproduce the deposit screens EXACTLY** from `design/reference/Yield2Pay-App.html` (the bundled app contains the 3-step deposit/onboarding; cross-check against `design/ui_kits/yield2pay-deposit` for the same composition). Match markup, inline styles, hex, the step indicator/progress, and the live returns projection. Wire only the confirm action to `useStellarTx().deposit` and the amount field to React state. Keep the reference's EN/PT strings.
 
-- [ ] **Step 4b: Fidelity check** — render `/deposit` and screenshot it via the Playwright MCP; open `design/reference/FixEarn-App.html` (served so `design/support.js` loads) to the deposit screen and screenshot; compare layout/spacing/color. Fix any visible deviation. (If the app can't run yet, note this check as deferred.)
+- [ ] **Step 4b: Fidelity check** — render `/deposit` and screenshot it via the Playwright MCP; open `design/reference/Yield2Pay-App.html` (served so `design/support.js` loads) to the deposit screen and screenshot; compare layout/spacing/color. Fix any visible deviation. (If the app can't run yet, note this check as deferred.)
 
 - [ ] **Step 4: Run, verify pass.**
 
@@ -440,7 +440,7 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 **Interfaces:**
 - Consumes: `api.getDashboard`, `api.listBills`, `formatUsdc`, primitives, i18n.
-- Produces: the logged-in overview (port `design/ui_kits/fixearn-dashboard`): capital working (`vaultValue`), accrued returns (`vaultValue − principal` = `spendable`), spendable "software credit", APY, and the list of registered bills. Money rendered via `formatUsdc`. Loads on mount; shows loading + error states.
+- Produces: the logged-in overview (port `design/ui_kits/yield2pay-dashboard`): capital working (`vaultValue`), accrued returns (`vaultValue − principal` = `spendable`), spendable "software credit", APY, and the list of registered bills. Money rendered via `formatUsdc`. Loads on mount; shows loading + error states.
 
 - [ ] **Step 1: Failing component test**
 
@@ -448,9 +448,9 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 - [ ] **Step 2: Run, verify fail.**
 
-- [ ] **Step 3: Implement the dashboard** — **reproduce `design/reference/FixEarn Dashboard Cliente.dc.html` EXACTLY**: the sidebar/nav (`nav: 'overview'` state), the capital/returns/spendable stat panels, the APY, and the subscriptions list with its category tabs (`tab` state; the reference seeds openai/claude/etc.). Match markup, inline styles, hex, spacing. Then wire the LIVE data: replace the prototype's hardcoded numbers with `formatUsdc(...)` of `GET /dashboard` (`vaultValue`/`principal`/`spendable`/`apyPercent`) and the subscriptions list with `GET /bills`. Keep `nav`/`tab` as React state and the EN/PT dictionary.
+- [ ] **Step 3: Implement the dashboard** — **reproduce `design/reference/Yield2Pay Dashboard Cliente.dc.html` EXACTLY**: the sidebar/nav (`nav: 'overview'` state), the capital/returns/spendable stat panels, the APY, and the subscriptions list with its category tabs (`tab` state; the reference seeds openai/claude/etc.). Match markup, inline styles, hex, spacing. Then wire the LIVE data: replace the prototype's hardcoded numbers with `formatUsdc(...)` of `GET /dashboard` (`vaultValue`/`principal`/`spendable`/`apyPercent`) and the subscriptions list with `GET /bills`. Keep `nav`/`tab` as React state and the EN/PT dictionary.
 
-- [ ] **Step 3b: Fidelity check** — screenshot `/dashboard` (with mocked API data matching the reference's sample values) via the Playwright MCP and compare against `design/reference/FixEarn Dashboard Cliente.dc.html` opened in a browser; fix visible deviations. (Defer with a note if the app can't run yet.)
+- [ ] **Step 3b: Fidelity check** — screenshot `/dashboard` (with mocked API data matching the reference's sample values) via the Playwright MCP and compare against `design/reference/Yield2Pay Dashboard Cliente.dc.html` opened in a browser; fix visible deviations. (Defer with a note if the app can't run yet.)
 
 - [ ] **Step 4: Run, verify pass.**
 
@@ -491,19 +491,19 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 
 **Interfaces:**
 - Consumes: tokens, helmet CSS, i18n, Privy `login` (CTA), primitives where they render identically.
-- Produces: the public marketing landing, **visually identical to `design/reference/FixEarn.dc.html`** — header nav (How it works / Services / Why FixEarn), the hero (`h-title` clamp typography) with the looping light-sweep, the section blocks, footer, and the EN/PT toggle. The primary CTA ("Get started" / "Começar") routes to `/login` (Privy `login()`).
+- Produces: the public marketing landing, **visually identical to `design/reference/Yield2Pay.dc.html`** — header nav (How it works / Services / Why Yield2Pay), the hero (`h-title` clamp typography) with the looping light-sweep, the section blocks, footer, and the EN/PT toggle. The primary CTA ("Get started" / "Começar") routes to `/login` (Privy `login()`).
 
 - [ ] **Step 1: Failing smoke/structure test**
 
-`apps/web/src/app/landing.test.tsx`: render the landing; assert the eyebrow `BANKING, REINVENTED FOR SOFTWARE`, the nav labels (`How it works`, `Services`, `Why FixEarn`), and the hero CTA are present; assert clicking the CTA triggers the login/route action (mock it).
+`apps/web/src/app/landing.test.tsx`: render the landing; assert the eyebrow `BANKING, REINVENTED FOR SOFTWARE`, the nav labels (`How it works`, `Services`, `Why Yield2Pay`), and the hero CTA are present; assert clicking the CTA triggers the login/route action (mock it).
 
 - [ ] **Step 2: Run, verify fail.**
 
-- [ ] **Step 3: Implement the landing** — reproduce `design/reference/FixEarn.dc.html` VERBATIM in JSX: copy the template markup, inline styles, exact hex, the `.sweep` hero animation, and the en/pt dictionary. Convert the `support.js`/DCLogic dynamic bits (lang toggle, intersection-reveal) to React (`useState` for `lang`, `IntersectionObserver` in an effect for the reveal). Only the CTA action changes (→ Privy login / `/login`).
+- [ ] **Step 3: Implement the landing** — reproduce `design/reference/Yield2Pay.dc.html` VERBATIM in JSX: copy the template markup, inline styles, exact hex, the `.sweep` hero animation, and the en/pt dictionary. Convert the `support.js`/DCLogic dynamic bits (lang toggle, intersection-reveal) to React (`useState` for `lang`, `IntersectionObserver` in an effect for the reveal). Only the CTA action changes (→ Privy login / `/login`).
 
 - [ ] **Step 4: Run, verify pass.**
 
-- [ ] **Step 5: Fidelity check** — screenshot `/` via the Playwright MCP and compare against `design/reference/FixEarn.dc.html` opened in a browser; fix visible deviations. (Defer with a note if the app can't run yet.)
+- [ ] **Step 5: Fidelity check** — screenshot `/` via the Playwright MCP and compare against `design/reference/Yield2Pay.dc.html` opened in a browser; fix visible deviations. (Defer with a note if the app can't run yet.)
 
 - [ ] **Step 6: Commit** — `git commit -m "feat: landing page (exact reproduction of reference)"`
 
@@ -534,4 +534,4 @@ A `request` helper reads `NEXT_PUBLIC_API_BASE_URL`, calls `getToken()`, sets `A
 1. Privy `useCreateWallet`/`signRawHash` exact runtime shapes on the installed `@privy-io/react-auth` version — pin when wiring a real Privy app id (Tasks 5, 6 mock them).
 2. End-to-end deposit against the live backend + testnet — deferred to manual/e2e once credentials exist.
 
-**Type consistency:** all API calls use `@fixearn/shared` DTOs (`BuildTxResponse`, `SubmitTxDto`, `SpendableView`, `CreateBillDto`, `BillType`) — same package the backend produces, so the contract can't drift. `formatUsdc`/`toBaseUnits` operate on strings end-to-end.
+**Type consistency:** all API calls use `@yield2pay/shared` DTOs (`BuildTxResponse`, `SubmitTxDto`, `SpendableView`, `CreateBillDto`, `BillType`) — same package the backend produces, so the contract can't drift. `formatUsdc`/`toBaseUnits` operate on strings end-to-end.

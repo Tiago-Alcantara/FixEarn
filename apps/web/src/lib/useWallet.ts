@@ -7,7 +7,7 @@ import { createApi } from './api';
 /**
  * Returns the user's Stellar embedded wallet address (or null if none yet),
  * and an `ensureWallet()` function that finds or creates one and registers it
- * with the FixEarn backend (idempotent upsert).
+ * with the Yield2Pay backend (idempotent upsert).
  *
  * Non-custodial contract: we NEVER touch private keys — wallet creation and
  * signing are entirely Privy's responsibility. We only read the address.

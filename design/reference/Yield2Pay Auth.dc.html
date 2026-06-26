@@ -45,9 +45,9 @@ input::placeholder{color:#6b6e73}
   <section class="metal" aria-hidden="false" style="position:relative;overflow:hidden;flex:1 1 420px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(32px,4vw,56px);border-right:1px solid #1A1C1F">
     <span class="brand-grain" aria-hidden="true"></span>
     <span class="brand-sweep" aria-hidden="true"></span>
-    <a href="FixEarn.dc.html" style="position:relative;z-index:2;display:inline-flex;align-items:center;gap:10px;text-decoration:none;width:max-content">
+    <a href="Yield2Pay.dc.html" style="position:relative;z-index:2;display:inline-flex;align-items:center;gap:10px;text-decoration:none;width:max-content">
       <span style="width:13px;height:13px;background:linear-gradient(135deg,#E6E8EA,#9A9DA1);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 12px rgba(192,194,197,.35)"></span>
-      <span style="font-size:20px;font-weight:700;letter-spacing:-.01em;color:#EDEFF1">FixEarn</span>
+      <span style="font-size:20px;font-weight:700;letter-spacing:-.01em;color:#EDEFF1">Yield2Pay</span>
     </a>
     <div style="position:relative;z-index:2;padding:48px 0">
       <h2 style="font-size:clamp(30px,3.6vw,46px);font-weight:700;line-height:1.08;letter-spacing:-.025em;color:#EDEFF1;margin:0;max-width:420px;text-shadow:0 1px 0 rgba(255,255,255,.13),0 -1px 1px rgba(0,0,0,.6)">{{ brandTitle }}</h2>
@@ -211,7 +211,7 @@ class Component extends DCLogic {
     } catch (err) {}
   }
 
-  goDashboard() { window.location.href = 'FixEarn%20Dashboard%20Cliente.dc.html'; }
+  goDashboard() { window.location.href = 'Yield2Pay%20Dashboard%20Cliente.dc.html'; }
 
   onSubmit(e) {
     if (e && e.preventDefault) e.preventDefault();
@@ -233,7 +233,7 @@ class Component extends DCLogic {
         brandTitle: 'Put your idle capital to work.',
         brandSub: 'The returns on your deposit cover the software your business runs on.',
         seals: [['shield', 'Capital protected'], ['lock', 'Bank-grade security'], ['cube', 'Blockchain-powered']],
-        login: { title: 'Welcome back', subtitle: 'Log in to your FixEarn account', cta: 'Log in', google: 'Continue with Google' },
+        login: { title: 'Welcome back', subtitle: 'Log in to your Yield2Pay account', cta: 'Log in', google: 'Continue with Google' },
         signup: { title: 'Create your business account', subtitle: 'Start putting your capital to work in minutes', cta: 'Create account', google: 'Sign up with Google' },
         forgot: 'Forgot password?', or: 'or',
         loginSwitchPrompt: "Don't have an account?", loginSwitchAction: 'Sign up',
@@ -254,7 +254,7 @@ class Component extends DCLogic {
         brandTitle: 'Coloque seu capital parado para trabalhar.',
         brandSub: 'O rendimento do seu aporte cobre os softwares que sua empresa usa.',
         seals: [['shield', 'Capital protegido'], ['lock', 'Segurança bancária'], ['cube', 'Tecnologia blockchain']],
-        login: { title: 'Bem-vindo de volta', subtitle: 'Acesse sua conta FixEarn', cta: 'Entrar', google: 'Continuar com Google' },
+        login: { title: 'Bem-vindo de volta', subtitle: 'Acesse sua conta Yield2Pay', cta: 'Entrar', google: 'Continuar com Google' },
         signup: { title: 'Crie sua conta empresarial', subtitle: 'Comece a colocar seu capital para trabalhar em minutos', cta: 'Criar conta', google: 'Cadastrar com Google' },
         forgot: 'Esqueceu a senha?', or: 'ou',
         loginSwitchPrompt: 'Não tem uma conta?', loginSwitchAction: 'Criar conta',

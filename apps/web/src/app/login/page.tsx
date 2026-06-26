@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * FixEarn Auth Screen — login/page.tsx
+ * Yield2Pay Auth Screen — login/page.tsx
  *
  * Google-only login. The right panel shows a single "Continue with Google"
  * button that kicks off Privy's headless OAuth redirect
@@ -27,7 +27,7 @@ const L = {
       ['lock', 'Bank-grade security'],
       ['cube', 'Blockchain-powered'],
     ] as [string, string][],
-    title: 'Welcome to FixEarn',
+    title: 'Welcome to Yield2Pay',
     subtitle: 'Sign in with your Google account to continue.',
     google: 'Continue with Google',
     loading: 'Redirecting…',
@@ -42,7 +42,7 @@ const L = {
       ['lock', 'Segurança bancária'],
       ['cube', 'Tecnologia blockchain'],
     ] as [string, string][],
-    title: 'Bem-vindo à FixEarn',
+    title: 'Bem-vindo à Yield2Pay',
     subtitle: 'Entre com sua conta Google para continuar.',
     google: 'Continuar com Google',
     loading: 'Redirecionando…',
@@ -87,7 +87,7 @@ export default function LoginPage() {
   const { initOAuth, loading } = useLoginWithOAuth({
     onComplete: () => router.replace('/dashboard'),
     onError: (err) => {
-      console.error('[FixEarn] Privy OAuth error:', err);
+      console.error('[Yield2Pay] Privy OAuth error:', err);
       setError(true);
     },
   });
@@ -192,7 +192,7 @@ export default function LoginPage() {
           {/* Logo */}
           <Link href="/" style={{ position: 'relative', zIndex: 2, display: 'inline-flex', alignItems: 'center', gap: 10, textDecoration: 'none', width: 'max-content' }}>
             <span style={{ width: 13, height: 13, background: 'linear-gradient(135deg,#E6E8EA,#9A9DA1)', transform: 'rotate(45deg)', borderRadius: 2, boxShadow: '0 0 12px rgba(192,194,197,.35)' }} />
-            <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-.01em', color: '#EDEFF1' }}>FixEarn</span>
+            <span style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-.01em', color: '#EDEFF1' }}>Yield2Pay</span>
           </Link>
 
           {/* Brand copy */}

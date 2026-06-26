@@ -3,7 +3,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
 import { LedgerService } from './ledger.service';
 import { VaultService } from '../vault/vault.service';
-import { SpendableView } from '@fixearn/shared';
+import { SpendableView } from '@yield2pay/shared';
 
 @Controller('dashboard')
 @UseGuards(AuthGuard)

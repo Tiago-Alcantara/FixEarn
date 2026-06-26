@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { CreateBillDto } from '@fixearn/shared';
+import type { CreateBillDto } from '@yield2pay/shared';
 import { PrismaService } from '../prisma/prisma.service';
 import { parseBaseUnits } from '../common/parse-money';
 

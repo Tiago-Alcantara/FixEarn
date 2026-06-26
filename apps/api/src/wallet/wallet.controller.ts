@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
 import { WalletService } from './wallet.service';
-import type { RegisterWalletDto } from '@fixearn/shared';
+import type { RegisterWalletDto } from '@yield2pay/shared';
 
 @Controller('wallet')
 @UseGuards(AuthGuard)

@@ -21,7 +21,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@fixearn/shared": ["../../packages/shared/src"]
+      "@yield2pay/shared": ["../../packages/shared/src"]
     }
   },
   "include": [

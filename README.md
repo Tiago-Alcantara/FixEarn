@@ -1,1 +1,1 @@
-# FixEarn
+# Yield2Pay

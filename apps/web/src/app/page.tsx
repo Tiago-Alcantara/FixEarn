@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * FixEarn Landing Page — page.tsx
+ * Yield2Pay Landing Page — page.tsx
  *
- * Faithfully reproduces design/reference/FixEarn.dc.html verbatim in JSX:
- *   - Header nav (How it works / Services / Why FixEarn) + EN/PT toggle
+ * Faithfully reproduces design/reference/Yield2Pay.dc.html verbatim in JSX:
+ *   - Header nav (How it works / Services / Why Yield2Pay) + EN/PT toggle
  *   - Hero section with h-title clamp typography + looping .sweep animation
  *   - How it works steps section
- *   - Why FixEarn benefits section
+ *   - Why Yield2Pay benefits section
  *   - Software logos marquee section
  *   - Trust / security banner
  *   - Final CTA section
@@ -35,7 +35,7 @@ const DICT = {
   en: {
     navHow: 'How it works',
     navServices: 'Services',
-    navWhy: 'Why FixEarn',
+    navWhy: 'Why Yield2Pay',
     login: 'Log in',
     getStarted: 'Get started',
     heroTagline: 'Banking, reinvented for software',
@@ -59,7 +59,7 @@ const DICT = {
       { n: '02', title: 'We invest your capital', desc: 'Your capital is allocated to generate steady, transparent returns.' },
       { n: '03', title: 'Your software gets paid', desc: 'The returns automatically cover the subscriptions you choose.' },
     ],
-    benTitle: 'Why businesses choose FixEarn',
+    benTitle: 'Why businesses choose Yield2Pay',
     benSub: 'Built to keep your tools running without ever touching your cash flow.',
     benefits: [
       { title: 'No cost out of pocket', desc: 'Your subscriptions are paid by returns, not your cash flow.' },
@@ -87,12 +87,12 @@ const DICT = {
     footCompanyLinks: ['About', 'Contact', 'Careers'],
     footLegalLinks: ['Terms', 'Privacy'],
     footTagline: 'The bank that pays your software.',
-    copyright: '© 2026 FixEarn. All rights reserved.',
+    copyright: '© 2026 Yield2Pay. All rights reserved.',
   },
   pt: {
     navHow: 'Como funciona',
     navServices: 'Serviços',
-    navWhy: 'Por que FixEarn',
+    navWhy: 'Por que Yield2Pay',
     login: 'Entrar',
     getStarted: 'Começar',
     heroTagline: 'O banco que paga seus softwares',
@@ -116,7 +116,7 @@ const DICT = {
       { n: '02', title: 'Investimos seu capital', desc: 'Seu capital é alocado para gerar rendimento estável e transparente.' },
       { n: '03', title: 'Seus softwares são pagos', desc: 'O rendimento cobre automaticamente as assinaturas que você escolher.' },
     ],
-    benTitle: 'Por que empresas escolhem o FixEarn',
+    benTitle: 'Por que empresas escolhem o Yield2Pay',
     benSub: 'Feito para manter suas ferramentas no ar sem nunca tocar no seu caixa.',
     benefits: [
       { title: 'Sem custo do seu bolso', desc: 'Suas assinaturas são pagas pelo rendimento, não pelo seu caixa.' },
@@ -144,7 +144,7 @@ const DICT = {
     footCompanyLinks: ['Sobre', 'Contato', 'Carreiras'],
     footLegalLinks: ['Termos', 'Privacidade'],
     footTagline: 'O banco que paga seus softwares.',
-    copyright: '© 2026 FixEarn. Todos os direitos reservados.',
+    copyright: '© 2026 Yield2Pay. Todos os direitos reservados.',
   },
 } as const;
 
@@ -530,7 +530,7 @@ export default function LandingPage() {
                 color: '#EDEFF1',
               }}
             >
-              FixEarn
+              Yield2Pay
             </span>
           </a>
 
@@ -1068,7 +1068,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── Why FixEarn ───────────────────────────────────────────────── */}
+        {/* ── Why Yield2Pay ───────────────────────────────────────────────── */}
         <section
           id="why"
           style={{
@@ -1509,7 +1509,7 @@ export default function LandingPage() {
                     color: '#EDEFF1',
                   }}
                 >
-                  FixEarn
+                  Yield2Pay
                 </span>
               </a>
               <p

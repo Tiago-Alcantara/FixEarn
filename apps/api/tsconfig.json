@@ -16,7 +16,7 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@fixearn/shared": ["../../packages/shared/src/index.ts"]
+      "@yield2pay/shared": ["../../packages/shared/src/index.ts"]
     },
     "incremental": true,
     "skipLibCheck": true,

@@ -6,7 +6,7 @@ import type {
   CreateBillDto,
   SpendableView,
   Bill,
-} from '@fixearn/shared';
+} from '@yield2pay/shared';
 
 export class ApiError extends Error {
   constructor(

@@ -12,7 +12,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 /**
- * The FixEarn action button.
+ * The Yield2Pay action button.
  * @startingPoint section="Core" subtitle="Chrome / hairline / ghost actions" viewport="700x150"
  */
 export function Button(props: ButtonProps): JSX.Element;

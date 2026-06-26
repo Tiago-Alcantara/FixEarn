@@ -1,10 +1,18 @@
 {
-  "name": "fixearn",
+  "name": "yield2pay",
   "private": true,
   "packageManager": "pnpm@10.33.2",
   "scripts": {
-    "api:dev": "pnpm --filter @fixearn/api start:dev",
-    "api:test": "pnpm --filter @fixearn/api test"
+    "dev:web": "pnpm --filter @yield2pay/web dev",
+    "dev:api": "pnpm --filter @yield2pay/api dev",
+    "dev:app": "pnpm --parallel --filter @yield2pay/web --filter @yield2pay/api dev",
+    "db:up": "docker compose up -d db",
+    "db:down": "docker compose down",
+    "db:generate": "pnpm --filter @yield2pay/api exec prisma generate",
+    "db:migrate": "pnpm --filter @yield2pay/api exec prisma migrate deploy",
+    "db:studio": "pnpm --filter @yield2pay/api exec prisma studio",
+    "api:dev": "pnpm --filter @yield2pay/api start:dev",
+    "api:test": "pnpm --filter @yield2pay/api test"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

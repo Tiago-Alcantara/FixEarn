@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { VaultService } from '../vault/vault.service';
 import { StellarService } from '../stellar/stellar.service';
 import { WalletService } from '../wallet/wallet.service';
-import { BuildTxResponse, SubmitTxDto } from '@fixearn/shared';
+import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
 @Injectable()
 export class WithdrawService {

@@ -1,4 +1,4 @@
-# Guia da IA — Como montar novas telas FixEarn
+# Guia da IA — Como montar novas telas Yield2Pay
 
 Este guia é para uma IA (ou pessoa) criar **novas telas no exato padrão já usado neste projeto**.
 Leia junto com `DESIGN-SYSTEM.md` (a fonte de verdade visual). Aqui está o **como**: estrutura de
@@ -15,9 +15,9 @@ arquivo, esqueleto para copiar, padrão da lógica, navegação entre telas e ch
 
 ```
 /                              ← raiz: as telas .dc.html vivem aqui
-├─ FixEarn.dc.html             ← landing  (referência de hero, header, footer, sweep)
-├─ FixEarn Auth.dc.html        ← login/cadastro (referência de form, inputs, validação)
-├─ FixEarn Dashboard Cliente.dc.html  ← app logado (referência de sidebar, cards, tabs)
+├─ Yield2Pay.dc.html             ← landing  (referência de hero, header, footer, sweep)
+├─ Yield2Pay Auth.dc.html        ← login/cadastro (referência de form, inputs, validação)
+├─ Yield2Pay Dashboard Cliente.dc.html  ← app logado (referência de sidebar, cards, tabs)
 ├─ DESIGN-SYSTEM.md            ← cores, tipo, material, motion (LEIA PRIMEIRO)
 ├─ GUIA-IA-TELAS.md            ← este arquivo
 ├─ tokens/                     ← --fx-* (referência de valores)
@@ -60,7 +60,7 @@ As 3 partes que você escreve:
 
 ## 3. Bloco `<helmet>` — copie este boilerplate
 
-Este é o cabeçalho-padrão de toda tela FixEarn. Carrega as duas fontes, reseta o body para o preto
+Este é o cabeçalho-padrão de toda tela Yield2Pay. Carrega as duas fontes, reseta o body para o preto
 da marca, e define as classes de metal/sweep/shine + os keyframes. **Cole no início do template.**
 
 ```html
@@ -103,7 +103,7 @@ resets do body, e as classes de efeito acima. Todo o resto é `style="..."` inli
 
 ## 4. Padrão da lógica (estado + bilíngue + handlers)
 
-Toda tela FixEarn usa o mesmo esqueleto de lógica: estado com `lang`, um dicionário `en`/`pt`
+Toda tela Yield2Pay usa o mesmo esqueleto de lógica: estado com `lang`, um dicionário `en`/`pt`
 dentro de `renderVals()`, e os handlers expostos por nome.
 
 ```js
@@ -150,9 +150,9 @@ Regras importantes da lógica:
 
 As telas são arquivos `.dc.html` na mesma pasta. Para ligar uma à outra:
 
-- **Link simples** (logo, "Entrar"): `<a href="FixEarn%20Auth.dc.html">` — espaços viram `%20`.
+- **Link simples** (logo, "Entrar"): `<a href="Yield2Pay%20Auth.dc.html">` — espaços viram `%20`.
 - **Botão / ação** (CTA, "Sair", submit): handler no `renderVals()` com
-  `window.location.href = 'FixEarn%20Dashboard%20Cliente.dc.html'`.
+  `window.location.href = 'Yield2Pay%20Dashboard%20Cliente.dc.html'`.
 - **Passar intenção** via query string: a landing manda `?mode=signup`; o Auth lê em
   `componentDidMount()` com `new URLSearchParams(window.location.search).get('mode')`.
 
@@ -198,7 +198,7 @@ Ao criar uma tela nova, decida de onde se chega a ela e para onde ela leva, e li
 - ✅ Cards/painéis em metal escovado com borda 1px + brilho interno + sombra profunda.
 - ✅ Entradas em fade; sweep no metal; respeitar `prefers-reduced-motion`.
 - ✅ Tudo bilíngue EN/PT no dicionário, em lockstep.
-- ✅ Logo = diamante prata + wordmark "FixEarn".
+- ✅ Logo = diamante prata + wordmark "Yield2Pay".
 - ✅ Ícones de linha fina (stroke 1.4–1.6) em prata; faltou ícone → Lucide via CDN (sinalize).
 
 **Não faça**

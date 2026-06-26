@@ -1,5 +1,5 @@
-<!-- @dsCard group="FixEarn Deposit" viewport="820x740" subtitle="3-step deposit flow with live returns projection" name="Deposit flow" -->
-<!-- @startingPoint section="FixEarn Deposit" subtitle="Capital deposit / onboarding flow" viewport="820x740" -->
+<!-- @dsCard group="Yield2Pay Deposit" viewport="820x740" subtitle="3-step deposit flow with live returns projection" name="Deposit flow" -->
+<!-- @startingPoint section="Yield2Pay Deposit" subtitle="Capital deposit / onboarding flow" viewport="820x740" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../../styles.css">
 <style>
@@ -53,7 +53,7 @@ function Flow(){
 
   return (
     <div className="shell">
-      <div className="brand"><span className="mark"></span><span className="wm">FixEarn</span></div>
+      <div className="brand"><span className="mark"></span><span className="wm">Yield2Pay</span></div>
       <div className="steps">
         {steps.map((s,i)=>(<React.Fragment key={s}>
           <span className={"step"+(i<=step?" on":"")}><span className="dot">{i<step?'✓':i+1}</span>{s}</span>

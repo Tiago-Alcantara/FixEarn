@@ -1,7 +1,7 @@
 'use client';
 
 import { useSignRawHash } from '@privy-io/react-auth/extended-chains';
-import type { BuildTxResponse, SubmitTxDto, SubmitTxResponse } from '@fixearn/shared';
+import type { BuildTxResponse, SubmitTxDto, SubmitTxResponse } from '@yield2pay/shared';
 import { useWallet } from './useWallet';
 import { createApi } from './api';
 import { usePrivy } from '@privy-io/react-auth';

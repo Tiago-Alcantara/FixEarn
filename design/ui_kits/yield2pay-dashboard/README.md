@@ -1,4 +1,4 @@
-# FixEarn Dashboard — UI kit
+# Yield2Pay Dashboard — UI kit
 
 Logged-in product view: the company's capital at work, returns, and the subscriptions
 those returns are paying for. Composed from system primitives (`StatPanel`, `StatTile`,

@@ -15,7 +15,7 @@ import { validateAmount } from '@/lib/validateAmount';
 import { getErrorMessage } from '@/lib/errors';
 import { useIsMobile } from '@/lib/useIsMobile';
 
-// ── Tools list (reference: design/ui_kits/fixearn-deposit/index.html) ────────
+// ── Tools list (reference: design/ui_kits/yield2pay-deposit/index.html) ────────
 const TOOLS: [string, number][] = [
   ['OpenAI', 20],
   ['Anthropic', 20],

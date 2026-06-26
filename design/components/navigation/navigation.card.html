@@ -14,7 +14,7 @@ const { useState } = React;
 function Demo(){
   const [lang,setLang]=useState('en');
   return (<>
-    <Header nav={['How it works','Services','Why FixEarn']} lang={lang} onLang={setLang} />
+    <Header nav={['How it works','Services','Why Yield2Pay']} lang={lang} onLang={setLang} />
     <div className="pad"><Marquee items={['OpenAI','Anthropic','Notion','Figma','GitHub','Linear','Slack']} /></div>
     <Footer columns={[
       {title:'Product',links:['How it works','Services','Security']},

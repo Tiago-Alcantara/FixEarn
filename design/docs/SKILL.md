@@ -1,6 +1,6 @@
 ---
-name: fixearn-design
-description: Use this skill to generate well-branded interfaces and assets for FixEarn, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping. FixEarn is a B2B fintech with a premium, monochrome black + silver "private bank" aesthetic built on brushed-metal surfaces.
+name: yield2pay-design
+description: Use this skill to generate well-branded interfaces and assets for Yield2Pay, either for production or throwaway prototypes/mocks/etc. Contains essential design guidelines, colors, type, fonts, assets, and UI kit components for prototyping. Yield2Pay is a B2B fintech with a premium, monochrome black + silver "private bank" aesthetic built on brushed-metal surfaces.
 user-invocable: true
 ---
 
@@ -11,7 +11,7 @@ Read the `readme.md` file within this skill, and explore the other available fil
 If creating visual artifacts (slides, mocks, throwaway prototypes, etc), copy assets out and
 create static HTML files for the user to view, linking `styles.css` for the real tokens. If
 working on production code, copy assets and read the rules here to design as an expert in the
-FixEarn brand.
+Yield2Pay brand.
 
 Core rules to never break:
 - **Monochrome only** — near-black ink + polished silver. No vibrant hues.

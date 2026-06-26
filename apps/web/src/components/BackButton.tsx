@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
  * Circular back-arrow button. Navigates to `href` (default /dashboard).
  *
  * Positioned absolutely at the left edge of its parent, so a centered
- * sibling (e.g. the FixEarn brand) stays visually centered. The parent
+ * sibling (e.g. the Yield2Pay brand) stays visually centered. The parent
  * must be `position: relative` for this to anchor correctly.
  *
  * aria-label intentionally avoids the word "back" so it doesn't collide

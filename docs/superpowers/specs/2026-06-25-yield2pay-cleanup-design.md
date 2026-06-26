@@ -1,5 +1,5 @@
 ---
-title: FixEarn Cleanup — Padronização, Redundância e Velocidade
+title: Yield2Pay Cleanup — Padronização, Redundância e Velocidade
 date: 2026-06-25
 status: draft
 area: specs
@@ -7,11 +7,11 @@ related:
   - "[[Preference - Coding Style]]"
 ---
 
-# FixEarn Cleanup — Design
+# Yield2Pay Cleanup — Design
 
 ## Objetivo
 
-Melhorar o código do monorepo FixEarn (`apps/api` NestJS, `apps/web` Next.js, `packages/shared`)
+Melhorar o código do monorepo Yield2Pay (`apps/api` NestJS, `apps/web` Next.js, `packages/shared`)
 em três frentes, **nesta ordem de prioridade**:
 
 1. **Padronizar** segundo `docs/Preference - Coding Style.md`

@@ -6,7 +6,7 @@ import { createApi } from '@/lib/api';
 import { toBaseUnits, formatUsdc } from '@/lib/money';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import type { Bill, BillType } from '@fixearn/shared';
+import type { Bill, BillType } from '@yield2pay/shared';
 import { useIsMobile } from '@/lib/useIsMobile';
 import { validateAmount } from '@/lib/validateAmount';
 import { getErrorMessage } from '@/lib/errors';

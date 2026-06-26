@@ -8,7 +8,7 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import type { CreateBillDto } from '@fixearn/shared';
+import type { CreateBillDto } from '@yield2pay/shared';
 import { BillsService } from './bills.service';
 import { AuthGuard } from '../auth/auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';

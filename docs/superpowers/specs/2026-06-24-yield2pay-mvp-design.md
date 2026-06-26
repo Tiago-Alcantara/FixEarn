@@ -1,4 +1,4 @@
-# FixEarn — Design do MVP (Ciclo 1)
+# Yield2Pay — Design do MVP (Ciclo 1)
 
 **Data:** 2026-06-24
 **Status:** Aprovado para escrever plano de implementação
@@ -7,7 +7,7 @@
 
 ## 1. Produto
 
-FixEarn é uma fintech B2B. A empresa faz **um depósito de capital**, a FixEarn coloca esse
+Yield2Pay é uma fintech B2B. A empresa faz **um depósito de capital**, a Yield2Pay coloca esse
 capital para render, e o **rendimento paga as assinaturas de software** da empresa (ferramentas
 de IA e SaaS). A empresa nunca gasta o próprio caixa nessas ferramentas — só o rendimento
 trabalha. O capital continua sendo da empresa, sacável a qualquer momento.
@@ -28,7 +28,7 @@ refazer a arquitetura. O motor de "gastável" é agnóstico ao tipo de conta.
 | Decisão | Escolha | Motivo |
 |---|---|---|
 | Motor de rendimento | **DeFindex** (vault Soroban na Stellar) | Yield real on-chain; SDK TypeScript pronto |
-| Custódia | **Não-custodial via Privy** (embedded wallet) | Cliente nem sabe que existe carteira; FixEarn nunca segura fundos |
+| Custódia | **Não-custodial via Privy** (embedded wallet) | Cliente nem sabe que existe carteira; Yield2Pay nunca segura fundos |
 | Tipo de carteira | **Embedded EOA** na Stellar (Privy, TEE + Shamir) | Privy na Stellar é EOA, não smart account (ERC-4337 é só EVM). UX idêntica |
 | Frontend | **Next.js + React + TypeScript** | SDK Privy first-class; ecossistema |
 | Backend | **NestJS + TypeScript** | Mesma linguagem; SDKs Stellar/DeFindex/Privy em JS; estrutura modular |
@@ -80,7 +80,7 @@ NestJS API  ──@defindex/sdk──>  monta tx deposit/withdraw, lê saldo + A
 
 Fluxo de assinatura de transação: o backend monta a transação (deposit/withdraw) com o
 `@defindex/sdk`; o frontend pede a assinatura à carteira embedded Privy; a tx assinada é
-submetida à rede. A FixEarn nunca detém a chave.
+submetida à rede. A Yield2Pay nunca detém a chave.
 
 ---
 

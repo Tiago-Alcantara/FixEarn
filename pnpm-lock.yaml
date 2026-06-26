@@ -13,7 +13,7 @@ importers:
       '@defindex/sdk':
         specifier: ^0.3.0
         version: 0.3.0
-      '@fixearn/shared':
+      '@yield2pay/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@nestjs/common':
@@ -143,7 +143,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@fixearn/shared':
+      '@yield2pay/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       '@privy-io/react-auth':

@@ -11,7 +11,7 @@ import { BrandHeader } from './BrandHeader';
 describe('BrandHeader', () => {
   it('renders the brand wordmark and the back button', () => {
     render(<BrandHeader />);
-    expect(screen.getByText('FixEarn')).toBeInTheDocument();
+    expect(screen.getByText('Yield2Pay')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /return to dashboard/i }),
     ).toBeInTheDocument();

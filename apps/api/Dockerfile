@@ -1,4 +1,4 @@
-# FixEarn API — portable container image (Render / Railway / Fly / any host).
+# Yield2Pay API — portable container image (Render / Railway / Fly / any host).
 # Build context MUST be the repo root (the app is part of a pnpm workspace and
 # depends on packages/shared). Example: docker build -f apps/api/Dockerfile .
 FROM node:20-slim AS build
@@ -21,8 +21,8 @@ COPY . .
 # prisma generate reads DATABASE_URL via prisma.config.ts; a dummy is fine here
 # (generate does not connect — the real URL is injected at runtime).
 ENV DATABASE_URL="postgresql://build:build@localhost:5432/build"
-RUN pnpm --filter @fixearn/api exec prisma generate \
-  && pnpm --filter @fixearn/api build
+RUN pnpm --filter @yield2pay/api exec prisma generate \
+  && pnpm --filter @yield2pay/api build
 
 ENV NODE_ENV=production
 # Render/Railway inject PORT at runtime; the app reads process.env.PORT.

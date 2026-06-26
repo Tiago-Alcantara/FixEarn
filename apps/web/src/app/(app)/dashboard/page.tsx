@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { usePrivy } from '@privy-io/react-auth';
 import { createApi } from '@/lib/api';
 import { formatUsdc } from '@/lib/money';
-import type { SpendableView, Bill } from '@fixearn/shared';
+import type { SpendableView, Bill } from '@yield2pay/shared';
 import Bills from './Bills';
 import { useIsMobile } from '@/lib/useIsMobile';
 
@@ -548,7 +548,7 @@ export default function DashboardPage() {
               color: '#F2F3F4',
             }}
           >
-            FixEarn
+            Yield2Pay
           </span>
         </a>
 
@@ -1462,7 +1462,7 @@ export default function DashboardPage() {
                       color: '#D4D6D9',
                     }}
                   >
-                    FIXEARN
+                    YIELD2PAY
                   </span>
                 </span>
                 <span

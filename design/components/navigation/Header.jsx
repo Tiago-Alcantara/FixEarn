@@ -9,7 +9,7 @@ export function Header({ nav = [], lang = 'en', onLang, ctaLabel = 'Get started'
       <div style={{ maxWidth: 'var(--fx-container)', margin: '0 auto', padding: '15px 24px', display: 'flex', alignItems: 'center', gap: 24 }}>
         <a href="#" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
           <span style={{ width: 11, height: 11, background: 'var(--fx-chrome)', transform: 'rotate(45deg)', borderRadius: 2, boxShadow: 'var(--fx-glow-silver)' }} />
-          <span style={{ fontFamily: 'var(--fx-font-display)', fontSize: 19, fontWeight: 700, letterSpacing: '-.01em', color: 'var(--fx-text)' }}>FixEarn</span>
+          <span style={{ fontFamily: 'var(--fx-font-display)', fontSize: 19, fontWeight: 700, letterSpacing: '-.01em', color: 'var(--fx-text)' }}>Yield2Pay</span>
         </a>
         <nav style={{ display: 'flex', gap: 28, margin: '0 auto' }}>
           {nav.map((n, i) => <a key={i} href="#" style={{ fontSize: 14.5, color: 'var(--fx-text-2)', textDecoration: 'none' }}>{n}</a>)}

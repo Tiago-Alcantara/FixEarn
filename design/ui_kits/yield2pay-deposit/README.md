@@ -1,4 +1,4 @@
-# FixEarn Deposit — UI kit
+# Yield2Pay Deposit — UI kit
 
 The capital-deposit / onboarding flow: choose an amount, pick which tools the returns
 should cover, and confirm. Composed from `Input`, `Select`, `SegmentedControl`, `Switch`,

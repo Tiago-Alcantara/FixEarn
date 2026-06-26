@@ -1,4 +1,4 @@
-FixEarn form controls — dark wells, silver focus, mono input text.
+Yield2Pay form controls — dark wells, silver focus, mono input text.
 
 ```jsx
 <Input label="Deposit amount" prefix="$" placeholder="10,000" type="number"

@@ -26,7 +26,7 @@ vi.mock('@privy-io/react-auth', () => ({
 }));
 
 import Bills from './Bills';
-import type { Bill } from '@fixearn/shared';
+import type { Bill } from '@yield2pay/shared';
 
 const EXISTING_BILLS: Bill[] = [
   { id: 'b1', vendor: 'Notion', monthlyCost: '1600000', type: 'software', status: 'active' },

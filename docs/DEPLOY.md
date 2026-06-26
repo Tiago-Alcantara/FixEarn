@@ -1,4 +1,4 @@
-# FixEarn — Deploy guide
+# Yield2Pay — Deploy guide
 
 Monorepo: `apps/web` (Next.js frontend) deploys to **Vercel**; `apps/api`
 (NestJS backend) + Postgres deploys to a container host (**Render** blueprint
@@ -17,12 +17,12 @@ included; the Dockerfile is portable to **Railway / Fly / any** host).
    - `NEXT_PUBLIC_PRIVY_APP_ID` — your real Privy app id (without it, only the
      public landing renders; login + authed screens need it).
    - `NEXT_PUBLIC_API_BASE_URL` — the deployed backend URL from step 2 below
-     (e.g. `https://fixearn-api.onrender.com`). Omit for a landing-only deploy.
+     (e.g. `https://yield2pay-api.onrender.com`). Omit for a landing-only deploy.
 5. In the **Privy dashboard**, add your Vercel domains (`https://<app>.vercel.app`
    and any preview/custom domains) to the allowed origins, or Privy refuses to
    initialize in production.
 
-`@fixearn/shared` resolves via `transpilePackages` + the tsconfig path alias;
+`@yield2pay/shared` resolves via `transpilePackages` + the tsconfig path alias;
 `packageManager` is pinned so Vercel uses the right pnpm.
 
 ---
@@ -30,12 +30,12 @@ included; the Dockerfile is portable to **Railway / Fly / any** host).
 ## 2. Backend → Render (`apps/api`) via the blueprint
 
 1. Render → New → **Blueprint**, point at this repo. `render.yaml` provisions a
-   free Postgres (`fixearn-db`) and a Docker web service (`fixearn-api`) with a
+   free Postgres (`yield2pay-db`) and a Docker web service (`yield2pay-api`) with a
    `/health` check. `DATABASE_URL` is wired from the database automatically.
 2. After the first deploy, set the secret env vars in the Render dashboard
    (marked `sync: false`): `PRIVY_APP_ID`, `PRIVY_APP_SECRET`,
    `DEFINDEX_API_KEY`, `VAULT_ADDRESS`, `USDC_ADDRESS`, and `CORS_ORIGIN`
-   (= your Vercel web origin, e.g. `https://fixearn.vercel.app`).
+   (= your Vercel web origin, e.g. `https://yield2pay.vercel.app`).
 3. Migrations run automatically on each deploy (`prisma migrate deploy` in the
    container start command). The app listens on Render's injected `PORT`.
 
@@ -44,7 +44,7 @@ included; the Dockerfile is portable to **Railway / Fly / any** host).
 The image is `apps/api/Dockerfile` with **build context = repo root**:
 
 ```bash
-docker build -f apps/api/Dockerfile -t fixearn-api .
+docker build -f apps/api/Dockerfile -t yield2pay-api .
 ```
 
 Provide a Postgres `DATABASE_URL` and the same env vars as above. Railway and

@@ -16,7 +16,7 @@ export function PrivyProviderWrapper({ children }: { children: React.ReactNode }
   if (!hasValidAppId) {
     if (typeof window !== 'undefined') {
       console.warn(
-        '[FixEarn] NEXT_PUBLIC_PRIVY_APP_ID is missing or invalid — running without Privy. ' +
+        '[Yield2Pay] NEXT_PUBLIC_PRIVY_APP_ID is missing or invalid — running without Privy. ' +
           'Set a real Privy app id in apps/web/.env.local to enable login and the authenticated screens.',
       );
     }
@@ -27,6 +27,7 @@ export function PrivyProviderWrapper({ children }: { children: React.ReactNode }
     <PrivyProvider
       appId={appId}
       config={{
+        loginMethods: ['google'],
         appearance: { theme: 'dark', accentColor: '#C0C2C5' },
         embeddedWallets: {
           ethereum: { createOnLogin: 'off' },

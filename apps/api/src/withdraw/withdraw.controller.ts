@@ -3,7 +3,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
 import { WithdrawService } from './withdraw.service';
 import { parseBaseUnits } from '../common/parse-money';
-import type { SubmitTxDto } from '@fixearn/shared';
+import type { SubmitTxDto } from '@yield2pay/shared';
 
 @Controller('withdraw')
 @UseGuards(AuthGuard)

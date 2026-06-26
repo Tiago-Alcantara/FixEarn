@@ -1,32 +1,39 @@
 /**
- * Tests for the login/page.tsx component.
+ * Tests for the login/page.tsx component (Google-only flow).
  *
  * Behaviour under test:
- *   1. Mode toggle: 'login' <-> 'signup' (segmented control)
- *   2. Password show/hide eye icon toggle
- *   3. Privy login() fires when the submit button is clicked in login mode
- *   4. Language toggle (EN / PT) changes visible text
+ *   1. Renders a single "Continue with Google" button
+ *   2. Clicking it triggers Privy's headless OAuth (initOAuth provider google)
+ *   3. Language toggle (EN / PT) changes visible text
+ *   4. Redirects to /dashboard when already authenticated
  *
- * Privy is fully mocked — no real Privy app id required.
+ * Privy + next/navigation are fully mocked — no real Privy app id required.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 
-// ── Privy mock ─────────────────────────────────────────────────────────────────
+// ── Mocks ───────────────────────────────────────────────────────────────────────
 
-const mockLogin = vi.fn();
+const mockInitOAuth = vi.fn().mockResolvedValue(undefined);
+const mockReplace = vi.fn();
+
+const privyState = { ready: true, authenticated: false };
 
 vi.mock('@privy-io/react-auth', () => ({
   usePrivy: vi.fn(() => ({
-    login: mockLogin,
-    ready: true,
-    authenticated: false,
+    ready: privyState.ready,
+    authenticated: privyState.authenticated,
     user: null,
     getAccessToken: vi.fn().mockResolvedValue(null),
   })),
+  useLoginWithOAuth: vi.fn(() => ({ initOAuth: mockInitOAuth, loading: false })),
+}));
+
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({ replace: mockReplace, push: vi.fn() })),
 }));
 
 // ── Component under test ───────────────────────────────────────────────────────
@@ -38,78 +45,35 @@ import LoginPage from './page';
 describe('LoginPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    privyState.ready = true;
+    privyState.authenticated = false;
   });
 
-  it('renders in login mode by default', () => {
+  it('renders the Google sign-in button', () => {
     render(<LoginPage />);
-    // The mode toggle should show both Log in and Sign up
-    // Use getAllBy since there may be multiple buttons with overlapping text
-    const logInBtns = screen.getAllByRole('button', { name: /^log in$/i });
-    expect(logInBtns.length).toBeGreaterThan(0);
-    const signUpBtns = screen.getAllByRole('button', { name: /^sign up$/i });
-    expect(signUpBtns.length).toBeGreaterThan(0);
-    // email and password inputs visible (query by id attribute directly)
-    expect(document.getElementById('fx-email')).toBeTruthy();
-    expect(document.getElementById('fx-password')).toBeTruthy();
+    expect(screen.getByRole('button', { name: /continue with google/i })).toBeTruthy();
+    // No legacy email/password form
+    expect(document.getElementById('fx-email')).toBeNull();
+    expect(document.getElementById('fx-password')).toBeNull();
   });
 
-  it('toggles from login to signup mode', async () => {
+  it('starts Google OAuth when the button is clicked', async () => {
     render(<LoginPage />);
-    // Click the first "Sign up" button (the segmented toggle one at top of form)
-    const signupBtns = screen.getAllByRole('button', { name: /^sign up$/i });
-    await userEvent.click(signupBtns[0]);
-    // In signup mode, company name field should appear
-    expect(document.getElementById('fx-company')).toBeTruthy();
-  });
-
-  it('toggles password visibility with eye button', async () => {
-    render(<LoginPage />);
-    const passwordInput = document.getElementById('fx-password') as HTMLInputElement;
-    expect(passwordInput).not.toBeNull();
-    expect(passwordInput.type).toBe('password');
-
-    // Click the eye/show button — aria-label "Show password"
-    const eyeBtn = screen.getByRole('button', { name: /show password/i });
-    await userEvent.click(eyeBtn);
-    expect(passwordInput.type).toBe('text');
-
-    // Click again — should hide
-    const hideBtn = screen.getByRole('button', { name: /hide password/i });
-    await userEvent.click(hideBtn);
-    expect(passwordInput.type).toBe('password');
-  });
-
-  it('calls Privy login() when form is submitted in login mode', async () => {
-    render(<LoginPage />);
-
-    // Fill in valid email and password using the input elements directly
-    const emailInput = document.getElementById('fx-email') as HTMLInputElement;
-    const passwordInput = document.getElementById('fx-password') as HTMLInputElement;
-
-    await userEvent.type(emailInput, 'test@company.com');
-    await userEvent.type(passwordInput, 'password123');
-
-    // Click the main CTA submit button ("Log in") — the submit button inside the form
-    const submitBtns = screen.getAllByRole('button', { name: /^log in$/i });
-    // The submit button is of type="submit"; others are type="button"
-    const submitBtn = submitBtns.find((b) => b.getAttribute('type') === 'submit');
-    expect(submitBtn).toBeTruthy();
-    await userEvent.click(submitBtn!);
-
-    expect(mockLogin).toHaveBeenCalledOnce();
+    await userEvent.click(screen.getByRole('button', { name: /continue with google/i }));
+    expect(mockInitOAuth).toHaveBeenCalledWith({ provider: 'google' });
   });
 
   it('toggles language from EN to PT', async () => {
     render(<LoginPage />);
+    expect(screen.getByText(/welcome to yield2pay/i)).toBeTruthy();
 
-    // EN is default — verify an EN-only string
-    expect(screen.getByText(/welcome back/i)).toBeTruthy();
+    await userEvent.click(screen.getByRole('button', { name: 'PT' }));
+    expect(screen.getByText(/bem-vindo à yield2pay/i)).toBeTruthy();
+  });
 
-    // Switch to PT
-    const ptBtn = screen.getByRole('button', { name: 'PT' });
-    await userEvent.click(ptBtn);
-
-    // PT title
-    expect(screen.getByText(/bem-vindo de volta/i)).toBeTruthy();
+  it('redirects to /dashboard when already authenticated', () => {
+    privyState.authenticated = true;
+    render(<LoginPage />);
+    expect(mockReplace).toHaveBeenCalledWith('/dashboard');
   });
 });

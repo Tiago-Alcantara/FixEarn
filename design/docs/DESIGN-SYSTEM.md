@@ -1,6 +1,6 @@
-# FixEarn — Design System
+# Yield2Pay — Design System
 
-> **O que é a FixEarn.** Fintech B2B: a empresa faz **um único aporte de capital**, a FixEarn
+> **O que é a Yield2Pay.** Fintech B2B: a empresa faz **um único aporte de capital**, a Yield2Pay
 > coloca esse capital para render, e **os rendimentos pagam automaticamente os softwares** da
 > empresa (ferramentas de IA e assinaturas SaaS). A empresa nunca gasta o próprio caixa nas
 > ferramentas — só o rendimento trabalha — e o capital continua sendo da empresa, resgatável a
@@ -172,8 +172,8 @@ numa cor prata.
 
 - **Sem emoji. Sem ícones preenchidos/duotone** — só linha.
 - Unicode é usado com parcimônia para marcas mínimas: `▲` (retorno positivo), `◆` (quadrado prata
-  girado = marca FixEarn), `·` (separador).
-- **Logo:** wordmark "FixEarn" (Hanken Grotesk 700, `-0.01em`) precedido de um diamante prata
+  girado = marca Yield2Pay), `·` (separador).
+- **Logo:** wordmark "Yield2Pay" (Hanken Grotesk 700, `-0.01em`) precedido de um diamante prata
   (quadrado 11px girado, radius 2, com glow suave). Arquivo: `assets/logo-mark.svg`.
 
 ---
@@ -184,7 +184,7 @@ numa cor prata.
   promete sempre as mesmas três coisas: *você não gasta nada*, *seu dinheiro continua seu*,
   *resgate quando quiser*. Sem hype, sem exclamação, sem jargão além de "capital", "rendimento",
   "assinaturas".
-- **Pessoa.** Segunda pessoa — "**você / seu**". A FixEarn é "nós", usado com parcimônia.
+- **Pessoa.** Segunda pessoa — "**você / seu**". A Yield2Pay é "nós", usado com parcimônia.
 - **Forma da frase.** Curta. Muitas vezes dois tempos unidos por ponto ou travessão:
   *"Seu capital paga seus softwares. Você não gasta nada."*
 - **Números.** Monoespaçados, concretos, plausíveis: `R$ 92.000,00`, `+8,4% / ano`, `R$ 1.074`.
@@ -199,12 +199,12 @@ numa cor prata.
 ### Telas (`.dc.html`, na raiz — abrem direto no navegador)
 | Arquivo | Papel |
 |---|---|
-| `FixEarn.dc.html` | Landing de marketing (toggle EN/PT) |
-| `FixEarn Auth.dc.html` | Login / cadastro (lê `?mode=signup`) |
-| `FixEarn Dashboard Cliente.dc.html` | Visão geral do cliente logado |
-| `FixEarn Directions.dc.html` | Explorações de direção de arte do hero |
-| `FixEarn Hero Variations.dc.html` | Variações de hero |
-| `FixEarn v1 (prata).dc.html` | Versão 1 (prata) |
+| `Yield2Pay.dc.html` | Landing de marketing (toggle EN/PT) |
+| `Yield2Pay Auth.dc.html` | Login / cadastro (lê `?mode=signup`) |
+| `Yield2Pay Dashboard Cliente.dc.html` | Visão geral do cliente logado |
+| `Yield2Pay Directions.dc.html` | Explorações de direção de arte do hero |
+| `Yield2Pay Hero Variations.dc.html` | Variações de hero |
+| `Yield2Pay v1 (prata).dc.html` | Versão 1 (prata) |
 
 **Fluxo interligado:** Landing → (Entrar / Começar) → Auth → (envio do form / Google) → Dashboard.
 O logo volta à landing; o botão "Sair" volta ao Auth.

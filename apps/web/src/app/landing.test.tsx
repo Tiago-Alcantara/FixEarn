@@ -3,7 +3,7 @@
  *
  * Asserts:
  *   1. Eyebrow text "BANKING, REINVENTED FOR SOFTWARE" is rendered
- *   2. Nav labels: How it works / Services / Why FixEarn
+ *   2. Nav labels: How it works / Services / Why Yield2Pay
  *   3. Hero CTA ("Get started") is present
  *   4. Clicking the CTA calls router.push('/login')
  *
@@ -84,11 +84,11 @@ describe('LandingPage', () => {
     expect(eyebrow).toBeTruthy();
   });
 
-  it('renders nav labels: How it works, Services, Why FixEarn', () => {
+  it('renders nav labels: How it works, Services, Why Yield2Pay', () => {
     render(<LandingPage />);
     expect(screen.getAllByText(/how it works/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/services/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/why fixearn/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/why yield2pay/i).length).toBeGreaterThan(0);
   });
 
   it('renders the hero CTA button "Get started"', () => {

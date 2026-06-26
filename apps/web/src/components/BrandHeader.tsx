@@ -3,7 +3,7 @@ import { BackButton } from './BackButton';
 
 /**
  * Cabeçalho de marca compartilhado pelas telas de depósito e saque:
- * botão de voltar + losango chrome + wordmark "FixEarn", centralizado.
+ * botão de voltar + losango chrome + wordmark "Yield2Pay", centralizado.
  * O wrapper é `position: relative` para o BackButton absoluto ancorar à esquerda.
  */
 export function BrandHeader() {
@@ -38,7 +38,7 @@ export function BrandHeader() {
           color: 'var(--fx-text)',
         }}
       >
-        FixEarn
+        Yield2Pay
       </span>
     </div>
   );

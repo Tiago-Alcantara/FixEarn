@@ -1,5 +1,5 @@
 {
-  "name": "@fixearn/web",
+  "name": "@yield2pay/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@fixearn/shared": "workspace:*",
+    "@yield2pay/shared": "workspace:*",
     "@privy-io/react-auth": "^3.32.2",
     "next": "16.2.9",
     "react": "19.2.4",

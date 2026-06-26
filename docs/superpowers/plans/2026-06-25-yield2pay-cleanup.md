@@ -1,8 +1,8 @@
-# FixEarn Cleanup Implementation Plan
+# Yield2Pay Cleanup Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Padronizar o monorepo FixEarn segundo o preference doc, remover redundância e código morto, e melhorar velocidade runtime + build — sem mudar comportamento de produto.
+**Goal:** Padronizar o monorepo Yield2Pay segundo o preference doc, remover redundância e código morto, e melhorar velocidade runtime + build — sem mudar comportamento de produto.
 
 **Architecture:** Três fases sequenciais (padronizar → redundância → velocidade). Refactors mecânicos usam a suíte de testes existente como rede de regressão (devem ficar verdes); peças novas (utils, componentes) entram via TDD. Withdraw-fix está FORA desta rodada.
 
@@ -14,7 +14,7 @@
 - **Preference (`docs/Preference - Coding Style.md`)**: código explícito e linear > DRY agressivo. Nomes descritivos. Sem `any`. **Proibido over-abstraction** (sem base-controller/factory). Não criar helper que só chama outra função sem ganho real.
 - **Next.js é custom**: ler `node_modules/next/dist/docs/` ANTES de qualquer mudança de config/padrão Next (ver `apps/web/AGENTS.md`). Não aplicar config de memória.
 - **Sem novas deps** além das estritamente necessárias à migração vitest da API (`vitest`, `unplugin-swc`, `@swc/core`, `@vitest/...` se preciso) e remoção de `ts-jest`/`jest`.
-- Comandos: API tests `pnpm --filter @fixearn/api test`; API lint `pnpm --filter @fixearn/api lint`; web tests `pnpm --filter @fixearn/web test`; web lint `pnpm --filter @fixearn/web lint`.
+- Comandos: API tests `pnpm --filter @yield2pay/api test`; API lint `pnpm --filter @yield2pay/api lint`; web tests `pnpm --filter @yield2pay/web test`; web lint `pnpm --filter @yield2pay/web lint`.
 - **Sem mudança de comportamento**: todo refactor mantém a suíte existente verde.
 
 ## File Structure
@@ -81,7 +81,7 @@ BigInt.prototype.toJSON = function () {
 
 - [ ] **Step 5: Build + testes**
 
-Run: `pnpm --filter @fixearn/api build && pnpm --filter @fixearn/api test`
+Run: `pnpm --filter @yield2pay/api build && pnpm --filter @yield2pay/api test`
 Expected: build sem erro de tipo; testes PASS.
 
 ### Task 2: Nomes explícitos
@@ -98,7 +98,7 @@ Expected: build sem erro de tipo; testes PASS.
 
 - [ ] **Step 2: Testes**
 
-Run: `pnpm --filter @fixearn/api test`
+Run: `pnpm --filter @yield2pay/api test`
 Expected: PASS (renomeações puras, sem mudança de lógica).
 
 ### Task 3: Naming uniforme de service injetado nos controllers
@@ -113,7 +113,7 @@ Expected: PASS (renomeações puras, sem mudança de lógica).
 
 - [ ] **Step 2: Testes**
 
-Run: `pnpm --filter @fixearn/api test`
+Run: `pnpm --filter @yield2pay/api test`
 Expected: PASS.
 
 ### Task 4: Elevar regras de lint a `error` (guard-rail)
@@ -134,7 +134,7 @@ rules: {
 
 - [ ] **Step 2: Rodar lint**
 
-Run: `pnpm --filter @fixearn/api lint`
+Run: `pnpm --filter @yield2pay/api lint`
 Expected: 0 erros. Se aparecer `no-unsafe-argument` em algum ponto não previsto, corrigir tipando (não suprimir com `any`/comentário). Se houver caso legítimo e isolado, usar `eslint-disable-next-line` com comentário explicando o porquê.
 
 - [ ] **Step 3 (commit da Fase 1 — só quando o usuário pedir)**
@@ -177,7 +177,7 @@ describe('getErrorMessage', () => {
 
 - [ ] **Step 2: Rodar — falha**
 
-Run: `pnpm --filter @fixearn/web test -- errors`
+Run: `pnpm --filter @yield2pay/web test -- errors`
 Expected: FAIL (módulo não existe).
 
 - [ ] **Step 3: Implementar**
@@ -189,11 +189,11 @@ export function getErrorMessage(error: unknown): string {
 }
 ```
 
-- [ ] **Step 4: Rodar — passa.** `pnpm --filter @fixearn/web test -- errors` → PASS.
+- [ ] **Step 4: Rodar — passa.** `pnpm --filter @yield2pay/web test -- errors` → PASS.
 
 - [ ] **Step 5: Substituir call sites.** Trocar cada `err instanceof Error ? err.message : ...` por `getErrorMessage(err)`. Onde havia fallback custom (ex.: Bills `'Failed to...'`), preservar a mensagem: `getErrorMessage(err) || 'Failed to delete bill'` só se o original tinha fallback fixo; senão usar direto. **Ler cada call site antes** para não perder mensagem de fallback específica.
 
-- [ ] **Step 6: Testes web.** `pnpm --filter @fixearn/web test` → PASS.
+- [ ] **Step 6: Testes web.** `pnpm --filter @yield2pay/web test` → PASS.
 
 ### Task 6: Util `validateAmount`
 
@@ -226,7 +226,7 @@ describe('validateAmount', () => {
 });
 ```
 
-- [ ] **Step 3: Rodar — falha.** `pnpm --filter @fixearn/web test -- validateAmount` → FAIL.
+- [ ] **Step 3: Rodar — falha.** `pnpm --filter @yield2pay/web test -- validateAmount` → FAIL.
 
 - [ ] **Step 4: Implementar** copiando a lógica existente (a mais completa das 3), retornando string de erro ou `null`. Manter as mensagens exatas usadas hoje na UI.
 
@@ -234,7 +234,7 @@ describe('validateAmount', () => {
 
 - [ ] **Step 6: Substituir as 3 cópias** pela chamada a `validateAmount`. Se a mensagem da UI variava por tela, parametrizar via segundo arg opcional `label` só se necessário (não criar abstração além do preciso).
 
-- [ ] **Step 7: Testes web.** `pnpm --filter @fixearn/web test` → PASS (inclui `deposit.test.tsx`, `withdraw.test.tsx`, `bills.test.tsx`).
+- [ ] **Step 7: Testes web.** `pnpm --filter @yield2pay/web test` → PASS (inclui `deposit.test.tsx`, `withdraw.test.tsx`, `bills.test.tsx`).
 
 ### Task 7: Componente `<BrandHeader/>`
 
@@ -243,7 +243,7 @@ describe('validateAmount', () => {
 - Modify: `deposit/page.tsx` (2 renders), `withdraw/page.tsx` (2 renders)
 
 **Interfaces:**
-- Produces: `<BrandHeader />` (BackButton + chrome square + texto "FixEarn"). Props: nenhuma, ou `showBack?: boolean` se algum dos 4 usos não tinha BackButton — **confirmar lendo os 4 blocos antes**.
+- Produces: `<BrandHeader />` (BackButton + chrome square + texto "Yield2Pay"). Props: nenhuma, ou `showBack?: boolean` se algum dos 4 usos não tinha BackButton — **confirmar lendo os 4 blocos antes**.
 
 - [ ] **Step 1: Ler os 4 blocos** (deposit:236-260, deposit:331-355, withdraw:72-97, withdraw:170-195) e confirmar se são 100% idênticos. Listar qualquer diferença → vira prop.
 
@@ -258,7 +258,7 @@ import { BrandHeader } from './BrandHeader';
 describe('BrandHeader', () => {
   it('renders the brand name', () => {
     render(<BrandHeader />);
-    expect(screen.getByText('FixEarn')).toBeInTheDocument();
+    expect(screen.getByText('Yield2Pay')).toBeInTheDocument();
   });
 });
 ```
@@ -271,7 +271,7 @@ describe('BrandHeader', () => {
 
 - [ ] **Step 6: Substituir os 4 renders** por `<BrandHeader .../>`. Remover imports de BackButton que ficaram órfãos nas páginas.
 
-- [ ] **Step 7: Testes web.** `pnpm --filter @fixearn/web test` → PASS.
+- [ ] **Step 7: Testes web.** `pnpm --filter @yield2pay/web test` → PASS.
 
 ### Task 8: Componentes `<TxResultCard/>` e `<TxErrorBox/>`
 
@@ -288,7 +288,7 @@ describe('BrandHeader', () => {
 
 - [ ] **Step 6: Substituir** nos dois pages.
 
-- [ ] **Step 7: Testes web.** `pnpm --filter @fixearn/web test` → PASS.
+- [ ] **Step 7: Testes web.** `pnpm --filter @yield2pay/web test` → PASS.
 
 ### Task 9: Colapsar twins em `useStellarTx`
 
@@ -299,7 +299,7 @@ describe('BrandHeader', () => {
 
 - [ ] **Step 2: Decisão de legibilidade.** Se uma helper interna parametrizada por `{ build, submit }` ficar MAIS legível, criar. Se introduzir indireção/magia (preference: evitar), **manter as duas funções explícitas** e parar aqui — registrar a decisão no PR. Não forçar DRY.
 
-- [ ] **Step 3 (se colapsou): garantir testes existentes cobrem ambos caminhos.** Rodar `pnpm --filter @fixearn/web test -- useStellarTx` → PASS. Adicionar caso de teste se algum caminho ficou descoberto.
+- [ ] **Step 3 (se colapsou): garantir testes existentes cobrem ambos caminhos.** Rodar `pnpm --filter @yield2pay/web test -- useStellarTx` → PASS. Adicionar caso de teste se algum caminho ficou descoberto.
 
 ### Task 10: Remover código morto
 
@@ -310,7 +310,7 @@ describe('BrandHeader', () => {
 
 - [ ] **Step 2: Deletar** apenas os comprovadamente órfãos, junto com seus testes.
 
-- [ ] **Step 3: Build + testes web.** `pnpm --filter @fixearn/web build && pnpm --filter @fixearn/web test` → PASS, sem import quebrado.
+- [ ] **Step 3: Build + testes web.** `pnpm --filter @yield2pay/web build && pnpm --filter @yield2pay/web test` → PASS, sem import quebrado.
 
 - [ ] **Step 4 (commit da Fase 2 — só quando o usuário pedir)**
 
@@ -345,7 +345,7 @@ async computeSpendable(companyId: string) {
 
 - [ ] **Step 2: `deposit.service.build` / `withdraw.service.build`** — `wallet.getAddress` e o build do vault: o vault depende do address, então não paralelizam diretamente. **Reavaliar**: o ganho real aqui é só se houver outra chamada independente. Se não houver, **não mudar** (evitar mudança sem ganho). Documentar no PR.
 
-- [ ] **Step 3: Testes.** `pnpm --filter @fixearn/api test` → PASS. Ajustar mocks que assumiam ordem sequencial se necessário.
+- [ ] **Step 3: Testes.** `pnpm --filter @yield2pay/api test` → PASS. Ajustar mocks que assumiam ordem sequencial se necessário.
 
 ### Task 12: Reusar `rpc.Server` no `StellarService`
 
@@ -354,7 +354,7 @@ async computeSpendable(companyId: string) {
 
 - [ ] **Step 1: Ler** o constructor e `attachAndSubmit` (linha ~27). Mover `new rpc.Server(config.sorobanRpcUrl)` para uma propriedade criada no constructor (`this.server`), reusada em `attachAndSubmit`.
 
-- [ ] **Step 2: Testes.** `pnpm --filter @fixearn/api test` → PASS. Ajustar o spec se ele mockava `new rpc.Server` por chamada.
+- [ ] **Step 2: Testes.** `pnpm --filter @yield2pay/api test` → PASS. Ajustar o spec se ele mockava `new rpc.Server` por chamada.
 
 ### Task 13: `prisma.upsert` em `CompanyService.findOrCreate`
 
@@ -376,7 +376,7 @@ async findOrCreate(privyUserId: string): Promise<{ id: string }> {
 }
 ```
 
-- [ ] **Step 3: Testes.** `pnpm --filter @fixearn/api test` → PASS. Ajustar o spec (não há mais branch P2002 para mockar).
+- [ ] **Step 3: Testes.** `pnpm --filter @yield2pay/api test` → PASS. Ajustar o spec (não há mais branch P2002 para mockar).
 
 ### Task 14: Batch no `snapshot.job`
 
@@ -392,7 +392,7 @@ const companies = await this.prisma.company.findMany({ select: { id: true } });
 await Promise.all(companies.map((company) => this.ledger.snapshot(company.id)));
 ```
 
-- [ ] **Step 3: Testes.** `pnpm --filter @fixearn/api test` → PASS. Ajustar spec que assumia ordem serial.
+- [ ] **Step 3: Testes.** `pnpm --filter @yield2pay/api test` → PASS. Ajustar spec que assumia ordem serial.
 
 ### Task 15: Índice `Deposit.companyId` (+ migration)
 
@@ -403,10 +403,10 @@ await Promise.all(companies.map((company) => this.ledger.snapshot(company.id)));
 
 - [ ] **Step 2: Gerar migration**
 
-Run: `pnpm --filter @fixearn/api exec prisma migrate dev --name deposit_company_id_index`
+Run: `pnpm --filter @yield2pay/api exec prisma migrate dev --name deposit_company_id_index`
 Expected: nova migration criada e aplicada no DB local. (Requer `pnpm db:up` rodando.)
 
-- [ ] **Step 3: Regenerar client + testes.** `pnpm db:generate && pnpm --filter @fixearn/api test` → PASS.
+- [ ] **Step 3: Regenerar client + testes.** `pnpm db:generate && pnpm --filter @yield2pay/api test` → PASS.
 
 ### Task 16: `useMemo` em `Bills.visibleBills`
 
@@ -415,7 +415,7 @@ Expected: nova migration criada e aplicada no DB local. (Requer `pnpm db:up` rod
 
 - [ ] **Step 1: Envolver** o cálculo em `useMemo(() => tab === 'all' ? bills : bills.filter((b) => b.type === tab), [bills, tab])`.
 
-- [ ] **Step 2: Testes.** `pnpm --filter @fixearn/web test -- bills` → PASS.
+- [ ] **Step 2: Testes.** `pnpm --filter @yield2pay/web test -- bills` → PASS.
 
 ### Task 17: Escopar `PrivyProvider` ao grupo `(app)`
 
@@ -428,7 +428,7 @@ Expected: nova migration criada e aplicada no DB local. (Requer `pnpm db:up` rod
 
 - [ ] **Step 3: Mover** `Providers`/`PrivyProviderWrapper` para `(app)/layout.tsx` (que já tem LangProvider+AuthGate), deixando `/` e `/login` sem Privy. Verificar que `/login` não depende de Privy fora do grupo `(app)` — se depender, manter Privy também no login ou ajustar. **Não quebrar auth.**
 
-- [ ] **Step 4: Validar manualmente** (a skill `/run` ou `pnpm dev:web`): landing e login carregam sem Privy; dashboard/deposit/withdraw funcionam. Testes: `pnpm --filter @fixearn/web test` → PASS.
+- [ ] **Step 4: Validar manualmente** (a skill `/run` ou `pnpm dev:web`): landing e login carregam sem Privy; dashboard/deposit/withdraw funcionam. Testes: `pnpm --filter @yield2pay/web test` → PASS.
 
 > Risco arquitetural — confirmar com o usuário antes de mergear se o fluxo de login mudar.
 
@@ -441,13 +441,13 @@ Expected: nova migration criada e aplicada no DB local. (Requer `pnpm db:up` rod
 - Add deps: `vitest`, `unplugin-swc`, `@swc/core`
 
 **Interfaces:**
-- Produces: `pnpm --filter @fixearn/api test` rodando em vitest.
+- Produces: `pnpm --filter @yield2pay/api test` rodando em vitest.
 
 - [ ] **Step 1: Instalar deps**
 
 ```bash
-pnpm --filter @fixearn/api add -D vitest unplugin-swc @swc/core
-pnpm --filter @fixearn/api remove jest ts-jest @types/jest
+pnpm --filter @yield2pay/api add -D vitest unplugin-swc @swc/core
+pnpm --filter @yield2pay/api remove jest ts-jest @types/jest
 ```
 
 - [ ] **Step 2: Criar `vitest.config.ts`** (swc resolve `emitDecoratorMetadata` do Nest):
@@ -465,7 +465,7 @@ export default defineConfig({
     include: ['src/**/*.spec.ts'],
     setupFiles: ['./test/setup-env.ts'],
     alias: {
-      '@fixearn/shared': new URL('../../packages/shared/src/index.ts', import.meta.url).pathname,
+      '@yield2pay/shared': new URL('../../packages/shared/src/index.ts', import.meta.url).pathname,
     },
   },
   plugins: [swc.vite()],
@@ -478,7 +478,7 @@ export default defineConfig({
 
 - [ ] **Step 5: Rodar**
 
-Run: `pnpm --filter @fixearn/api test`
+Run: `pnpm --filter @yield2pay/api test`
 Expected: toda a suíte (auth.guard, bills, company, deposit, ledger ×2, prisma, snapshot, stellar, vault, wallet, withdraw, parse-money, env) PASS em vitest.
 
 ### Task 19: Next config — `optimizePackageImports` (opcional, após docs)
@@ -490,7 +490,7 @@ Expected: toda a suíte (auth.guard, bills, company, deposit, ledger ×2, prisma
 
 - [ ] **Step 2: Adicionar** (se suportado) os pacotes pesados confirmados como usados no client (`@privy-io/react-auth`, e Stellar SDK só se realmente importado no client — checar com `grep -rn "stellar-sdk\|@stellar" apps/web/src`).
 
-- [ ] **Step 3: Build.** `pnpm --filter @fixearn/web build` → sucesso. Comparar tamanho de bundle antes/depois se possível.
+- [ ] **Step 3: Build.** `pnpm --filter @yield2pay/web build` → sucesso. Comparar tamanho de bundle antes/depois se possível.
 
 - [ ] **Step 4 (commit da Fase 3 — só quando o usuário pedir)**
 

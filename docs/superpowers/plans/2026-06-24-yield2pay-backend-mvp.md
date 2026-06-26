@@ -1,4 +1,4 @@
-# FixEarn Backend MVP — Implementation Plan
+# Yield2Pay Backend MVP — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -106,11 +106,11 @@ packages:
 Root `package.json`:
 ```json
 {
-  "name": "fixearn",
+  "name": "yield2pay",
   "private": true,
   "scripts": {
-    "api:dev": "pnpm --filter @fixearn/api start:dev",
-    "api:test": "pnpm --filter @fixearn/api test"
+    "api:dev": "pnpm --filter @yield2pay/api start:dev",
+    "api:test": "pnpm --filter @yield2pay/api test"
   }
 }
 ```
@@ -122,10 +122,10 @@ Run:
 mkdir -p apps/api packages/shared
 cd apps/api && pnpm dlx @nestjs/cli new . --skip-git --package-manager pnpm --strict
 ```
-Then set `"name": "@fixearn/api"` in `apps/api/package.json` and add deps:
+Then set `"name": "@yield2pay/api"` in `apps/api/package.json` and add deps:
 ```bash
-pnpm --filter @fixearn/api add @nestjs/config zod
-pnpm --filter @fixearn/api add -D supertest @types/supertest
+pnpm --filter @yield2pay/api add @nestjs/config zod
+pnpm --filter @yield2pay/api add -D supertest @types/supertest
 ```
 
 - [ ] **Step 3: Write the failing health e2e test**
@@ -156,7 +156,7 @@ describe('Health', () => {
 
 - [ ] **Step 4: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test:e2e -- health`
+Run: `pnpm --filter @yield2pay/api test:e2e -- health`
 Expected: FAIL — `/health` 404.
 
 - [ ] **Step 5: Implement health controller + register in AppModule**
@@ -177,7 +177,7 @@ Add `HealthController` to `app.module.ts` `controllers: [HealthController]`.
 
 - [ ] **Step 6: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test:e2e -- health`
+Run: `pnpm --filter @yield2pay/api test:e2e -- health`
 Expected: PASS.
 
 - [ ] **Step 7: Commit**
@@ -231,7 +231,7 @@ it('rejects missing required keys', () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- env`
+Run: `pnpm --filter @yield2pay/api test -- env`
 Expected: FAIL — `loadEnv` not defined.
 
 - [ ] **Step 3: Implement `env.ts`**
@@ -273,7 +273,7 @@ export function loadEnv(raw: Record<string, string | undefined>): Env {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- env`
+Run: `pnpm --filter @yield2pay/api test -- env`
 Expected: PASS.
 
 - [ ] **Step 5: Wire `AppConfig` provider + `.env.example`**
@@ -317,7 +317,7 @@ git commit -m "feat: typed validated env config"
 
 Run:
 ```bash
-pnpm --filter @fixearn/api add @prisma/client && pnpm --filter @fixearn/api add -D prisma
+pnpm --filter @yield2pay/api add @prisma/client && pnpm --filter @yield2pay/api add -D prisma
 ```
 `apps/api/prisma/schema.prisma`:
 ```prisma
@@ -378,7 +378,7 @@ model YieldSnapshot {
 
 - [ ] **Step 2: Run the migration**
 
-Run: `pnpm --filter @fixearn/api exec prisma migrate dev --name init`
+Run: `pnpm --filter @yield2pay/api exec prisma migrate dev --name init`
 Expected: migration created, client generated.
 
 - [ ] **Step 3: Write failing PrismaService connectivity test**
@@ -399,7 +399,7 @@ it('connects and round-trips a company', async () => {
 
 - [ ] **Step 4: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- prisma.service`
+Run: `pnpm --filter @yield2pay/api test -- prisma.service`
 Expected: FAIL — `PrismaService` not defined.
 
 - [ ] **Step 5: Implement PrismaService + module**
@@ -419,7 +419,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
 
 - [ ] **Step 6: Run it, verify it passes** (requires a running Postgres; `DATABASE_URL` set)
 
-Run: `pnpm --filter @fixearn/api test -- prisma.service`
+Run: `pnpm --filter @yield2pay/api test -- prisma.service`
 Expected: PASS.
 
 - [ ] **Step 7: Commit**
@@ -447,7 +447,7 @@ git commit -m "feat: prisma schema + service (company, wallet, deposit, bill, sn
 
 - [ ] **Step 1: Add dep + write failing CompanyService test**
 
-Run: `pnpm --filter @fixearn/api add @privy-io/server-auth`
+Run: `pnpm --filter @yield2pay/api add @privy-io/server-auth`
 `apps/api/src/company/company.service.spec.ts`:
 ```typescript
 import { CompanyService } from './company.service';
@@ -472,7 +472,7 @@ it('find-or-creates by privyUserId', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- company.service`
+Run: `pnpm --filter @yield2pay/api test -- company.service`
 Expected: FAIL — `CompanyService` not defined.
 
 - [ ] **Step 3: Implement CompanyService**
@@ -497,7 +497,7 @@ export class CompanyService {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- company.service`
+Run: `pnpm --filter @yield2pay/api test -- company.service`
 Expected: PASS.
 
 - [ ] **Step 5: Write failing AuthGuard test**
@@ -532,7 +532,7 @@ it('verifies token and attaches companyId', async () => {
 
 - [ ] **Step 6: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- auth.guard`
+Run: `pnpm --filter @yield2pay/api test -- auth.guard`
 Expected: FAIL — `AuthGuard` not defined.
 
 - [ ] **Step 7: Implement PrivyService + AuthGuard**
@@ -583,7 +583,7 @@ Wire `AuthModule` (provides `PrivyService`, `AuthGuard`, imports `CompanyModule`
 
 - [ ] **Step 8: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- auth.guard company.service`
+Run: `pnpm --filter @yield2pay/api test -- auth.guard company.service`
 Expected: PASS.
 
 > **Verification note:** `verifyAuthToken`'s return shape (`.userId`) must be confirmed against the installed `@privy-io/server-auth` version. If the field differs (e.g. `.user_id`), adjust `PrivyService.verify` only. The guard contract is unchanged.
@@ -648,7 +648,7 @@ it('throws when address missing', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- wallet.service`
+Run: `pnpm --filter @yield2pay/api test -- wallet.service`
 Expected: FAIL — `WalletService` not defined.
 
 - [ ] **Step 3: Implement WalletService**
@@ -680,7 +680,7 @@ export class WalletService {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- wallet.service`
+Run: `pnpm --filter @yield2pay/api test -- wallet.service`
 Expected: PASS.
 
 - [ ] **Step 5: Implement controller + module**
@@ -690,7 +690,7 @@ Expected: PASS.
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { WalletService } from './wallet.service';
-import { RegisterWalletDto } from '@fixearn/shared';
+import { RegisterWalletDto } from '@yield2pay/shared';
 
 @Controller('wallet')
 @UseGuards(AuthGuard)
@@ -702,7 +702,7 @@ export class WalletController {
   }
 }
 ```
-Wire `WalletModule`. Add `@fixearn/shared` path mapping in `apps/api/tsconfig.json`.
+Wire `WalletModule`. Add `@yield2pay/shared` path mapping in `apps/api/tsconfig.json`.
 
 - [ ] **Step 6: Commit**
 
@@ -730,7 +730,7 @@ git commit -m "feat: wallet registration endpoint + shared DTOs"
 
 - [ ] **Step 1: Add dep + write failing unit test (SDK mocked)**
 
-Run: `pnpm --filter @fixearn/api add @defindex/sdk`
+Run: `pnpm --filter @yield2pay/api add @defindex/sdk`
 `apps/api/src/vault/vault.service.spec.ts`:
 ```typescript
 import { VaultService } from './vault.service';
@@ -781,7 +781,7 @@ it('returns APY percent string', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- vault.service`
+Run: `pnpm --filter @yield2pay/api test -- vault.service`
 Expected: FAIL — `VaultService` not defined.
 
 - [ ] **Step 3: Implement VaultService**
@@ -842,7 +842,7 @@ export class VaultService {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- vault.service`
+Run: `pnpm --filter @yield2pay/api test -- vault.service`
 Expected: PASS.
 
 - [ ] **Step 5: Pin shares→underlying conversion with a testnet integration test**
@@ -851,7 +851,7 @@ This is the one integration-uncertain point. Write `apps/api/test/vault.integrat
 
 1. Inspect the installed `@defindex/sdk` typings for a method returning underlying value or price-per-share (candidates: a `getVaultInfo`/`report`/`totalAssets`-style method, or a `pricePerShare`). Confirm via `node -e "console.log(Object.getOwnPropertyNames(require('@defindex/sdk').DefindexSDK.prototype))"`.
 2. Replace the 1:1 placeholder in `getPositionValue` with the real conversion (`shares × pricePerShare`).
-3. Run: `RUN_INTEGRATION=1 pnpm --filter @fixearn/api test -- vault.integration` and confirm the asserted value matches.
+3. Run: `RUN_INTEGRATION=1 pnpm --filter @yield2pay/api test -- vault.integration` and confirm the asserted value matches.
 
 Expected: PASS against testnet; the conversion method is now pinned by a real assertion.
 
@@ -929,7 +929,7 @@ it('principal is 0 with no deposits', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- ledger.service`
+Run: `pnpm --filter @yield2pay/api test -- ledger.service`
 Expected: FAIL — `LedgerService` not defined.
 
 - [ ] **Step 3: Implement LedgerService**
@@ -979,7 +979,7 @@ export class LedgerService {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- ledger.service`
+Run: `pnpm --filter @yield2pay/api test -- ledger.service`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1005,7 +1005,7 @@ git commit -m "feat: ledger spendable calc + deposit/snapshot records"
 
 - [ ] **Step 1: Add dep + write failing hash test**
 
-Run: `pnpm --filter @fixearn/api add @stellar/stellar-sdk`
+Run: `pnpm --filter @yield2pay/api add @stellar/stellar-sdk`
 `apps/api/src/stellar/stellar.service.spec.ts`:
 ```typescript
 import { StellarService } from './stellar.service';
@@ -1041,7 +1041,7 @@ it('hash matches the SDK transaction hash', () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- stellar.service`
+Run: `pnpm --filter @yield2pay/api test -- stellar.service`
 Expected: FAIL — `StellarService` not defined.
 
 - [ ] **Step 3: Implement hashForSigning + attachAndSubmit**
@@ -1084,7 +1084,7 @@ export class StellarService {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- stellar.service`
+Run: `pnpm --filter @yield2pay/api test -- stellar.service`
 Expected: PASS.
 
 > **Verification note:** `attachAndSubmit` is exercised end-to-end by Task 9's integration test against testnet. The exact submit/polling API (`rpc.Server.sendTransaction` then `getTransaction` polling for Soroban) is pinned there. If the DeFindex XDR requires `server.prepareTransaction` before submit, add it inside `attachAndSubmit` and re-run the integration test.
@@ -1145,7 +1145,7 @@ it('submit: attaches sig, submits, records deposit', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- deposit.service`
+Run: `pnpm --filter @yield2pay/api test -- deposit.service`
 Expected: FAIL — `DepositService` not defined.
 
 - [ ] **Step 3: Implement DepositService + controller**
@@ -1157,7 +1157,7 @@ import { VaultService } from '../vault/vault.service';
 import { StellarService } from '../stellar/stellar.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { WalletService } from '../wallet/wallet.service';
-import { BuildTxResponse, SubmitTxDto } from '@fixearn/shared';
+import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
 @Injectable()
 export class DepositService {
@@ -1187,7 +1187,7 @@ export class DepositService {
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { DepositService } from './deposit.service';
-import { SubmitTxDto } from '@fixearn/shared';
+import { SubmitTxDto } from '@yield2pay/shared';
 
 @Controller('deposit')
 @UseGuards(AuthGuard)
@@ -1207,14 +1207,14 @@ Wire `DepositModule`.
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- deposit.service`
+Run: `pnpm --filter @yield2pay/api test -- deposit.service`
 Expected: PASS.
 
 - [ ] **Step 5: Write the opt-in full-flow integration test**
 
 `apps/api/test/deposit.integration-spec.ts` (guarded by `RUN_INTEGRATION === '1'`): using a funded testnet keypair as a stand-in for the Privy wallet, call `build`, sign the returned hash locally with `Keypair.sign(hashBytes)`, call `submit`, then assert `getPositionValue` reflects the deposit. This pins `attachAndSubmit` (and any required `prepareTransaction`) and the shares→underlying conversion together.
 
-Run: `RUN_INTEGRATION=1 pnpm --filter @fixearn/api test -- deposit.integration`
+Run: `RUN_INTEGRATION=1 pnpm --filter @yield2pay/api test -- deposit.integration`
 Expected: PASS — deposit lands in the vault on testnet.
 
 - [ ] **Step 6: Commit**
@@ -1266,7 +1266,7 @@ it('submit: attaches sig and submits', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- withdraw.service`
+Run: `pnpm --filter @yield2pay/api test -- withdraw.service`
 Expected: FAIL — `WithdrawService` not defined.
 
 - [ ] **Step 3: Implement WithdrawService + controller**
@@ -1277,7 +1277,7 @@ import { Injectable } from '@nestjs/common';
 import { VaultService } from '../vault/vault.service';
 import { StellarService } from '../stellar/stellar.service';
 import { WalletService } from '../wallet/wallet.service';
-import { BuildTxResponse, SubmitTxDto } from '@fixearn/shared';
+import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
 @Injectable()
 export class WithdrawService {
@@ -1303,7 +1303,7 @@ Controller mirrors `DepositController` at `/withdraw`. Wire `WithdrawModule`.
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- withdraw.service`
+Run: `pnpm --filter @yield2pay/api test -- withdraw.service`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1363,7 +1363,7 @@ it('remove is scoped to the company', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- bills.service`
+Run: `pnpm --filter @yield2pay/api test -- bills.service`
 Expected: FAIL — `BillsService` not defined.
 
 - [ ] **Step 3: Implement BillsService + controller**
@@ -1372,7 +1372,7 @@ Expected: FAIL — `BillsService` not defined.
 ```typescript
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateBillDto } from '@fixearn/shared';
+import { CreateBillDto } from '@yield2pay/shared';
 
 @Injectable()
 export class BillsService {
@@ -1395,7 +1395,7 @@ Controller exposes `POST /bills`, `GET /bills`, `DELETE /bills/:id`, all `@UseGu
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- bills.service`
+Run: `pnpm --filter @yield2pay/api test -- bills.service`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1435,7 +1435,7 @@ it('returns spendable view with string-encoded bigints', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- ledger.controller`
+Run: `pnpm --filter @yield2pay/api test -- ledger.controller`
 Expected: FAIL — `LedgerController` not defined.
 
 - [ ] **Step 3: Implement LedgerController**
@@ -1446,7 +1446,7 @@ import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { LedgerService } from './ledger.service';
 import { VaultService } from '../vault/vault.service';
-import { SpendableView } from '@fixearn/shared';
+import { SpendableView } from '@yield2pay/shared';
 
 @Controller('dashboard')
 @UseGuards(AuthGuard)
@@ -1468,7 +1468,7 @@ export class LedgerController {
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- ledger.controller`
+Run: `pnpm --filter @yield2pay/api test -- ledger.controller`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
@@ -1492,7 +1492,7 @@ git commit -m "feat: dashboard endpoint (spendable + apy)"
 
 - [ ] **Step 1: Add scheduler + write failing test**
 
-Run: `pnpm --filter @fixearn/api add @nestjs/schedule`
+Run: `pnpm --filter @yield2pay/api add @nestjs/schedule`
 `apps/api/src/jobs/snapshot.job.spec.ts`:
 ```typescript
 import { SnapshotJob } from './snapshot.job';
@@ -1518,7 +1518,7 @@ it('continues past a failing company snapshot', async () => {
 
 - [ ] **Step 2: Run it, verify it fails**
 
-Run: `pnpm --filter @fixearn/api test -- snapshot.job`
+Run: `pnpm --filter @yield2pay/api test -- snapshot.job`
 Expected: FAIL — `SnapshotJob` not defined.
 
 - [ ] **Step 3: Implement SnapshotJob**
@@ -1555,7 +1555,7 @@ Import `ScheduleModule.forRoot()` in `AppModule`; wire `JobsModule`.
 
 - [ ] **Step 4: Run it, verify it passes**
 
-Run: `pnpm --filter @fixearn/api test -- snapshot.job`
+Run: `pnpm --filter @yield2pay/api test -- snapshot.job`
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
