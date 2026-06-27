@@ -10,6 +10,7 @@ const base = {
   USDC_ADDRESS: 'C...usdc',
   STELLAR_NETWORK: 'testnet',
   SOROBAN_RPC_URL: 'https://soroban-testnet.stellar.org',
+  FEE_SPONSOR_SECRET_KEY: 'SXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
   PORT: '3000',
 };
 
