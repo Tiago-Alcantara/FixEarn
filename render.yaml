@@ -42,3 +42,5 @@ services:
         sync: false
       - key: USDC_ADDRESS
         sync: false
+      - key: FEE_SPONSOR_SECRET_KEY
+        sync: false
