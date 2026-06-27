@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { VaultService } from '../vault/vault.service';
 import { StellarService } from '../stellar/stellar.service';
 import { WalletService } from '../wallet/wallet.service';
@@ -20,9 +20,13 @@ export class WithdrawService {
   }
 
   async submit(
-    _companyId: string,
+    companyId: string,
     dto: SubmitTxDto,
   ): Promise<{ txHash: string }> {
+    const registered = await this.wallet.getAddress(companyId);
+    if (dto.stellarAddress !== registered) {
+      throw new ForbiddenException('stellar address does not match registered wallet');
+    }
     return this.stellar.attachAndSubmit(
       dto.xdr,
       dto.stellarAddress,

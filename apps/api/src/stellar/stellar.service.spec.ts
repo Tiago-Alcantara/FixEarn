@@ -101,6 +101,18 @@ it('throws when the createAccount tx is not confirmed', async () => {
 
 // ── attachAndSubmit (fee bump) ────────────────────────────────────────────────
 
+it('ensureAccountFunded re-throws when getAccount rejects with a non-not-found error', async () => {
+  const server = {
+    getAccount: vi.fn().mockRejectedValueOnce(new Error('RPC 500: service unavailable')),
+    sendTransaction: vi.fn(),
+  } as unknown as rpc.Server;
+
+  await expect(
+    new StellarService(cfg, server).ensureAccountFunded(Keypair.random().publicKey()),
+  ).rejects.toThrow('RPC 500: service unavailable');
+  expect(server.sendTransaction).not.toHaveBeenCalled();
+});
+
 it('wraps the inner tx in a sponsor-signed fee bump and submits it', async () => {
   const { xdr, address, kp } = sampleTx();
   const inner = TransactionBuilder.fromXDR(xdr, Networks.TESTNET) as Transaction;

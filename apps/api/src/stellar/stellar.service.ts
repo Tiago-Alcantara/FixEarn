@@ -83,8 +83,11 @@ export class StellarService {
     try {
       await this.server.getAccount(address);
       return true;
-    } catch {
-      return false;
+    } catch (err) {
+      if (err instanceof Error && err.message.includes('not found')) {
+        return false;
+      }
+      throw err;
     }
   }
 

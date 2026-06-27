@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { DepositService } from './deposit.service';
 
 it('build: gets address, builds vault xdr, returns hash', async () => {
@@ -19,7 +20,7 @@ it('build: gets address, builds vault xdr, returns hash', async () => {
 });
 
 it('submit: attaches sig, submits, records deposit', async () => {
-  const wallet = {};
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
   const vault = {};
   const stellar = {
     attachAndSubmit: vi.fn().mockResolvedValue({ txHash: 'TX9' }),
@@ -40,4 +41,28 @@ it('submit: attaches sig, submits, records deposit', async () => {
   expect(stellar.attachAndSubmit).toHaveBeenCalledWith('X', 'GADDR', '0xsig');
   expect(ledger.recordDeposit).toHaveBeenCalledWith('co_1', 1000000n, 'TX9');
   expect(r).toEqual({ txHash: 'TX9' });
+});
+
+it('submit: rejects with ForbiddenException when stellarAddress does not match registered wallet', async () => {
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
+  const stellar = {
+    attachAndSubmit: vi.fn(),
+  };
+  const ledger = { recordDeposit: vi.fn() };
+  const svc = new DepositService(
+    {} as any,
+    stellar as any,
+    ledger as any,
+    wallet as any,
+  );
+  await expect(
+    svc.submit('co_1', {
+      xdr: 'X',
+      signatureHex: '0xsig',
+      stellarAddress: 'GEVIL',
+      amount: '1000000',
+    }),
+  ).rejects.toThrow(ForbiddenException);
+  expect(stellar.attachAndSubmit).not.toHaveBeenCalled();
+  expect(ledger.recordDeposit).not.toHaveBeenCalled();
 });

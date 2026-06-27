@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { VaultService } from '../vault/vault.service';
 import { StellarService } from '../stellar/stellar.service';
 import { LedgerService } from '../ledger/ledger.service';
@@ -26,6 +26,10 @@ export class DepositService {
     companyId: string,
     dto: SubmitTxDto,
   ): Promise<{ txHash: string }> {
+    const registered = await this.wallet.getAddress(companyId);
+    if (dto.stellarAddress !== registered) {
+      throw new ForbiddenException('stellar address does not match registered wallet');
+    }
     const { txHash } = await this.stellar.attachAndSubmit(
       dto.xdr,
       dto.stellarAddress,
