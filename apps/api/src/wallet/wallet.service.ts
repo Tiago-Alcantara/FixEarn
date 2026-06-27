@@ -5,15 +5,21 @@ import {
 } from '@nestjs/common';
 import { StrKey } from '@stellar/stellar-sdk';
 import { PrismaService } from '../prisma/prisma.service';
+import { StellarService } from '../stellar/stellar.service';
 
 @Injectable()
 export class WalletService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly stellar: StellarService,
+  ) {}
 
   async register(companyId: string, stellarAddress: string) {
     if (!StrKey.isValidEd25519PublicKey(stellarAddress)) {
       throw new BadRequestException('invalid stellar address');
     }
+    // Fund on-chain first; only persist once the account is live.
+    await this.stellar.ensureAccountFunded(stellarAddress);
     return this.prisma.wallet.upsert({
       where: { companyId },
       create: { companyId, stellarAddress },
@@ -22,9 +28,7 @@ export class WalletService {
   }
 
   async getAddress(companyId: string): Promise<string> {
-    const wallet = await this.prisma.wallet.findUnique({
-      where: { companyId },
-    });
+    const wallet = await this.prisma.wallet.findUnique({ where: { companyId } });
     if (!wallet) throw new NotFoundException('wallet not registered');
     return wallet.stellarAddress;
   }
