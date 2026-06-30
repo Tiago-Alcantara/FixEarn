@@ -169,3 +169,30 @@ it('fundClient lança quando o payment não confirma', async () => {
     new StellarService(cfg, server).fundClient(Keypair.random().publicKey(), 100000000n),
   ).rejects.toThrow('failed on-chain');
 });
+
+// ── getNativeBalance ──────────────────────────────────────────────────────────
+
+it('getNativeBalance lê o balance nativo do AccountEntry (stroops)', async () => {
+  const addr = Keypair.random().publicKey();
+  const server = {
+    getLedgerEntries: vi.fn().mockResolvedValue({
+      entries: [
+        { val: { account: () => ({ balance: () => ({ toString: () => '250000000' }) }) } },
+      ],
+      latestLedger: 1,
+    }),
+  } as unknown as rpc.Server;
+
+  const bal = await new StellarService(cfg, server).getNativeBalance(addr);
+  expect(bal).toBe(250000000n); // 25 XLM
+  expect(server.getLedgerEntries).toHaveBeenCalledTimes(1);
+});
+
+it('getNativeBalance retorna 0n quando a conta não existe (sem entries)', async () => {
+  const server = {
+    getLedgerEntries: vi.fn().mockResolvedValue({ entries: [], latestLedger: 1 }),
+  } as unknown as rpc.Server;
+
+  const bal = await new StellarService(cfg, server).getNativeBalance(Keypair.random().publicKey());
+  expect(bal).toBe(0n);
+});

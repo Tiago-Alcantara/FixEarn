@@ -4,18 +4,30 @@
  * Mocks @/lib/api — no real network.
  */
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // --- mock @/lib/api ---
 const mockGetDashboard = vi.fn();
 const mockListBills = vi.fn();
+const mockGetWalletBalance = vi.fn();
 
 vi.mock('@/lib/api', () => ({
   createApi: () => ({
     getDashboard: mockGetDashboard,
     listBills: mockListBills,
+    getWalletBalance: mockGetWalletBalance,
   }),
+}));
+
+// Stub do MoveDrawer: vira um marcador clicável que dispara onSuccess.
+vi.mock('@/components/MoveDrawer', () => ({
+  MoveDrawer: ({ mode, onSuccess }: { mode: string; onSuccess: () => void }) => (
+    <div data-testid="move-drawer">
+      drawer:{mode}
+      <button onClick={onSuccess}>drawer-success</button>
+    </div>
+  ),
 }));
 
 // --- mock @privy-io/react-auth (needed for createApi(getAccessToken) and logout) ---
@@ -48,6 +60,7 @@ const BILLS_DATA = [
 function setup() {
   mockGetDashboard.mockResolvedValue(DASHBOARD_DATA);
   mockListBills.mockResolvedValue(BILLS_DATA);
+  mockGetWalletBalance.mockResolvedValue({ balance: '1200000000', spendable: '1185000000' });
   return render(<DashboardPage />);
 }
 
@@ -55,6 +68,9 @@ describe('Dashboard page', () => {
   beforeEach(() => {
     mockGetDashboard.mockReset();
     mockListBills.mockReset();
+    mockGetWalletBalance.mockReset();
+    // Saldo é não-bloqueante: dá um default resolvido pros testes que não usam setup().
+    mockGetWalletBalance.mockResolvedValue({ balance: '0', spendable: '0' });
   });
 
   it('shows loading state initially', () => {
@@ -84,9 +100,10 @@ describe('Dashboard page', () => {
 
   it('renders apyPercent as percentage after data loads', async () => {
     setup();
-    // APY now appears in the returns-chart badge ("Annual yield: 7.50%")
+    // APY aparece no badge do gráfico ("Annual yield: 7.50%") e no MoneyPanel
+    // ("~7.50% a.a.") — assert ao menos uma ocorrência.
     await waitFor(() => {
-      expect(screen.getByText(/7\.50%/)).toBeInTheDocument();
+      expect(screen.getAllByText(/7\.50%/).length).toBeGreaterThan(0);
     });
   });
 
@@ -134,5 +151,18 @@ describe('Dashboard page', () => {
     await waitFor(() => {
       expect(screen.getByText(T_ERROR)).toBeInTheDocument();
     });
+  });
+
+  it('mostra o MoneyPanel com o saldo da carteira', async () => {
+    setup();
+    // formatUsdc('1200000000') = '120.00'
+    await waitFor(() => expect(screen.getByText('$120.00')).toBeInTheDocument());
+  });
+
+  it('clicar Aportar abre o MoveDrawer em modo deposit', async () => {
+    setup();
+    await waitFor(() => expect(screen.getByRole('button', { name: /aportar/i })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: /aportar/i }));
+    expect(screen.getByTestId('move-drawer')).toHaveTextContent('drawer:deposit');
   });
 });

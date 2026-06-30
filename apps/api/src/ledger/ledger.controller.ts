@@ -18,11 +18,17 @@ export class LedgerController {
       this.ledger.computeSpendable(req.companyId),
       this.vault.getApyPercent(),
     ]);
+    // Depende do spendable atual → roda após computeSpendable.
+    const returnsChangePercent = await this.ledger.getReturnsChangePercent(
+      req.companyId,
+      s.spendable,
+    );
     return {
       vaultValue: s.vaultValue.toString(),
       principal: s.principal.toString(),
       spendable: s.spendable.toString(),
       apyPercent,
+      returnsChangePercent,
     };
   }
 }

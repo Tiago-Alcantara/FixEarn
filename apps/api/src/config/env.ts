@@ -12,6 +12,12 @@ const schema = z.object({
   SOROBAN_RPC_URL: z.string().url(),
   FEE_SPONSOR_SECRET_KEY: z.string().min(1),
   PORT: z.coerce.number().int().positive().default(3000),
+  // Demo only: injeta rendimento sintético (basis points sobre o principal).
+  // 0 = desligado (produção). Ex.: 320 = 3,2% de rendimento fictício.
+  DEMO_YIELD_BPS: z.coerce.number().int().nonnegative().default(0),
+  // Demo only: variação "vs mês anterior" exibida quando NÃO há histórico de
+  // snapshot suficiente. Só usada quando DEMO_YIELD_BPS > 0. Ex.: "3.2".
+  DEMO_RETURNS_CHANGE_PERCENT: z.string().default('3.2'),
 });
 
 export type Env = {
@@ -26,6 +32,8 @@ export type Env = {
   sorobanRpcUrl: string;
   feeSponsorSecretKey: string;
   port: number;
+  demoYieldBps: number;
+  demoReturnsChangePercent: string;
 };
 
 export function loadEnv(raw: Record<string, string | undefined>): Env {
@@ -42,5 +50,7 @@ export function loadEnv(raw: Record<string, string | undefined>): Env {
     sorobanRpcUrl: parsed.SOROBAN_RPC_URL,
     feeSponsorSecretKey: parsed.FEE_SPONSOR_SECRET_KEY,
     port: parsed.PORT,
+    demoYieldBps: parsed.DEMO_YIELD_BPS,
+    demoReturnsChangePercent: parsed.DEMO_RETURNS_CHANGE_PERCENT,
   };
 }

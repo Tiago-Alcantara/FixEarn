@@ -4,12 +4,11 @@ import { StellarService } from '../stellar/stellar.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { WalletService } from '../wallet/wallet.service';
 import { parseBaseUnits } from '../common/parse-money';
+import { RESERVE_BUFFER_BASE_UNITS } from '../common/reserve';
 import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
-// Testnet safety cap: the sponsor funds each deposit (fundClient), so an
-// unbounded amount would let an authenticated caller drain the sponsor in a
-// single request. Bound it well above expected deposits (10000 XLM). Adjust to
-// the real product limit later.
+// Safety cap on a single deposit. Bound it well above expected deposits
+// (10000 XLM); adjust to the real product limit later.
 const MAX_DEPOSIT_BASE_UNITS = 100_000_000_000n; // 10000 XLM (7 decimals)
 
 @Injectable()
@@ -26,10 +25,14 @@ export class DepositService {
       throw new BadRequestException('amount exceeds maximum deposit');
     }
     const address = await this.wallet.getAddress(companyId);
-    // Abastece a wallet do cliente com o valor do depósito (sponsor → cliente)
-    // ANTES de montar o XDR: a build da DeFindex simula o invoke Soroban e
-    // exige que o saldo já esteja na conta do cliente.
-    await this.stellar.fundClient(address, amount);
+    const balance = await this.stellar.getNativeBalance(address);
+    const spendable =
+      balance > RESERVE_BUFFER_BASE_UNITS
+        ? balance - RESERVE_BUFFER_BASE_UNITS
+        : 0n;
+    if (amount > spendable) {
+      throw new BadRequestException('saldo insuficiente na carteira');
+    }
     const { xdr } = await this.vault.buildDeposit(address, amount);
     const { hash } = this.stellar.hashForSigning(xdr);
     return { xdr, hash };

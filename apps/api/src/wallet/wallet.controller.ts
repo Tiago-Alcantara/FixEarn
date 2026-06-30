@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import type { AuthenticatedRequest } from '../auth/authenticated-request';
 import { WalletService } from './wallet.service';
@@ -11,5 +11,10 @@ export class WalletController {
   @Post()
   register(@Req() req: AuthenticatedRequest, @Body() body: RegisterWalletDto) {
     return this.walletService.register(req.companyId, body.stellarAddress);
+  }
+
+  @Get('balance')
+  balance(@Req() req: AuthenticatedRequest) {
+    return this.walletService.getBalance(req.companyId);
   }
 }

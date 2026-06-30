@@ -82,6 +82,24 @@ export class StellarService {
     await this.submit(tx);
   }
 
+  /**
+   * Lê o saldo XLM nativo da conta on-chain via Soroban RPC.
+   * `getAccount` do RPC não traz balance — usamos `getLedgerEntries` no
+   * LedgerKey da conta e parseamos o `AccountEntry.balance` (Int64 stroops).
+   * Retorna 0n se a conta ainda não existe on-chain.
+   */
+  async getNativeBalance(address: string): Promise<bigint> {
+    const key = StellarXdr.LedgerKey.account(
+      new StellarXdr.LedgerKeyAccount({
+        accountId: Keypair.fromPublicKey(address).xdrAccountId(),
+      }),
+    );
+    const resp = await this.server.getLedgerEntries(key);
+    const entry = resp.entries?.[0];
+    if (!entry) return 0n;
+    return BigInt(entry.val.account().balance().toString());
+  }
+
   /** Attaches the user's signature, wraps in a sponsor-paid fee bump, submits. */
   async attachAndSubmit(
     xdr: string,

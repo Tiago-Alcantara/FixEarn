@@ -1,5 +1,6 @@
 import { WalletService } from './wallet.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { RESERVE_BUFFER_BASE_UNITS } from '../common/reserve';
 
 const VALID_ADDRESS = 'GDUKN35CP3SQ67QMZL5SKCUCX6MB47TX4SZBTS5UHKFMGTF35Z3723DY';
 
@@ -41,4 +42,26 @@ it('throws when the address is missing', async () => {
   await expect(
     new WalletService(prisma, stellar).getAddress('co_x'),
   ).rejects.toBeInstanceOf(NotFoundException);
+});
+
+it('getBalance: retorna balance e spendable (balance − reserva)', async () => {
+  const prisma = {} as any;
+  const stellar = { getNativeBalance: vi.fn().mockResolvedValue(120_0000000n) }; // 120 XLM
+  const svc = new WalletService(prisma, stellar as any);
+  vi.spyOn(svc, 'getAddress').mockResolvedValue('GADDR');
+
+  const r = await svc.getBalance('co_1');
+  expect(stellar.getNativeBalance).toHaveBeenCalledWith('GADDR');
+  expect(r.balance).toBe('1200000000');
+  expect(r.spendable).toBe((1200000000n - RESERVE_BUFFER_BASE_UNITS).toString()); // 1185000000
+});
+
+it('getBalance: spendable nunca é negativo (saldo abaixo da reserva)', async () => {
+  const stellar = { getNativeBalance: vi.fn().mockResolvedValue(5_000000n) }; // 0.5 XLM
+  const svc = new WalletService({} as any, stellar as any);
+  vi.spyOn(svc, 'getAddress').mockResolvedValue('GADDR');
+
+  const r = await svc.getBalance('co_1');
+  expect(r.balance).toBe('5000000');
+  expect(r.spendable).toBe('0');
 });

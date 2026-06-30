@@ -90,7 +90,7 @@ function StepIndicator({ current }: { current: number }) {
 }
 
 // ── Quick-select chips ────────────────────────────────────────────────────────
-const CHIPS = [5000, 10000, 18400, 20000];
+const CHIPS = [1000, 2500, 5000, 10000];
 
 // ── Row + Divider ─────────────────────────────────────────────────────────────
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
@@ -179,7 +179,7 @@ export default function DepositPage() {
   const isMobile = useIsMobile();
 
   const [step, setStep] = useState(0);
-  const [amountRaw, setAmountRaw] = useState('18400');
+  const [amountRaw, setAmountRaw] = useState('5000');
   const [touched, setTouched] = useState(false);
   const [currency, setCurrency] = useState('USD');
   const [picked, setPicked] = useState<Record<string, boolean>>(() =>

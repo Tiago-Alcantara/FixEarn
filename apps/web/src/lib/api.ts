@@ -5,6 +5,7 @@ import type {
   RegisterWalletDto,
   CreateBillDto,
   SpendableView,
+  WalletBalanceView,
   Bill,
 } from '@yield2pay/shared';
 
@@ -27,6 +28,7 @@ interface ApiMethods {
   buildWithdraw(amount: string): Promise<BuildTxResponse>;
   submitWithdraw(body: SubmitTxDto): Promise<SubmitTxResponse>;
   getDashboard(): Promise<SpendableView>;
+  getWalletBalance(): Promise<WalletBalanceView>;
   listBills(): Promise<Bill[]>;
   createBill(body: CreateBillDto): Promise<Bill>;
   deleteBill(id: string): Promise<void>;
@@ -67,7 +69,9 @@ export function createApi(getToken: GetToken): ApiMethods {
       throw new ApiError(response.status, errorBody);
     }
 
-    return response.json();
+    if (response.status === 204) return undefined as T;
+    const text = await response.text();
+    return text ? (JSON.parse(text) as T) : (undefined as T);
   }
 
   return {
@@ -87,6 +91,8 @@ export function createApi(getToken: GetToken): ApiMethods {
       request('/withdraw/submit', 'POST', body),
 
     getDashboard: () => request('/dashboard', 'GET'),
+
+    getWalletBalance: () => request('/wallet/balance', 'GET'),
 
     listBills: () => request('/bills', 'GET'),
 

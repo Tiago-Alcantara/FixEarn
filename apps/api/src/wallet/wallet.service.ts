@@ -6,6 +6,7 @@ import {
 import { StrKey } from '@stellar/stellar-sdk';
 import { PrismaService } from '../prisma/prisma.service';
 import { StellarService } from '../stellar/stellar.service';
+import { RESERVE_BUFFER_BASE_UNITS } from '../common/reserve';
 
 @Injectable()
 export class WalletService {
@@ -31,5 +32,17 @@ export class WalletService {
     const wallet = await this.prisma.wallet.findUnique({ where: { companyId } });
     if (!wallet) throw new NotFoundException('wallet not registered');
     return wallet.stellarAddress;
+  }
+
+  async getBalance(
+    companyId: string,
+  ): Promise<{ balance: string; spendable: string }> {
+    const address = await this.getAddress(companyId);
+    const balance = await this.stellar.getNativeBalance(address);
+    const spendable =
+      balance > RESERVE_BUFFER_BASE_UNITS
+        ? balance - RESERVE_BUFFER_BASE_UNITS
+        : 0n;
+    return { balance: balance.toString(), spendable: spendable.toString() };
   }
 }

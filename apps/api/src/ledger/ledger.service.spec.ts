@@ -4,6 +4,9 @@ function makeDeps(opts: {
   deposits: bigint[];
   vaultValue: bigint;
   address?: string;
+  demoYieldBps?: number;
+  demoReturnsChangePercent?: string;
+  baselineSpendable?: bigint | null;
 }) {
   const prisma = {
     deposit: {
@@ -12,7 +15,14 @@ function makeDeps(opts: {
       }),
       create: vi.fn().mockResolvedValue({}),
     },
-    yieldSnapshot: { create: vi.fn().mockResolvedValue({}) },
+    yieldSnapshot: {
+      create: vi.fn().mockResolvedValue({}),
+      findFirst: vi.fn().mockResolvedValue(
+        opts.baselineSpendable == null
+          ? null
+          : { spendable: opts.baselineSpendable },
+      ),
+    },
   } as any;
   const wallet = {
     getAddress: vi.fn().mockResolvedValue(opts.address ?? 'GADDR'),
@@ -20,11 +30,15 @@ function makeDeps(opts: {
   const vault = {
     getPositionValue: vi.fn().mockResolvedValue(opts.vaultValue),
   } as any;
+  const config = {
+    demoYieldBps: opts.demoYieldBps ?? 0,
+    demoReturnsChangePercent: opts.demoReturnsChangePercent ?? '3.2',
+  } as any;
   return {
     prisma,
     wallet,
     vault,
-    svc: new LedgerService(prisma, vault, wallet),
+    svc: new LedgerService(prisma, vault, wallet, config),
   };
 }
 
@@ -53,13 +67,92 @@ describe('LedgerService', () => {
     expect(r.spendable).toBe(100000n);
   });
 
+  it('demo: injeta rendimento sintético quando demoYieldBps > 0', async () => {
+    // vaultValue real ~= principal (depósito recém-feito, sem rendimento).
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1000000n,
+      demoYieldBps: 320, // 3,2%
+    });
+    const r = await svc.computeSpendable('co_1');
+    expect(r.vaultValue).toBe(1032000n);
+    expect(r.spendable).toBe(32000n);
+  });
+
+  it('demo: não reduz vaultValue real maior que o sintético', async () => {
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1100000n, // já rendeu mais que os 3,2% sintéticos
+      demoYieldBps: 320,
+    });
+    const r = await svc.computeSpendable('co_1');
+    expect(r.vaultValue).toBe(1100000n);
+    expect(r.spendable).toBe(100000n);
+  });
+
   it('principal is 0 with no deposits', async () => {
     const prisma = {
       deposit: {
         aggregate: vi.fn().mockResolvedValue({ _sum: { amount: null } }),
       },
     } as any;
-    const svc = new LedgerService(prisma, {} as any, {} as any);
+    const svc = new LedgerService(prisma, {} as any, {} as any, {} as any);
     expect(await svc.principal('co_x')).toBe(0n);
+  });
+
+  it('returnsChange: % vs baseline de ~1 mês atrás', async () => {
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1000000n,
+      baselineSpendable: 100000n,
+    });
+    // atual = 110000 (10% acima de 100000) → "+10.0"
+    expect(await svc.getReturnsChangePercent('co_1', 110000n)).toBe('+10.0');
+  });
+
+  it('returnsChange: variação negativa formata com sinal', async () => {
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1000000n,
+      baselineSpendable: 100000n,
+    });
+    expect(await svc.getReturnsChangePercent('co_1', 95000n)).toBe('-5.0');
+  });
+
+  it('returnsChange: sem histórico e sem demo → null', async () => {
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1000000n,
+      baselineSpendable: null,
+    });
+    expect(await svc.getReturnsChangePercent('co_1', 50000n)).toBeNull();
+  });
+
+  it('returnsChange: sem histórico, em demo → valor configurável com sinal', async () => {
+    const { svc } = makeDeps({
+      deposits: [1000000n],
+      vaultValue: 1000000n,
+      baselineSpendable: null,
+      demoYieldBps: 320,
+      demoReturnsChangePercent: '3.2',
+    });
+    expect(await svc.getReturnsChangePercent('co_1', 32000n)).toBe('+3.2');
+  });
+
+  it('recordWithdraw: grava um lançamento negativo (reduz principal)', async () => {
+    const prisma = { deposit: { create: vi.fn().mockResolvedValue({}) } } as any;
+    const svc = new LedgerService(prisma, {} as any, {} as any, {} as any);
+    await svc.recordWithdraw('co_1', 250000n, 'TXW');
+    expect(prisma.deposit.create).toHaveBeenCalledWith({
+      data: { companyId: 'co_1', amount: -250000n, txHash: 'TXW' },
+    });
+  });
+
+  it('principal: clampa em 0 quando a soma é negativa', async () => {
+    const prisma = {
+      deposit: { aggregate: vi.fn().mockResolvedValue({ _sum: { amount: -5000n } }) },
+    } as any;
+    const svc = new LedgerService(prisma, {} as any, {} as any, {} as any);
+    expect(await svc.principal('co_1')).toBe(0n);
   });
 });

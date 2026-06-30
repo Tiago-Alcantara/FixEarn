@@ -7,6 +7,8 @@ import { createApi } from '@/lib/api';
 import { formatUsdc } from '@/lib/money';
 import type { SpendableView, Bill } from '@yield2pay/shared';
 import ServiceCatalog from './ServiceCatalog';
+import { MoneyPanel } from './MoneyPanel';
+import { MoveDrawer } from '@/components/MoveDrawer';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { useIsMobile } from '@/lib/useIsMobile';
 
@@ -29,7 +31,8 @@ const T = {
     capitalSub: 'Your money, always',
     returnsTitle: 'Monthly returns',
     returnsLabel: 'Generated this month',
-    returnsSub: '▲ +3.2% vs last month',
+    returnsSubSuffix: '% vs last month',
+    returnsSubEmpty: 'Since your first deposit',
     spendableTitle: 'Available to spend',
     spendableLabel: 'After active subscriptions',
     spendableSub: 'Unused returns are reinvested',
@@ -71,7 +74,8 @@ const T = {
     capitalSub: 'Sempre seu',
     returnsTitle: 'Rendimento mensal',
     returnsLabel: 'Gerado este mês',
-    returnsSub: '▲ +3,2% vs mês anterior',
+    returnsSubSuffix: '% vs mês anterior',
+    returnsSubEmpty: 'Desde o seu primeiro aporte',
     spendableTitle: 'Disponível para usar',
     spendableLabel: 'Após assinaturas ativas',
     spendableSub: 'A sobra é reinvestida',
@@ -100,6 +104,22 @@ const T = {
 } as const;
 
 type Lang = keyof typeof T;
+
+/**
+ * Monta o texto "▲ +3,2% vs mês anterior" a partir do returnsChangePercent
+ * vindo do backend (ex.: "+3.2" / "-1.5"). Quando null (sem histórico),
+ * cai num texto neutro. Ponto decimal vira vírgula em PT.
+ */
+function formatReturnsChange(
+  change: string | null | undefined,
+  opts: { suffix: string; empty: string; pt: boolean },
+): string {
+  if (!change) return opts.empty;
+  const positive = !change.startsWith('-');
+  const arrow = positive ? '▲' : '▼';
+  const num = opts.pt ? change.replace('.', ',') : change;
+  return `${arrow} ${num}${opts.suffix}`;
+}
 
 // ── Nav icons (SVG, copied from reference) ────────────────────────────────────
 
@@ -240,10 +260,10 @@ function StatCard({
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function DashboardPage() {
-  const router = useRouter();
   const { getAccessToken, logout } = usePrivy();
   const api = useMemo(() => createApi(getAccessToken), [getAccessToken]);
   const isMobile = useIsMobile();
+  const router = useRouter();
 
   const [lang, setLang] = useState<Lang>('en');
   const [nav, setNav] = useState('overview');
@@ -253,6 +273,8 @@ export default function DashboardPage() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<{ balance: string; spendable: string } | null>(null);
+  const [drawer, setDrawer] = useState<'deposit' | 'withdraw' | null>(null);
 
   const t = T[lang];
 
@@ -260,6 +282,10 @@ export default function DashboardPage() {
   // de mount não disparar setState síncrono (evita render em cascata).
   // `loading` já inicia true via useState, então não precisa setLoading(true) aqui.
   const fetchData = useCallback(() => {
+    // Saldo da carteira é não-bloqueante: falha aqui não derruba o dashboard.
+    api.getWalletBalance()
+      .then(setWalletBalance)
+      .catch(() => setWalletBalance(null));
     return Promise.all([api.getDashboard(), api.listBills()])
       .then(([dash, billList]) => {
         setDashboard(dash);
@@ -455,7 +481,7 @@ export default function DashboardPage() {
             const on = nav === item.id;
             function handleNavClick() {
               if (item.id === 'deposit') {
-                router.push('/deposit');
+                setDrawer('deposit');
               } else {
                 setNav(item.id);
               }
@@ -731,6 +757,16 @@ export default function DashboardPage() {
             gap: 20,
           }}
         >
+          {/* ── Money panel (carteira ↔ vault) ────────────────────────────── */}
+          <MoneyPanel
+            walletBalance={walletBalance ? walletBalance.balance : null}
+            spendable={walletBalance ? walletBalance.spendable : '0'}
+            vaultValue={dash.vaultValue}
+            apyPercent={dash.apyPercent}
+            onDeposit={() => setDrawer('deposit')}
+            onWithdraw={() => setDrawer('withdraw')}
+          />
+
           {/* ── Stat panels (capital / monthly returns / available) ───────── */}
           <div
             style={{
@@ -752,7 +788,11 @@ export default function DashboardPage() {
               title={t.returnsTitle}
               value={monthlyReturnsFmt}
               label={t.returnsLabel}
-              sub={t.returnsSub}
+              sub={formatReturnsChange(dash.returnsChangePercent, {
+                suffix: t.returnsSubSuffix,
+                empty: t.returnsSubEmpty,
+                pt: lang === 'pt',
+              })}
               silver
             />
 
@@ -1251,6 +1291,16 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+
+      {drawer && (
+        <MoveDrawer
+          mode={drawer}
+          maxBaseUnits={drawer === 'deposit' ? (walletBalance?.spendable ?? '0') : dash.vaultValue}
+          apyPercent={dash.apyPercent}
+          onClose={() => setDrawer(null)}
+          onSuccess={() => { setDrawer(null); void fetchData(); }}
+        />
+      )}
     </div>
   );
 }

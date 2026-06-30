@@ -4,6 +4,7 @@ import {
   Get,
   Delete,
   Body,
+  HttpCode,
   Param,
   UseGuards,
   Req,
@@ -29,6 +30,7 @@ export class BillsController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Req() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.billsService.remove(req.companyId, id);
   }

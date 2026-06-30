@@ -5,4 +5,5 @@ export interface SubmitTxDto { xdr: string; signatureHex: string; stellarAddress
 export interface SubmitTxResponse { txHash: string; }
 export interface CreateBillDto { vendor: string; monthlyCost: string; type: BillType; }
 export interface Bill { id: string; vendor: string; monthlyCost: string; type: BillType; status: string; }
-export interface SpendableView { vaultValue: string; principal: string; spendable: string; apyPercent: string; }
+export interface SpendableView { vaultValue: string; principal: string; spendable: string; apyPercent: string; returnsChangePercent: string | null; }
+export interface WalletBalanceView { balance: string; spendable: string; }
