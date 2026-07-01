@@ -1,20 +1,22 @@
 /**
- * deposit.test.tsx
- * Behavior tests for the 3-step deposit onboarding flow.
- * Mocks useStellarTx — no real network or Privy.
+ * deposit.test.tsx — fluxo de depósito Pix-only (web3 invisível).
+ * Mocka useDepositFlow — sem rede/Privy.
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-// --- mock useStellarTx ---
-const mockDeposit = vi.fn();
-vi.mock('@/lib/useStellarTx', () => ({
-  useStellarTx: () => ({ deposit: mockDeposit }),
-}));
-
-// --- mock next/navigation (App Router) ---
+const flow: any = {
+  state: 'idle',
+  order: null,
+  error: null,
+  start: vi.fn(),
+  simulate: vi.fn(),
+  confirm: vi.fn(),
+  reset: vi.fn(),
+};
+vi.mock('@/lib/useDepositFlow', () => ({ useDepositFlow: () => flow }));
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   usePathname: () => '/deposit',
@@ -22,160 +24,75 @@ vi.mock('next/navigation', () => ({
 
 import DepositPage from './page';
 
-function setup() {
-  return render(<DepositPage />);
-}
+beforeEach(() => {
+  flow.state = 'idle';
+  flow.order = null;
+  flow.error = null;
+  flow.start.mockReset();
+  flow.simulate.mockReset();
+  flow.confirm.mockReset();
+});
 
-describe('Deposit onboarding flow', () => {
-  beforeEach(() => {
-    mockDeposit.mockReset();
+describe('Depósito Pix-only', () => {
+  it('idle: mostra input R$ e botão Depositar', () => {
+    render(<DepositPage />);
+    expect(screen.getByRole('heading', { name: /quanto quer depositar/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/valor do depósito/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /depositar/i })).toBeInTheDocument();
   });
 
-  // ── Step 1: Amount entry ──────────────────────────────────────────────────
-
-  it('renders Step 1 with amount input and Continue button', () => {
-    setup();
-    expect(screen.getByRole('heading', { name: /how much capital/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/deposit amount/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /continue/i })).toBeInTheDocument();
-  });
-
-  it('shows live returns projection that updates as the user types', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
+  it('idle: projeção de rendimento mensal atualiza ao digitar', async () => {
+    render(<DepositPage />);
+    const input = screen.getByLabelText(/valor do depósito/i);
     await userEvent.clear(input);
     await userEvent.type(input, '12000');
-    // monthly = 12000 * 0.084 / 12 = 84
-    expect(screen.getByText(/84\.00/)).toBeInTheDocument();
+    // 12000 * 0.084 / 12 = 84
+    expect(screen.getByText(/84,00/)).toBeInTheDocument();
   });
 
-  it('renders the Currency select (default USD) next to the amount input', () => {
-    setup();
-    const select = screen.getByLabelText(/currency/i) as HTMLSelectElement;
-    expect(select).toBeInTheDocument();
-    expect(select.value).toBe('USD');
-    // can switch to BRL (display-only, does not affect deposit behavior)
-    fireEvent.change(select, { target: { value: 'BRL' } });
-    expect((screen.getByLabelText(/currency/i) as HTMLSelectElement).value).toBe('BRL');
-  });
-
-  it('does not show a validation hint until the field is touched', () => {
-    setup();
-    // pristine: no hint even though we have not interacted
-    expect(screen.queryByText(/positive amount/i)).not.toBeInTheDocument();
-    const input = screen.getByLabelText(/deposit amount/i);
-    fireEvent.change(input, { target: { value: '0' } });
-    // touched + invalid → hint appears
-    expect(screen.getByText(/positive amount/i)).toBeInTheDocument();
-  });
-
-  it('blocks Continue when amount is 0', () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
-    fireEvent.change(input, { target: { value: '0' } });
-    expect(screen.getByRole('button', { name: /continue/i })).toBeDisabled();
-  });
-
-  it('blocks Continue when amount has more than 7 decimal places', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
+  it('idle: Depositar chama start com o valor', async () => {
+    render(<DepositPage />);
+    const input = screen.getByLabelText(/valor do depósito/i);
     await userEvent.clear(input);
-    await userEvent.type(input, '1.123456789');
-    expect(screen.getByRole('button', { name: /continue/i })).toBeDisabled();
+    await userEvent.type(input, '250');
+    fireEvent.click(screen.getByRole('button', { name: /depositar/i }));
+    expect(flow.start).toHaveBeenCalledWith('250');
   });
 
-  it('enables Continue for a valid amount with ≤7 decimals', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '500.12');
-    expect(screen.getByRole('button', { name: /continue/i })).not.toBeDisabled();
+  it('awaiting_pix: mostra Pix e botão simular chama simulate', () => {
+    flow.state = 'awaiting_pix';
+    flow.order = { orderId: 'o1', depositBankName: 'PIX', targetAmount: '18.71', fiatCurrency: 'BRL' };
+    render(<DepositPage />);
+    expect(screen.getByRole('heading', { name: /pague com pix/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /simular pix/i }));
+    expect(flow.simulate).toHaveBeenCalled();
   });
 
-  // ── Step 2: Review (Tools) ────────────────────────────────────────────────
-
-  it('advances to Step 2 (tools) when Continue is clicked with a valid amount', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '10000');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    expect(screen.getByRole('heading', { name: /tools/i })).toBeInTheDocument();
+  it('funded: Confirmar depósito chama confirm', () => {
+    flow.state = 'funded';
+    render(<DepositPage />);
+    expect(screen.getByText(/pix recebido/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /confirmar depósito/i }));
+    expect(flow.confirm).toHaveBeenCalled();
   });
 
-  it('goes back to Step 1 from Step 2 via Back button', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '10000');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    fireEvent.click(screen.getByRole('button', { name: /back/i }));
-    expect(screen.getByRole('heading', { name: /how much capital/i })).toBeInTheDocument();
+  it('applying: mostra progresso', () => {
+    flow.state = 'applying';
+    render(<DepositPage />);
+    expect(screen.getByText(/aplicando no seu cofre/i)).toBeInTheDocument();
   });
 
-  // ── Step 3: Confirm ───────────────────────────────────────────────────────
-
-  it('advances to Step 3 (confirm) via Review button', async () => {
-    setup();
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '10000');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    fireEvent.click(screen.getByRole('button', { name: /review/i }));
-    expect(screen.getByRole('heading', { name: /confirm your deposit/i })).toBeInTheDocument();
+  it('done: mostra sucesso sem hash', () => {
+    flow.state = 'done';
+    render(<DepositPage />);
+    expect(screen.getByText(/seu dinheiro está rendendo/i)).toBeInTheDocument();
   });
 
-  it('calls deposit with base-unit string (toBaseUnits applied) on Confirm', async () => {
-    mockDeposit.mockResolvedValue('abc123txhash');
-    setup();
-
-    // Step 1
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '100');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-
-    // Step 2
-    fireEvent.click(screen.getByRole('button', { name: /review/i }));
-
-    // Step 3 — confirm
-    fireEvent.click(screen.getByRole('button', { name: /confirm deposit/i }));
-
-    await waitFor(() => {
-      // toBaseUnits('100') = '1000000000' (100 * 10^7 = 1,000,000,000)
-      expect(mockDeposit).toHaveBeenCalledWith('1000000000');
-    });
-  });
-
-  it('shows txHash in success state after confirm', async () => {
-    mockDeposit.mockResolvedValue('abc123txhash');
-    setup();
-
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '100');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    fireEvent.click(screen.getByRole('button', { name: /review/i }));
-    fireEvent.click(screen.getByRole('button', { name: /confirm deposit/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText(/abc123txhash/i)).toBeInTheDocument();
-    });
-  });
-
-  it('shows error state when deposit throws', async () => {
-    mockDeposit.mockRejectedValue(new Error('Network error'));
-    setup();
-
-    const input = screen.getByLabelText(/deposit amount/i);
-    await userEvent.clear(input);
-    await userEvent.type(input, '100');
-    fireEvent.click(screen.getByRole('button', { name: /continue/i }));
-    fireEvent.click(screen.getByRole('button', { name: /review/i }));
-    fireEvent.click(screen.getByRole('button', { name: /confirm deposit/i }));
-
-    await waitFor(() => {
-      expect(screen.getByText(/network error/i)).toBeInTheDocument();
-    });
+  it('error: mostra mensagem e botão tentar de novo', () => {
+    flow.state = 'error';
+    flow.error = 'Boom';
+    render(<DepositPage />);
+    expect(screen.getByText(/não deu pra concluir/i)).toBeInTheDocument();
+    expect(screen.getByText(/boom/i)).toBeInTheDocument();
   });
 });

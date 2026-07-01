@@ -24,12 +24,46 @@ model Company {
   privyUserId String   @unique @map("privy_user_id")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  wallet    Wallet?
-  deposits  Deposit[]
-  snapshots YieldSnapshot[]
-  bills     RecurringBill[]
+  wallet            Wallet?
+  deposits          Deposit[]
+  snapshots         YieldSnapshot[]
+  bills             RecurringBill[]
+  etherfuseCustomer EtherfuseCustomer?
+  rampOrders        RampOrder[]
 
   @@map("companies")
+}
+
+model EtherfuseCustomer {
+  id            String   @id @default(cuid())
+  companyId     String   @unique @map("company_id")
+  customerId    String   @unique @map("customer_id")
+  bankAccountId String?  @map("bank_account_id")
+  walletId      String?  @map("wallet_id")
+  kycStatus     String   @default("pending") @map("kyc_status")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("etherfuse_customers")
+}
+
+model RampOrder {
+  id              String   @id @default(cuid())
+  companyId       String   @map("company_id")
+  orderId         String   @unique @map("order_id")
+  type            String
+  status          String   @default("created")
+  amountFiat      String?  @map("amount_fiat")
+  amountToken     String?  @map("amount_token")
+  burnTransaction String?  @map("burn_transaction")
+  depositClabe    String?  @map("deposit_clabe")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@index([companyId])
+  @@map("ramp_orders")
 }
 
 model Wallet {
@@ -49,6 +83,8 @@ model Deposit {
   /// USDC amount in base units (7 decimal places)
   amount    BigInt
   txHash    String   @unique @map("tx_hash")
+  /// Liga o depósito à order de on-ramp (jornada Pix→cofre). Null = depósito direto.
+  rampOrderId String? @map("ramp_order_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   company Company @relation(fields: [companyId], references: [id])

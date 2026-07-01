@@ -11,6 +11,7 @@ import { DepositModule } from './deposit/deposit.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
 import { BillsModule } from './bills/bills.module';
 import { JobsModule } from './jobs/jobs.module';
+import { RampModule } from './ramp/ramp.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { JobsModule } from './jobs/jobs.module';
     WithdrawModule,
     BillsModule,
     JobsModule,
+    RampModule,
   ],
   controllers: [HealthController],
   providers: [],

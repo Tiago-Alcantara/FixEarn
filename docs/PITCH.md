@@ -124,22 +124,35 @@ colateral gera rendimento. Incentivo perfeitamente alinhado.
 
 ## O que já está construído (MVP do hackathon)
 
-O esqueleto Web2.5 está **de pé e rodando**:
+O produto está **de pé e rodando end-to-end na testnet Stellar**:
 
 - ✅ Autenticação Privy + carteira embutida (login Google) e registro de endereço Stellar.
-- ✅ Depósito e saque reais no cofre **DeFindex** (build XDR → assina no cliente → submete na
-  Soroban RPC).
-- ✅ Ledger financeiro: principal, valor do cofre e **yield gastável** (spendable).
-- ✅ CRUD de assinaturas recorrentes, com escopo por empresa.
+- ✅ **Conta Stellar criada e financiada automaticamente** — o usuário nunca precisa comprar
+  XLM. Na primeira conexão, o backend detecta que a conta não existe e a cria na rede com um
+  saldo inicial (sponsor paga).
+- ✅ **Zero taxas de gas para o usuário** — todas as transações são embrulhadas em
+  *fee-bump* pago pelo sponsor da plataforma (`StellarService.attachAndSubmit`).
+- ✅ Depósito e saque reais no cofre **DeFindex** (build XDR → assina no cliente → submete
+  na Soroban RPC). O backend **financia o cliente** com XLM para o depósito no testnet
+  (substituto do On-Ramp fiat no mainnet).
+- ✅ **Saldo real on-chain** no dashboard — `MoneyPanel` exibe o saldo da carteira e o
+  valor real do cofre lidos diretamente da Soroban RPC.
+- ✅ Ledger financeiro: principal, valor do cofre e **yield gastável** (spendable), calculado
+  em tempo real como `vaultValue − principal`.
+- ✅ **Catálogo de serviços ativo** (8 ferramentas: OpenAI, Claude, Midjourney, Notion, Slack,
+  Figma, GitHub, Linear) com filtros por categoria (IA / Produtividade / Dev) — o cliente
+  ativa/desativa assinaturas diretamente do dashboard, que recalcula o yield alocado.
+- ✅ CRUD completo de assinaturas recorrentes, com escopo por empresa.
 - ✅ Snapshot diário do estado (cron) para histórico e gráficos.
-- ✅ UI completa, estética *private bank* (dashboard, wizard de depósito, saque), bilíngue
-  EN/PT e responsiva.
+- ✅ UI completa, estética *private bank* (dashboard, painel de movimentação, saque),
+  bilíngue EN/PT e responsiva — incluindo drawer de depósito/saque in-page no mobile.
 
 **Stack:** NestJS 11 · Prisma 7 · Postgres 16 · Next.js 16 · React 19 · Privy · DeFindex SDK ·
 Stellar SDK · pnpm · Vitest. Monorepo com contrato de tipos compartilhado ponta a ponta.
 
 **Próximos passos (pós-MVP):** contrato escrow próprio com `claim_yield`/split/`cancel`,
-rampa fiat SEP-24 (QR Pix), motor de cobrança automatizado e margem de colateral reativa.
+rampa fiat Etherfuse (QR Pix em BRL↔USDC), motor de cobrança automatizado e margem de
+colateral reativa.
 
 ---
 

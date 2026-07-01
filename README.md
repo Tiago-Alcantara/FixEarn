@@ -1,11 +1,27 @@
 # Yield2Pay
 
-> Protocolo de infraestrutura financeira **Web2.5** na rede Stellar (Soroban). Empresas
-> alocam um colateral em stablecoins; o **rendimento** desse colateral paga assinaturas de
-> software/APIs em tempo real; o **principal volta 100%** ao cliente no cancelamento.
-> Arquitetura **não-custodial** (sem chaves administrativas sobre o dinheiro do cliente).
+> **Seu caixa ocioso paga o seu software. E o caixa continua sendo seu.**
+
+Protocolo de infraestrutura financeira **Web2.5** na rede Stellar (Soroban). Empresas
+alocam um colateral em stablecoins; o **rendimento** desse colateral paga assinaturas de
+software/APIs em tempo real; o **principal volta 100%** ao cliente no cancelamento.
+Arquitetura **não-custodial** — sem chaves administrativas sobre o dinheiro do cliente.
+
+![Status](https://img.shields.io/badge/status-MVP%20rodando%20em%20testnet-2ea44f)
+![Rede](https://img.shields.io/badge/rede-Stellar%20%C2%B7%20Soroban-1e40af)
+![Stack](https://img.shields.io/badge/stack-NestJS%2011%20%C2%B7%20Next.js%2016-3b82f6)
+![Custódia](https://img.shields.io/badge/arquitetura-100%25%20n%C3%A3o--custodial-6d28d9)
 
 *Yield2Pay nasceu como `FixEarn` e foi renomeado em todo o monorepo (marca, pacotes, infra, banco).*
+
+## Mapa de áreas do projeto
+
+O projeto se divide em **Negócio** e **Produto**; Produto se abre em Front, Back e três
+mecanismos on-chain (depósito, carteira, on/off-ramp). Detalhe de cada área:
+
+![Arquitetura Yield2Pay — negócio + produto](docs/diagrams/arquitetura-geral.png)
+
+> Fonte editável: [`docs/diagrams/arquitetura-geral.excalidraw`](docs/diagrams/arquitetura-geral.excalidraw)
 
 ---
 
@@ -71,9 +87,10 @@ aciona o **Off-Ramp Etherfuse** (saca o USDC do cofre → cliente assina a `burn
 → cálculo pro-rata do rendimento dos dias usados → Pix de devolução para o CNPJ da empresa.
 O acesso à API é revogado lendo o evento on-chain.
 
-> No **MVP atual** o backend implementa o núcleo desse fluxo de forma simplificada:
-> depósito/saque direto no cofre DeFindex e cálculo de *spendable = valor atual do cofre −
-> principal*. O contrato escrow próprio do Yield2Pay com `claim_yield`/split/`cancel` e a
+> No **MVP atual** o backend implementa o núcleo desse fluxo: depósito/saque direto no
+> cofre DeFindex, cálculo de *spendable = valor atual do cofre − principal*, criação e
+> financiamento automático de contas Stellar e patrocínio de taxas de gas via *fee-bump*.
+> O contrato escrow próprio do Yield2Pay com `claim_yield`/split/`cancel` e a
 > **rampa fiat Etherfuse** (BRL↔USDC via PIX) já estão **especificados e planejados**, mas
 > **ainda não codados** — ver o Bloco 3.
 
@@ -118,13 +135,16 @@ apps/api/src/
 ├── prisma/            → PrismaService (ciclo de conexão, adapter Postgres)
 ├── auth/              → AuthGuard: verifica JWT do Privy e faz upsert da Company no login
 ├── company/           → ciclo de vida da Company (upsert idempotente por privyUserId)
-├── wallet/            → registro 1:1 do endereço Stellar (valida chave Ed25519)
+├── wallet/            → registro 1:1 do endereço Stellar; cria e financia a conta on-chain
+│                         se ainda não existir (StellarService.ensureAccountFunded)
 ├── vault/             → wrapper do SDK DeFindex (build deposit/withdraw, APY, posição)
-├── stellar/           → assina hash + submete na Soroban RPC e faz polling do resultado
-├── deposit/           → fluxo de depósito (build XDR → assina → submete → grava no ledger)
+├── stellar/           → StellarService: fee-bump sponsor, criação de conta, saldo on-chain,
+│                         submit + polling na Soroban RPC, funding de testnet para clientes
+├── deposit/           → fluxo de depósito (funde cliente → build XDR → assina → submete)
 ├── withdraw/          → fluxo de saque (espelho do depósito)
 ├── bills/             → CRUD de assinaturas recorrentes (escopo por company)
-├── ledger/            → estado financeiro: principal, valor do cofre, yield gastável
+├── ledger/            → estado financeiro: principal, valor real do cofre, yield gastável,
+│                         saldo nativo da carteira (lido via Soroban RPC)
 ├── jobs/              → cron diário (snapshot do estado de cada company às 2h)
 ├── health/            → GET /health para health check
 └── common/            → utilitários puros (parse-money em base units)
@@ -134,9 +154,13 @@ apps/api/src/
 - **Módulos por domínio** em vez de uma pasta `services/` única: cada fluxo (deposit,
   withdraw, bills) é independente, com seu próprio `.spec.ts`. Facilita testar e evoluir.
 - **`config/` com Zod**: o app **falha no boot** se faltar uma env (`DATABASE_URL`,
-  `PRIVY_APP_*`, `DEFINDEX_*`, `VAULT_ADDRESS`, etc.), evitando erro silencioso em produção.
+  `PRIVY_APP_*`, `DEFINDEX_*`, `VAULT_ADDRESS`, `FEE_SPONSOR_SECRET_KEY`, etc.), evitando
+  erro silencioso em produção.
 - **Não-custodial por design**: o backend só **monta** a transação (XDR) e **submete** a
   assinatura que veio do cliente (`stellar/`). A chave privada nunca passa pelo servidor.
+- **Fee-bump sponsor**: `StellarService` mantém um par de chaves sponsor. Toda transação do
+  cliente é embrulhada em `FeeBumpTransaction` — o cliente nunca precisa de XLM para pagar
+  gas. O sponsor também cria a conta Stellar do cliente no primeiro registro de carteira.
 - **`auth/` faz upsert da Company no login**: primeiro acesso já cria o registro,
   idempotente, tolerando logins concorrentes (constraint única em `privyUserId`).
 - **`jobs/` (cron)**: snapshot diário materializa o estado para histórico/gráficos sem
@@ -173,10 +197,16 @@ apps/web/src/
 │   ├── login/             → Login (Google OAuth via Privy)
 │   ├── tokens/            → Design tokens em CSS custom properties (--fx-*)
 │   └── (app)/             → Route group autenticado (AuthGate + LangProvider)
-│       ├── dashboard/     → Visão geral: capital, retornos, gráfico, serviços, cartão
+│       ├── dashboard/     → Visão geral: MoneyPanel (carteira+vault real), StatCards,
+│       │                    barra de rendimento, catálogo de serviços, cartão virtual
+│       │   ├── MoneyPanel.tsx      → Painel carteira ↔ vault com APY real e botões move
+│       │   ├── ServiceCatalog.tsx  → Grade de 8 serviços (AI/Produtividade/Dev), ativa
+│       │   │                         via bills API, filtro por categoria
+│       │   └── serviceCatalog.ts   → Definição dos 8 serviços do catálogo (preços/tipos)
 │       ├── deposit/       → Wizard de 3 passos (valor → ferramentas → confirmar)
 │       └── withdraw/      → Fluxo de saque
-├── components/            → Primitivas UI (MetalCard, Button, Input, Badge, BrandHeader...)
+├── components/            → Primitivas UI (MetalCard, Button, Input, Badge,
+│                            MoveDrawer, SegmentedControl, BrandHeader...)
 ├── lib/                   → api.ts (client fetch+JWT), money.ts, hooks (useWallet,
 │                            useStellarTx, useIsMobile), i18n, validateAmount, errors
 └── providers/            → Providers, PrivyProviderWrapper, AuthGate
@@ -231,11 +261,12 @@ SDK · Stellar SDK · pnpm · Vitest**.
 
 # Bloco 3 — A fazer: revisar, testar e implementar
 
-> Estado atual: o **esqueleto Web2.5 está de pé** (auth Privy, registro de carteira,
-> deposit/withdraw no cofre DeFindex, ledger/spendable, bills, snapshot diário, UI completa).
-> Os commits recentes já fizeram o cleanup (padronização de tipos/lint, paralelização de I/O,
-> migração de testes para Vitest, extração de utils/componentes, memoização). Falta fechar as
-> integrações reais on-chain/fiat e os testes que dependem de credenciais.
+> **Estado atual (30/06/2026):** o produto roda **end-to-end na testnet Stellar** — auth
+> Privy, criação e financiamento automático de conta Stellar, patrocínio de gas via fee-bump,
+> deposit/withdraw reais no cofre DeFindex, saldo on-chain no dashboard, catálogo de 8 serviços,
+> bills, snapshot diário e UI completa. Falta fechar o contrato escrow próprio, a rampa fiat
+> Etherfuse e os testes que dependem de credenciais. Ver a tabela de status em
+> `docs/Yield2Pay_Documentacao_Tecnica.md` §8.
 
 ## 3.1. Implementar
 
@@ -316,12 +347,20 @@ Sem `NEXT_PUBLIC_PRIVY_APP_ID` só a landing pública renderiza.
 
 ## Documentação
 
-- `docs/Yield2Pay_Documentacao_Tecnica.md` — spec técnica e de negócios completa.
+**Técnica**
+- `docs/Yield2Pay_Documentacao_Tecnica.md` — spec técnica e de negócios completa (§8 traz a
+  tabela de status: implementado em testnet vs. planejado).
 - `docs/DEPLOY.md` — guia de deploy (Vercel + Render).
+- `docs/diagrams/arquitetura-geral.excalidraw` — mapa de áreas do projeto (negócio + produto).
 - `docs/superpowers/specs/2026-06-26-etherfuse-ramp-design.md` — design da rampa fiat Etherfuse
   (BRL↔USDC via PIX), verificado endpoint-a-endpoint contra a doc oficial.
-- `docs/superpowers/plans/2026-06-26-etherfuse-ramp-mvp.md` — plano de implementação da rampa
-  Etherfuse, task a task.
-- `docs/superpowers/plans/` — demais planos de implementação (backend MVP, frontend MVP, cleanup).
+- `docs/superpowers/plans/` — planos de implementação task-a-task (backend MVP, frontend MVP,
+  rampa Etherfuse, cleanup).
+
+**Negócio & produto**
+- `docs/PITCH.md` — pitch do projeto (problema, solução, modelo, o que já está construído).
+- `docs/GTM.md` — estratégia go-to-market (ICP, canais, precificação, roadmap 18 meses).
+- `docs/GUIA-DO-USUARIO.md` — guia de onboarding para o cliente final.
+- `docs/PROMPT-PITCH-SLIDES.md` — prompt pronto para gerar o pitch deck no design system.
 </content>
 </invoke>

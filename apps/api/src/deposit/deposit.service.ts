@@ -4,7 +4,6 @@ import { StellarService } from '../stellar/stellar.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { WalletService } from '../wallet/wallet.service';
 import { parseBaseUnits } from '../common/parse-money';
-import { RESERVE_BUFFER_BASE_UNITS } from '../common/reserve';
 import { BuildTxResponse, SubmitTxDto } from '@yield2pay/shared';
 
 // Safety cap on a single deposit. Bound it well above expected deposits
@@ -24,15 +23,10 @@ export class DepositService {
     if (amount > MAX_DEPOSIT_BASE_UNITS) {
       throw new BadRequestException('amount exceeds maximum deposit');
     }
+    // Cofre USDC: o valor vem do on-ramp (USDC recebido), não do saldo XLM
+    // nativo. Não checamos saldo nativo aqui — o depósito falha on-chain se a
+    // carteira não tiver USDC. O buffer de XLM segue só p/ fees/reserve.
     const address = await this.wallet.getAddress(companyId);
-    const balance = await this.stellar.getNativeBalance(address);
-    const spendable =
-      balance > RESERVE_BUFFER_BASE_UNITS
-        ? balance - RESERVE_BUFFER_BASE_UNITS
-        : 0n;
-    if (amount > spendable) {
-      throw new BadRequestException('saldo insuficiente na carteira');
-    }
     const { xdr } = await this.vault.buildDeposit(address, amount);
     const { hash } = this.stellar.hashForSigning(xdr);
     return { xdr, hash };
@@ -55,6 +49,7 @@ export class DepositService {
       companyId,
       parseBaseUnits(dto.amount),
       txHash,
+      dto.rampOrderId,
     );
     return { txHash };
   }

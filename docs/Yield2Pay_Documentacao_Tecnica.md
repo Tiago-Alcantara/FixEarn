@@ -144,8 +144,10 @@ Para manter a objetividade exigida pelo ambiente de hackathon, o projeto foi int
 
 ### Fase 1 — MVP (Entrega Atual do Hackathon)
 
+> **⚠️ Testnet:** toda a implementação atual roda na testnet Stellar. O depósito no cofre DeFindex, o saldo on-chain, o fee-bump e o funding do cliente são operações reais na rede de testes — não em produção. A migração para mainnet depende da rampa fiat Etherfuse (BRL↔USDC via PIX) e de um cofre DeFindex financiado em mainnet.
+
 - **Foco:** Assinaturas B2B de Valor Mensal Fixo para DevTools e APIs.
-- **Implementação:** Fluxos estáveis de On-Ramp via Pix, pré-autorizações via Privy e direcionamento de yield simplificado via DeFindex.
+- **Implementação:** Depósito/saque reais no cofre DeFindex (testnet), criação automática de conta Stellar, patrocínio de gas via fee-bump, catálogo de serviços ativáveis, saldo on-chain em tempo real. On-Ramp fiat via Pix ainda não implementado — o funding de testnet é feito diretamente pelo sponsor da plataforma.
 - **Caso de Uso Real:** Startups travam caixa ocioso para utilizar APIs de dados e infraestrutura Web2 sem queimar orçamento.
 
 ### Fase 2 — Próximos 6 Meses (Cobranças Recorrentes Variáveis)
@@ -160,3 +162,37 @@ Para manter a objetividade exigida pelo ambiente de hackathon, o projeto foi int
 - **Foco:** Contas de Consumo Industriais e Corporativas de Grande Porte.
 - **Evolução Técnica:** Parcerias de integração com ERPs corporativos tradicionais e concessionárias de serviços públicos.
 - **Caso de Uso Real:** Indústrias, redes de franquias e condomínios alocam o capital flutuante de suas tesourarias em contratos inteligentes para liquidar faturas de energia elétrica, água e telecomunicações perpetuamente, gerando o maior caso de uso de utilidade real e atração de TVL da história da rede Stellar.
+
+---
+
+## 8. Estado de Implementação (30/06/2026)
+
+### 8.1. Implementado e Rodando em Testnet
+
+| Componente | Status | Detalhe |
+|---|---|---|
+| Autenticação Privy + embedded wallet | ✅ Produção | Login Google; chave fragmentada por SSS |
+| Criação automática de conta Stellar | ✅ Produção | `StellarService.ensureAccountFunded` — sponsor cria a conta no primeiro registro de carteira |
+| Patrocínio de gas via fee-bump | ✅ Produção | Todas as txs do cliente são embrulhadas em `FeeBumpTransaction` assinada pelo sponsor |
+| Depósito no cofre DeFindex | ✅ Testnet | Build XDR → assina no Privy → submete com fee-bump |
+| Saque do cofre DeFindex | ✅ Testnet | Espelho do depósito |
+| Funding de testnet para depósito | ✅ Testnet | `StellarService.fundClient` — o sponsor envia XLM ao cliente (substituto do On-Ramp no mainnet) |
+| Saldo real da carteira on-chain | ✅ Produção | `getNativeBalance` via `getLedgerEntries` na Soroban RPC |
+| Valor real do cofre | ✅ Produção | `VaultService.getPositionValue` via DeFindex SDK |
+| Ledger financeiro (principal / yield gastável) | ✅ Produção | `spendable = vaultValue − principal` |
+| Catálogo de serviços (8 ferramentas) | ✅ Produção | OpenAI, Claude, Midjourney, Notion, Slack, Figma, GitHub, Linear com filtros por categoria |
+| CRUD de assinaturas recorrentes | ✅ Produção | Bills por company, com `status` active/paused |
+| Snapshot diário (cron) | ✅ Produção | Às 2h UTC, paralelo por company |
+| Dashboard Web2 completo | ✅ Produção | MoneyPanel, StatCards, barra de rendimento, catálogo, cartão virtual; bilíngue EN/PT, responsivo |
+
+### 8.2. Especificado e Planejado (Não Implementado)
+
+| Componente | Referência | Bloqueio |
+|---|---|---|
+| Contrato escrow próprio (Soroban) | `docs/Yield2Pay_Documentacao_Tecnica.md` §4 | Nenhum — próximo passo de engenharia |
+| Rampa fiat Etherfuse (BRL↔USDC via PIX) | `docs/superpowers/specs/2026-06-26-etherfuse-ramp-design.md` | Confirmação de sandbox BRL + aprovação de KYB Etherfuse |
+| Motor de cobrança automatizado (`claim_yield` no vencimento) | — | Depende do contrato escrow próprio |
+| Split de receita 95/5 on-chain | — | Depende do contrato escrow próprio |
+| Margem de colateral reativa | — | Depende do motor de cobrança |
+| Cálculo pro-rata no cancelamento | — | Depende do contrato escrow próprio |
+| Migração para mainnet | `docs/DEPLOY.md` | Rampa fiat + cofre DeFindex financiado em mainnet |

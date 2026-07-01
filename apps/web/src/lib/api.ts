@@ -7,6 +7,15 @@ import type {
   SpendableView,
   WalletBalanceView,
   Bill,
+  RampStatus,
+  RampSetupResult,
+  OnrampResult,
+  OfframpResult,
+  RampOrderStatus,
+  RampOrder,
+  OrderClaim,
+  OrderBurn,
+  SubmitClaimDto,
 } from '@yield2pay/shared';
 
 export class ApiError extends Error {
@@ -32,6 +41,19 @@ interface ApiMethods {
   listBills(): Promise<Bill[]>;
   createBill(body: CreateBillDto): Promise<Bill>;
   deleteBill(id: string): Promise<void>;
+  // Ramp
+  getRampStatus(): Promise<RampStatus>;
+  rampSetup(body: { email: string; displayName: string }): Promise<RampSetupResult>;
+  rampMarkKycApproved(): Promise<void>;
+  startOnramp(body: { amountFiat: string }): Promise<OnrampResult>;
+  simulateFiatReceived(body: { orderId: string }): Promise<void>;
+  startOfframp(body: { amountToken: string }): Promise<OfframpResult>;
+  getRampOrder(orderId: string): Promise<RampOrderStatus>;
+  listRampOrders(): Promise<RampOrder[]>;
+  getOrderClaim(orderId: string): Promise<OrderClaim>;
+  submitOrderClaim(orderId: string, body: SubmitClaimDto): Promise<{ txHash: string }>;
+  getOrderBurn(orderId: string): Promise<OrderBurn>;
+  submitOrderBurn(orderId: string, body: SubmitClaimDto): Promise<{ txHash: string }>;
 }
 
 export function createApi(getToken: GetToken): ApiMethods {
@@ -99,5 +121,20 @@ export function createApi(getToken: GetToken): ApiMethods {
     createBill: (body: CreateBillDto) => request('/bills', 'POST', body),
 
     deleteBill: (id: string) => request(`/bills/${id}`, 'DELETE'),
+
+    getRampStatus: () => request('/ramp/status'),
+    rampSetup: (body) => request('/ramp/setup', 'POST', body),
+    rampMarkKycApproved: () => request('/ramp/kyc-approved', 'POST'),
+    startOnramp: (body) => request('/ramp/onramp/start', 'POST', body),
+    simulateFiatReceived: (body) => request('/ramp/onramp/simulate', 'POST', body),
+    startOfframp: (body) => request('/ramp/offramp/start', 'POST', body),
+    getRampOrder: (orderId) => request(`/ramp/order/${orderId}`),
+    listRampOrders: () => request('/ramp/orders'),
+    getOrderClaim: (orderId) => request(`/ramp/order/${orderId}/claim`),
+    submitOrderClaim: (orderId, body) =>
+      request(`/ramp/order/${orderId}/claim`, 'POST', body),
+    getOrderBurn: (orderId) => request(`/ramp/order/${orderId}/burn`),
+    submitOrderBurn: (orderId, body) =>
+      request(`/ramp/order/${orderId}/burn`, 'POST', body),
   };
 }

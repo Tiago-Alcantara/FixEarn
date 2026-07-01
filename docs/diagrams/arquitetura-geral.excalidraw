@@ -1,0 +1,544 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "text",
+      "id": "title_main",
+      "x": 940, "y": 40, "width": 420, "height": 46,
+      "text": "Yield2Pay",
+      "originalText": "Yield2Pay",
+      "fontSize": 38, "fontFamily": 3, "textAlign": "center", "verticalAlign": "top",
+      "strokeColor": "#1e40af", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100001,
+      "version": 1, "versionNonce": 100002, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+    {
+      "type": "text",
+      "id": "title_sub",
+      "x": 900, "y": 92, "width": 500, "height": 22,
+      "text": "Mapa de areas do projeto  ·  Negocio + Produto",
+      "originalText": "Mapa de areas do projeto  ·  Negocio + Produto",
+      "fontSize": 16, "fontFamily": 3, "textAlign": "center", "verticalAlign": "top",
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100003,
+      "version": 1, "versionNonce": 100004, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+
+    {
+      "type": "rectangle",
+      "id": "hdr_negocio",
+      "x": 200, "y": 210, "width": 300, "height": 72,
+      "strokeColor": "#b45309", "backgroundColor": "#fef3c7",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100005,
+      "version": 1, "versionNonce": 100006, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "hdr_negocio_t", "type": "text"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text",
+      "id": "hdr_negocio_t",
+      "x": 300, "y": 234, "width": 100, "height": 24,
+      "text": "NEGOCIO",
+      "originalText": "NEGOCIO",
+      "fontSize": 20, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100007,
+      "version": 1, "versionNonce": 100008, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "hdr_negocio", "lineHeight": 1.25
+    },
+
+    {
+      "type": "rectangle",
+      "id": "hdr_produto",
+      "x": 1130, "y": 210, "width": 300, "height": 72,
+      "strokeColor": "#1e3a5f", "backgroundColor": "#3b82f6",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100009,
+      "version": 1, "versionNonce": 100010, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "hdr_produto_t", "type": "text"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text",
+      "id": "hdr_produto_t",
+      "x": 1230, "y": 234, "width": 100, "height": 24,
+      "text": "PRODUTO",
+      "originalText": "PRODUTO",
+      "fontSize": 20, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100011,
+      "version": 1, "versionNonce": 100012, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "hdr_produto", "lineHeight": 1.25
+    },
+
+    {
+      "type": "arrow",
+      "id": "arr_title_neg",
+      "x": 1050, "y": 120, "width": 640, "height": 86,
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100013,
+      "version": 1, "versionNonce": 100014, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [-350, 45], [-700, 86]],
+      "startBinding": {"elementId": "title_main", "focus": 0, "gap": 4},
+      "endBinding": {"elementId": "hdr_negocio", "focus": 0, "gap": 4},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow",
+      "id": "arr_title_prod",
+      "x": 1200, "y": 120, "width": 80, "height": 86,
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 100015,
+      "version": 1, "versionNonce": 100016, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [40, 45], [80, 86]],
+      "startBinding": {"elementId": "title_main", "focus": 0, "gap": 4},
+      "endBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 4},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+
+    {
+      "type": "line",
+      "id": "neg_spine",
+      "x": 232, "y": 330, "width": 0, "height": 300,
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110000,
+      "version": 1, "versionNonce": 110001, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [0, 300]]
+    },
+    {
+      "type": "arrow",
+      "id": "arr_neg_spine",
+      "x": 350, "y": 284, "width": 0, "height": 44,
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110002,
+      "version": 1, "versionNonce": 110003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [0, 44]],
+      "startBinding": {"elementId": "hdr_negocio", "focus": 0, "gap": 2},
+      "endBinding": null, "startArrowhead": null, "endArrowhead": "arrow"
+    },
+
+    {
+      "type": "ellipse",
+      "id": "neg_dot1", "x": 226, "y": 336, "width": 13, "height": 13,
+      "strokeColor": "#b45309", "backgroundColor": "#b45309",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110010,
+      "version": 1, "versionNonce": 110011, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false
+    },
+    {
+      "type": "text", "id": "neg_h1", "x": 256, "y": 330, "width": 260, "height": 22,
+      "text": "Modelo — OpEx Zero",
+      "originalText": "Modelo — OpEx Zero",
+      "fontSize": 17, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110012,
+      "version": 1, "versionNonce": 110013, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+    {
+      "type": "text", "id": "neg_b1", "x": 256, "y": 356, "width": 290, "height": 40,
+      "text": "Colateral rende e paga o SaaS.\nO principal volta 100% no cancelamento.",
+      "originalText": "Colateral rende e paga o SaaS.\nO principal volta 100% no cancelamento.",
+      "fontSize": 13, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110014,
+      "version": 1, "versionNonce": 110015, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+
+    {
+      "type": "ellipse",
+      "id": "neg_dot2", "x": 226, "y": 416, "width": 13, "height": 13,
+      "strokeColor": "#b45309", "backgroundColor": "#b45309",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110020,
+      "version": 1, "versionNonce": 110021, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false
+    },
+    {
+      "type": "text", "id": "neg_h2", "x": 256, "y": 410, "width": 200, "height": 22,
+      "text": "Formula do colateral",
+      "originalText": "Formula do colateral",
+      "fontSize": 17, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110022,
+      "version": 1, "versionNonce": 110023, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+    {
+      "type": "rectangle",
+      "id": "neg_code", "x": 256, "y": 436, "width": 290, "height": 34,
+      "strokeColor": "#334155", "backgroundColor": "#1e293b",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110024,
+      "version": 1, "versionNonce": 110025, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "neg_code_t", "type": "text"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "neg_code_t", "x": 266, "y": 444, "width": 270, "height": 18,
+      "text": "C = (Mensalidade x 12) / APY",
+      "originalText": "C = (Mensalidade x 12) / APY",
+      "fontSize": 14, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#22c55e", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110026,
+      "version": 1, "versionNonce": 110027, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "neg_code", "lineHeight": 1.25
+    },
+
+    {
+      "type": "ellipse",
+      "id": "neg_dot3", "x": 226, "y": 496, "width": 13, "height": 13,
+      "strokeColor": "#b45309", "backgroundColor": "#b45309",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110030,
+      "version": 1, "versionNonce": 110031, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false
+    },
+    {
+      "type": "text", "id": "neg_h3", "x": 256, "y": 490, "width": 200, "height": 22,
+      "text": "Receita",
+      "originalText": "Receita",
+      "fontSize": 17, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110032,
+      "version": 1, "versionNonce": 110033, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+    {
+      "type": "text", "id": "neg_b3", "x": 256, "y": 516, "width": 290, "height": 40,
+      "text": "Split no claim_yield:\n95% provedor da API  /  5% Yield2Pay.",
+      "originalText": "Split no claim_yield:\n95% provedor da API  /  5% Yield2Pay.",
+      "fontSize": 13, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110034,
+      "version": 1, "versionNonce": 110035, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+
+    {
+      "type": "ellipse",
+      "id": "neg_dot4", "x": 226, "y": 576, "width": 13, "height": 13,
+      "strokeColor": "#b45309", "backgroundColor": "#b45309",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110040,
+      "version": 1, "versionNonce": 110041, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false
+    },
+    {
+      "type": "text", "id": "neg_h4", "x": 256, "y": 570, "width": 260, "height": 22,
+      "text": "Nicho & rede",
+      "originalText": "Nicho & rede",
+      "fontSize": 17, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#b45309", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110042,
+      "version": 1, "versionNonce": 110043, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+    {
+      "type": "text", "id": "neg_b4", "x": 256, "y": 596, "width": 290, "height": 40,
+      "text": "B2B DevTools & APIs de valor fixo.\nRede Stellar (Soroban), 100% nao-custodial.",
+      "originalText": "B2B DevTools & APIs de valor fixo.\nRede Stellar (Soroban), 100% nao-custodial.",
+      "fontSize": 13, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#64748b", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 110044,
+      "version": 1, "versionNonce": 110045, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.25
+    },
+
+    {
+      "type": "rectangle", "id": "box_front", "x": 600, "y": 360, "width": 250, "height": 58,
+      "strokeColor": "#1e3a5f", "backgroundColor": "#93c5fd",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 300000,
+      "version": 1, "versionNonce": 300001, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "box_front_t", "type": "text"}, {"id": "arr_pf", "type": "arrow"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "box_front_t", "x": 625, "y": 375, "width": 200, "height": 28,
+      "text": "FRONT\nNext.js 16",
+      "originalText": "FRONT\nNext.js 16",
+      "fontSize": 15, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#1e3a5f", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 300002,
+      "version": 1, "versionNonce": 300003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "box_front", "lineHeight": 1.2
+    },
+    {
+      "type": "text", "id": "det_front", "x": 602, "y": 432, "width": 250, "height": 110,
+      "text": "· Landing + login Privy (Google)\n· Dashboard: MoneyPanel + StatCards\n· ServiceCatalog (8 servicos)\n· MoveDrawer deposito/saque\n· i18n EN/PT · design private-bank\n· lib/api.ts (JWT) · useStellarTx",
+      "originalText": "· Landing + login Privy (Google)\n· Dashboard: MoneyPanel + StatCards\n· ServiceCatalog (8 servicos)\n· MoveDrawer deposito/saque\n· i18n EN/PT · design private-bank\n· lib/api.ts (JWT) · useStellarTx",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 300004,
+      "version": 1, "versionNonce": 300005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.3
+    },
+
+    {
+      "type": "rectangle", "id": "box_back", "x": 890, "y": 360, "width": 250, "height": 58,
+      "strokeColor": "#1e3a5f", "backgroundColor": "#3b82f6",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 400000,
+      "version": 1, "versionNonce": 400001, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "box_back_t", "type": "text"}, {"id": "arr_pb", "type": "arrow"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "box_back_t", "x": 915, "y": 375, "width": 200, "height": 28,
+      "text": "BACK\nNestJS 11",
+      "originalText": "BACK\nNestJS 11",
+      "fontSize": 15, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#ffffff", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 400002,
+      "version": 1, "versionNonce": 400003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "box_back", "lineHeight": 1.2
+    },
+    {
+      "type": "text", "id": "det_back", "x": 892, "y": 432, "width": 250, "height": 110,
+      "text": "· auth: Privy JWT + upsert Company\n· vault: DeFindex SDK (APY/posicao)\n· ledger: spendable=vault-principal\n· bills CRUD · jobs: snapshot cron\n· stellar: fee-bump + submit RPC\n· Prisma + Postgres · config Zod",
+      "originalText": "· auth: Privy JWT + upsert Company\n· vault: DeFindex SDK (APY/posicao)\n· ledger: spendable=vault-principal\n· bills CRUD · jobs: snapshot cron\n· stellar: fee-bump + submit RPC\n· Prisma + Postgres · config Zod",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 400004,
+      "version": 1, "versionNonce": 400005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.3
+    },
+
+    {
+      "type": "rectangle", "id": "box_dep", "x": 1180, "y": 360, "width": 250, "height": 58,
+      "strokeColor": "#047857", "backgroundColor": "#a7f3d0",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 500000,
+      "version": 1, "versionNonce": 500001, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "box_dep_t", "type": "text"}, {"id": "arr_pd", "type": "arrow"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "box_dep_t", "x": 1205, "y": 375, "width": 200, "height": 28,
+      "text": "MECANISMO\nDeposito no cofre",
+      "originalText": "MECANISMO\nDeposito no cofre",
+      "fontSize": 15, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#047857", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 500002,
+      "version": 1, "versionNonce": 500003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "box_dep", "lineHeight": 1.2
+    },
+    {
+      "type": "text", "id": "det_dep", "x": 1182, "y": 432, "width": 250, "height": 110,
+      "text": "1. Back monta XDR (DeFindex deposit)\n2. Cliente assina (useSignRawHash)\n3. Fee-bump do sponsor na tx\n4. Submit + polling Soroban RPC\n5. Grava Deposit no ledger\n(testnet: fundClient envia XLM)",
+      "originalText": "1. Back monta XDR (DeFindex deposit)\n2. Cliente assina (useSignRawHash)\n3. Fee-bump do sponsor na tx\n4. Submit + polling Soroban RPC\n5. Grava Deposit no ledger\n(testnet: fundClient envia XLM)",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 500004,
+      "version": 1, "versionNonce": 500005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.3
+    },
+
+    {
+      "type": "rectangle", "id": "box_wal", "x": 1470, "y": 360, "width": 250, "height": 58,
+      "strokeColor": "#6d28d9", "backgroundColor": "#ddd6fe",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 600000,
+      "version": 1, "versionNonce": 600001, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "box_wal_t", "type": "text"}, {"id": "arr_pw", "type": "arrow"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "box_wal_t", "x": 1495, "y": 375, "width": 200, "height": 28,
+      "text": "MECANISMO\nCarteira",
+      "originalText": "MECANISMO\nCarteira",
+      "fontSize": 15, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#6d28d9", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 600002,
+      "version": 1, "versionNonce": 600003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "box_wal", "lineHeight": 1.2
+    },
+    {
+      "type": "text", "id": "det_wal", "x": 1472, "y": 432, "width": 250, "height": 110,
+      "text": "· Privy embedded wallet (SSS)\n· Login Google, sem seed phrase\n· Registro 1:1 do stellarAddress\n· ensureAccountFunded: sponsor\n  cria a conta on-chain no 1o acesso\n· getNativeBalance (getLedgerEntries)\n· Gas patrocinado (usuario nao paga)",
+      "originalText": "· Privy embedded wallet (SSS)\n· Login Google, sem seed phrase\n· Registro 1:1 do stellarAddress\n· ensureAccountFunded: sponsor\n  cria a conta on-chain no 1o acesso\n· getNativeBalance (getLedgerEntries)\n· Gas patrocinado (usuario nao paga)",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 600004,
+      "version": 1, "versionNonce": 600005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.3
+    },
+
+    {
+      "type": "rectangle", "id": "box_ramp", "x": 1760, "y": 360, "width": 250, "height": 58,
+      "strokeColor": "#c2410c", "backgroundColor": "#fed7aa",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "dashed",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 700000,
+      "version": 1, "versionNonce": 700001, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "box_ramp_t", "type": "text"}, {"id": "arr_pr", "type": "arrow"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "box_ramp_t", "x": 1785, "y": 375, "width": 200, "height": 28,
+      "text": "MECANISMO\nOn / Off-Ramp",
+      "originalText": "MECANISMO\nOn / Off-Ramp",
+      "fontSize": 15, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#c2410c", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 700002,
+      "version": 1, "versionNonce": 700003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "box_ramp", "lineHeight": 1.2
+    },
+    {
+      "type": "text", "id": "det_ramp", "x": 1762, "y": 432, "width": 255, "height": 110,
+      "text": "Etherfuse · BRL <-> USDC via PIX\n· On: quote -> order -> PIX ->\n  claim -> auto-deposito no cofre\n· Off: saca cofre -> burnTransaction\n  -> PIX payout ao provedor\n· KYC/KYB hosted\n· webhook HMAC assinado (JCS)",
+      "originalText": "Etherfuse · BRL <-> USDC via PIX\n· On: quote -> order -> PIX ->\n  claim -> auto-deposito no cofre\n· Off: saca cofre -> burnTransaction\n  -> PIX payout ao provedor\n· KYC/KYB hosted\n· webhook HMAC assinado (JCS)",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "left", "verticalAlign": "top",
+      "strokeColor": "#475569", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 700004,
+      "version": 1, "versionNonce": 700005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": null, "lineHeight": 1.3
+    },
+    {
+      "type": "rectangle", "id": "ramp_badge", "x": 1762, "y": 548, "width": 120, "height": 24,
+      "strokeColor": "#c2410c", "backgroundColor": "#ffedd5",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "dashed",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 700006,
+      "version": 1, "versionNonce": 700007, "isDeleted": false,
+      "groupIds": [], "boundElements": [{"id": "ramp_badge_t", "type": "text"}], "link": null, "locked": false,
+      "roundness": {"type": 3}
+    },
+    {
+      "type": "text", "id": "ramp_badge_t", "x": 1772, "y": 552, "width": 100, "height": 16,
+      "text": "PLANEJADO",
+      "originalText": "PLANEJADO",
+      "fontSize": 12, "fontFamily": 3, "textAlign": "center", "verticalAlign": "middle",
+      "strokeColor": "#c2410c", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 1, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 700008,
+      "version": 1, "versionNonce": 700009, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "containerId": "ramp_badge", "lineHeight": 1.25
+    },
+
+    {
+      "type": "arrow", "id": "arr_pf", "x": 1200, "y": 284, "width": 475, "height": 72,
+      "strokeColor": "#1e3a5f", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 250000,
+      "version": 1, "versionNonce": 250001, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [-200, 40], [-475, 72]],
+      "startBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 2},
+      "endBinding": {"elementId": "box_front", "focus": 0, "gap": 3},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow", "id": "arr_pb", "x": 1230, "y": 284, "width": 215, "height": 72,
+      "strokeColor": "#1e3a5f", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 250002,
+      "version": 1, "versionNonce": 250003, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [-100, 40], [-215, 72]],
+      "startBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 2},
+      "endBinding": {"elementId": "box_back", "focus": 0, "gap": 3},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow", "id": "arr_pd", "x": 1290, "y": 284, "width": 15, "height": 72,
+      "strokeColor": "#047857", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 250004,
+      "version": 1, "versionNonce": 250005, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [8, 40], [15, 72]],
+      "startBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 2},
+      "endBinding": {"elementId": "box_dep", "focus": 0, "gap": 3},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow", "id": "arr_pw", "x": 1340, "y": 284, "width": 255, "height": 72,
+      "strokeColor": "#6d28d9", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 250006,
+      "version": 1, "versionNonce": 250007, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [130, 40], [255, 72]],
+      "startBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 2},
+      "endBinding": {"elementId": "box_wal", "focus": 0, "gap": 3},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    },
+    {
+      "type": "arrow", "id": "arr_pr", "x": 1360, "y": 284, "width": 525, "height": 72,
+      "strokeColor": "#c2410c", "backgroundColor": "transparent",
+      "fillStyle": "solid", "strokeWidth": 2, "strokeStyle": "solid",
+      "roughness": 0, "opacity": 100, "angle": 0, "seed": 250008,
+      "version": 1, "versionNonce": 250009, "isDeleted": false,
+      "groupIds": [], "boundElements": null, "link": null, "locked": false,
+      "points": [[0, 0], [260, 40], [525, 72]],
+      "startBinding": {"elementId": "hdr_produto", "focus": 0, "gap": 2},
+      "endBinding": {"elementId": "box_ramp", "focus": 0, "gap": 3},
+      "startArrowhead": null, "endArrowhead": "arrow"
+    }
+  ],
+  "appState": {
+    "viewBackgroundColor": "#ffffff",
+    "gridSize": 20
+  },
+  "files": {}
+}

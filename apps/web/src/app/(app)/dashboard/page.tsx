@@ -26,9 +26,9 @@ const T = {
     logout: 'Log out',
     greeting: 'Welcome back, Acme',
     greetingSub: 'Your capital is working. Returns are covering your tools.',
-    capitalTitle: 'Your deposit',
+    capitalTitle: 'Your assets',
     capitalLabel: 'Total capital',
-    capitalSub: 'Your money, always',
+    capitalSub: 'Wallet + vault',
     returnsTitle: 'Monthly returns',
     returnsLabel: 'Generated this month',
     returnsSubSuffix: '% vs last month',
@@ -69,9 +69,9 @@ const T = {
     logout: 'Sair',
     greeting: 'Bem-vindo, Acme',
     greetingSub: 'Seu capital está rendendo. O rendimento cobre suas ferramentas.',
-    capitalTitle: 'Seu aporte',
+    capitalTitle: 'Seus ativos',
     capitalLabel: 'Capital total',
-    capitalSub: 'Sempre seu',
+    capitalSub: 'Carteira + vault',
     returnsTitle: 'Rendimento mensal',
     returnsLabel: 'Gerado este mês',
     returnsSubSuffix: '% vs mês anterior',
@@ -92,10 +92,10 @@ const T = {
     loading: 'Carregando…',
     error: 'Erro ao carregar o painel.',
     // Deposit CTA
-    depositTitle: 'Aumentar seu aporte',
+    depositTitle: 'Aumentar seu depósito',
     depositSub: 'Mais capital significa mais rendimento para cobrir suas ferramentas.',
     estReturn: 'Rendimento extra estimado: ~R$ 42,00/mês',
-    depositCta: 'Aportar via PIX',
+    depositCta: 'Depositar via PIX',
     depositSecurity: 'Transferência segura · Capital investido automaticamente',
     // Virtual card
     cardText: 'Este cartão paga suas assinaturas ativas automaticamente, com o seu rendimento.',
@@ -481,7 +481,11 @@ export default function DashboardPage() {
             const on = nav === item.id;
             function handleNavClick() {
               if (item.id === 'deposit') {
-                setDrawer('deposit');
+                if (lang === 'en') {
+                  router.push('/deposit');
+                } else {
+                  setDrawer('deposit');
+                }
               } else {
                 setNav(item.id);
               }
@@ -775,10 +779,12 @@ export default function DashboardPage() {
               gap: 16,
             }}
           >
-            {/* Capital working (vaultValue) */}
+            {/* Total assets (wallet + vault) */}
             <StatCard
               title={t.capitalTitle}
-              value={formatUsdc(dash.vaultValue)}
+              value={formatUsdc(
+                (BigInt(dash.vaultValue) + BigInt(walletBalance?.balance ?? '0')).toString()
+              )}
               label={t.capitalLabel}
               sub={t.capitalSub}
             />

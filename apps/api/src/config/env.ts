@@ -12,12 +12,15 @@ const schema = z.object({
   SOROBAN_RPC_URL: z.string().url(),
   FEE_SPONSOR_SECRET_KEY: z.string().min(1),
   PORT: z.coerce.number().int().positive().default(3000),
-  // Demo only: injeta rendimento sintético (basis points sobre o principal).
-  // 0 = desligado (produção). Ex.: 320 = 3,2% de rendimento fictício.
   DEMO_YIELD_BPS: z.coerce.number().int().nonnegative().default(0),
-  // Demo only: variação "vs mês anterior" exibida quando NÃO há histórico de
-  // snapshot suficiente. Só usada quando DEMO_YIELD_BPS > 0. Ex.: "3.2".
   DEMO_RETURNS_CHANGE_PERCENT: z.string().default('3.2'),
+  // Etherfuse on/off-ramp integration. Ausente = mock mode automático.
+  ETHERFUSE_API_KEY: z.string().optional(),
+  ETHERFUSE_BASE_URL: z.string().url().default('https://api.sand.etherfuse.com'),
+  // Override do customerId/org (default: 3º segmento da API key).
+  ETHERFUSE_CUSTOMER_ID: z.string().optional(),
+  // Moeda fiat do ramp: BRL (Pix) ou MXN (SPEI). Default BRL.
+  ETHERFUSE_FIAT_CURRENCY: z.enum(['BRL', 'MXN']).default('BRL'),
 });
 
 export type Env = {
@@ -34,6 +37,10 @@ export type Env = {
   port: number;
   demoYieldBps: number;
   demoReturnsChangePercent: string;
+  etherfuseApiKey: string | undefined;
+  etherfuseBaseUrl: string;
+  etherfuseCustomerId: string | undefined;
+  etherfuseFiatCurrency: 'BRL' | 'MXN';
 };
 
 export function loadEnv(raw: Record<string, string | undefined>): Env {
@@ -52,5 +59,9 @@ export function loadEnv(raw: Record<string, string | undefined>): Env {
     port: parsed.PORT,
     demoYieldBps: parsed.DEMO_YIELD_BPS,
     demoReturnsChangePercent: parsed.DEMO_RETURNS_CHANGE_PERCENT,
+    etherfuseApiKey: parsed.ETHERFUSE_API_KEY,
+    etherfuseBaseUrl: parsed.ETHERFUSE_BASE_URL,
+    etherfuseCustomerId: parsed.ETHERFUSE_CUSTOMER_ID,
+    etherfuseFiatCurrency: parsed.ETHERFUSE_FIAT_CURRENCY,
   };
 }

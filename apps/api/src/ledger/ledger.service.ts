@@ -24,8 +24,11 @@ export class LedgerService {
     companyId: string,
     amount: bigint,
     txHash: string,
+    rampOrderId?: string,
   ): Promise<void> {
-    await this.prisma.deposit.create({ data: { companyId, amount, txHash } });
+    await this.prisma.deposit.create({
+      data: { companyId, amount, txHash, rampOrderId },
+    });
   }
 
   async recordWithdraw(
