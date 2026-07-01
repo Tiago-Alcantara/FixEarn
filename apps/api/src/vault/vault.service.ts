@@ -24,6 +24,25 @@ function assertSafeInteger(amount: bigint): void {
   }
 }
 
+/**
+ * DeFindex error 124 (`AmountOverTotalSupply`): a simulação de saldo falha quando
+ * o vault está vazio (total_supply 0) — vale pra qualquer endereço. A posição é 0
+ * e o erro some sozinho no primeiro depósito, então não é ruído digno de warn.
+ */
+function isEmptyVaultBalanceError(e: unknown): boolean {
+  if (e && typeof e === 'object') {
+    const err = e as { errorCode?: unknown; message?: unknown };
+    if (err.errorCode === 124) return true;
+    if (
+      typeof err.message === 'string' &&
+      err.message.includes('AmountOverTotalSupply')
+    ) {
+      return true;
+    }
+  }
+  return false;
+}
+
 @Injectable()
 export class VaultService {
   private readonly network: SupportedNetworks;
@@ -124,7 +143,10 @@ export class VaultService {
       );
       return BigInt(response.underlyingBalance?.[0] ?? 0);
     } catch (e) {
-      console.warn('[VaultService] getVaultBalance failed, returning 0n:', e);
+      // Vault vazio → posição 0, silencioso (ver isEmptyVaultBalanceError).
+      if (!isEmptyVaultBalanceError(e)) {
+        console.warn('[VaultService] getVaultBalance failed, returning 0n:', e);
+      }
       return 0n;
     }
   }

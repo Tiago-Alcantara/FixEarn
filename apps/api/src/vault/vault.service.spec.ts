@@ -177,6 +177,36 @@ describe('VaultService', () => {
 
       expect(result).toBe(0n);
     });
+
+    it('returns 0n WITHOUT warning on empty-vault error (DeFindex 124)', async () => {
+      const sdk = makeSdkMock();
+      sdk.getVaultBalance.mockRejectedValue({
+        message: 'VaultErrors.AmountOverTotalSupply',
+        errorCode: 124,
+        error: 'Simulation Failed',
+      });
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
+
+      const result = await svc.getPositionValue('GUSER...');
+
+      expect(result).toBe(0n);
+      expect(warn).not.toHaveBeenCalled();
+      warn.mockRestore();
+    });
+
+    it('returns 0n AND warns on unexpected balance error', async () => {
+      const sdk = makeSdkMock();
+      sdk.getVaultBalance.mockRejectedValue(new Error('network down'));
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const svc = new VaultService(sdk as any, makeConfig('testnet'));
+
+      const result = await svc.getPositionValue('GUSER...');
+
+      expect(result).toBe(0n);
+      expect(warn).toHaveBeenCalled();
+      warn.mockRestore();
+    });
   });
 
   describe('buildDeposit / buildWithdraw — safe integer guard (I3)', () => {

@@ -37,7 +37,7 @@ model Company {
 model EtherfuseCustomer {
   id            String   @id @default(cuid())
   companyId     String   @unique @map("company_id")
-  customerId    String   @unique @map("customer_id")
+  customerId    String   @map("customer_id")
   bankAccountId String?  @map("bank_account_id")
   walletId      String?  @map("wallet_id")
   kycStatus     String   @default("pending") @map("kyc_status")
