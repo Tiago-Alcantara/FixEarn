@@ -322,7 +322,7 @@ function LangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void 
 
 export default function LandingPage() {
   const router = useRouter();
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('pt');
   const headerRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
 

@@ -1,7 +1,10 @@
 import {
   BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { randomUUID } from 'crypto';
@@ -12,6 +15,8 @@ import { EtherfuseClient } from './etherfuse.client';
 
 @Injectable()
 export class RampService {
+  private readonly logger = new Logger(RampService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly wallet: WalletService,
@@ -126,11 +131,13 @@ export class RampService {
     });
 
     const orderId = randomUUID();
-    const order = await this.ef.createOrder({
+    const order = await this.createOnrampOrderWithRetry({
+      companyId,
       orderId,
       quoteId: quote.quoteId,
       bankAccountId: customer.bankAccountId!,
       publicKey: stellarAddress,
+      amountFiat,
     });
 
     await this.prisma.rampOrder.create({
@@ -339,6 +346,98 @@ export class RampService {
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
+
+  /**
+   * Cria a order de on-ramp. A Etherfuse rejeita com 409 quando já existe uma
+   * order de on-ramp *pendente* pro mesmo (bankAccount + amount). Nesse caso,
+   * cancela as orders pendentes *da própria empresa* com o mesmo valor e tenta
+   * de novo uma vez. Se o conflito for de outra empresa (mesmo bank account do
+   * org), não há o que cancelar aqui — repassa uma mensagem limpa.
+   */
+  private async createOnrampOrderWithRetry(params: {
+    companyId: string;
+    orderId: string;
+    quoteId: string;
+    bankAccountId: string;
+    publicKey: string;
+    amountFiat: string;
+  }) {
+    try {
+      return await this.ef.createOrder({
+        orderId: params.orderId,
+        quoteId: params.quoteId,
+        bankAccountId: params.bankAccountId,
+        publicKey: params.publicKey,
+      });
+    } catch (err) {
+      if (!this.isDuplicatePendingOrder(err)) throw err;
+
+      const cancelled = await this.cancelOwnPendingOnramps(
+        params.companyId,
+        params.amountFiat,
+        params.orderId,
+      );
+      if (cancelled === 0) {
+        throw new BadRequestException(
+          'Já existe uma ordem de depósito pendente com esse valor. ' +
+            'Finalize ou cancele a ordem anterior, ou use um valor diferente.',
+        );
+      }
+
+      // Uma retentativa após liberar o lock de (bankAccount + amount).
+      return this.ef.createOrder({
+        orderId: params.orderId,
+        quoteId: params.quoteId,
+        bankAccountId: params.bankAccountId,
+        publicKey: params.publicKey,
+      });
+    }
+  }
+
+  /** 409 da Etherfuse: order de on-ramp pendente duplicada (bankAccount + amount). */
+  private isDuplicatePendingOrder(err: unknown): boolean {
+    return err instanceof HttpException && err.getStatus() === HttpStatus.CONFLICT;
+  }
+
+  /**
+   * Cancela as orders de on-ramp da empresa que ainda estão em `created`
+   * (canceláveis) com o mesmo valor. Retorna quantas foram efetivamente
+   * canceladas. Best-effort: falhas individuais de cancel são logadas e ignoradas.
+   */
+  private async cancelOwnPendingOnramps(
+    companyId: string,
+    amountFiat: string,
+    excludeOrderId: string,
+  ): Promise<number> {
+    const pending = await this.prisma.rampOrder.findMany({
+      where: {
+        companyId,
+        type: 'onramp',
+        amountFiat,
+        status: 'created',
+        orderId: { not: excludeOrderId },
+      },
+    });
+
+    let cancelled = 0;
+    for (const o of pending) {
+      try {
+        await this.ef.cancelOrder(o.orderId);
+        await this.prisma.rampOrder.update({
+          where: { orderId: o.orderId },
+          data: { status: 'cancelled' },
+        });
+        cancelled++;
+      } catch (e) {
+        this.logger.warn(
+          `Falha ao cancelar order pendente ${o.orderId}: ${
+            e instanceof Error ? e.message : e
+          }`,
+        );
+      }
+    }
+    return cancelled;
+  }
 
   private async requireReadyCustomer(companyId: string) {
     const customer = await this.prisma.etherfuseCustomer.findUnique({

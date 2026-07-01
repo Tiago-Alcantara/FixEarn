@@ -16,7 +16,7 @@ export interface HeaderProps {
 /** The full sticky marketing header: logo, center nav, language toggle, login + CTA. */
 export function Header({
   nav = [],
-  lang = 'en',
+  lang = 'pt',
   onLang,
   ctaLabel = 'Get started',
   loginLabel = 'Log in',

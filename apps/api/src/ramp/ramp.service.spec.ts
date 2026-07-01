@@ -1,4 +1,10 @@
-import { ForbiddenException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { RampService } from './ramp.service';
 
 function make(overrides: {
@@ -80,4 +86,86 @@ it('submitOrderClaim: Forbidden quando o address não bate com a wallet registra
     }),
   ).rejects.toThrow(ForbiddenException);
   expect(stellar.attachAndSubmit).not.toHaveBeenCalled();
+});
+
+// ── startOnramp: 409 (order pendente duplicada) ─────────────────────────────
+
+function makeOnramp(overrides: { pending?: any[]; conflict?: boolean } = {}) {
+  let createCalls = 0;
+  const prisma = {
+    etherfuseCustomer: {
+      findUnique: vi.fn().mockResolvedValue({
+        customerId: 'cust_1',
+        kycStatus: 'approved',
+        bankAccountId: 'bank_1',
+      }),
+    },
+    rampOrder: {
+      findMany: vi.fn().mockResolvedValue(overrides.pending ?? []),
+      create: vi.fn().mockResolvedValue(undefined),
+      update: vi.fn().mockResolvedValue(undefined),
+    },
+  };
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
+  const stellar = {};
+  const ef = {
+    fiatCurrency: 'BRL',
+    pickAsset: vi
+      .fn()
+      .mockResolvedValue({ identifier: 'USDC:GISS', symbol: 'USDC' }),
+    createQuote: vi.fn().mockResolvedValue({
+      quoteId: 'q1',
+      targetAmount: '18.00',
+      feeAmount: '0.20',
+      expiresAt: '2026-01-01T00:00:00Z',
+    }),
+    createOrder: vi.fn().mockImplementation(() => {
+      createCalls++;
+      if (overrides.conflict && createCalls === 1) {
+        throw new HttpException(
+          'A pending onramp order already exists for this bank account and amount',
+          HttpStatus.CONFLICT,
+        );
+      }
+      return Promise.resolve({
+        orderId: 'new1',
+        status: 'created',
+        depositClabe: '123',
+        depositBankName: 'Banco',
+        statusPage: 'https://s',
+      });
+    }),
+    cancelOrder: vi.fn().mockResolvedValue(undefined),
+  };
+  const svc = new RampService(
+    prisma as any,
+    wallet as any,
+    stellar as any,
+    ef as any,
+  );
+  return { svc, prisma, ef };
+}
+
+it('startOnramp: no 409, cancela order pendente própria e retenta uma vez', async () => {
+  const { svc, prisma, ef } = makeOnramp({
+    conflict: true,
+    pending: [{ orderId: 'old1' }],
+  });
+  const r = await svc.startOnramp('co_1', '100');
+  expect(ef.cancelOrder).toHaveBeenCalledWith('old1');
+  expect(prisma.rampOrder.update).toHaveBeenCalledWith({
+    where: { orderId: 'old1' },
+    data: { status: 'cancelled' },
+  });
+  expect(ef.createOrder).toHaveBeenCalledTimes(2);
+  expect(r.depositClabe).toBe('123');
+});
+
+it('startOnramp: 409 sem order própria cancelável → BadRequest (conflito de outra empresa)', async () => {
+  const { svc, ef } = makeOnramp({ conflict: true, pending: [] });
+  await expect(svc.startOnramp('co_1', '100')).rejects.toThrow(
+    BadRequestException,
+  );
+  expect(ef.cancelOrder).not.toHaveBeenCalled();
+  expect(ef.createOrder).toHaveBeenCalledTimes(1);
 });

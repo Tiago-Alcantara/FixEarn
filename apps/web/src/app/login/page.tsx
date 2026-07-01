@@ -93,7 +93,7 @@ export default function LoginPage() {
   });
   const isMobile = useIsMobile();
 
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('pt');
   const [error, setError] = useState(false);
 
   const t = L[lang];

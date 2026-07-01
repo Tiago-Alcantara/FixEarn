@@ -391,6 +391,19 @@ export class EtherfuseClient {
   }
 
   /**
+   * Cancela uma order em status `created` (não fundada). Só funciona nesse
+   * estado — orders fundadas/completas não podem ser canceladas. Usado pra
+   * liberar o lock de (bankAccount + amount) e recriar a order.
+   */
+  async cancelOrder(orderId: string): Promise<void> {
+    if (this.isMock) {
+      this.mockOrders.delete(orderId);
+      return;
+    }
+    await this.request('POST', `/ramp/order/${orderId}/cancel`, {});
+  }
+
+  /**
    * Regenera as txs pré-montadas da order (claim/burn) com sequence fresca.
    * Usado quando a tx expira (`tx_too_late`) ou a sequence fica velha.
    */

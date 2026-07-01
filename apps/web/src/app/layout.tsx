@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${hankenGrotesk.variable} ${geistMono.variable}`}>
+    <html lang="pt-BR" className={`${hankenGrotesk.variable} ${geistMono.variable}`}>
       <body>
         <Providers>{children}</Providers>
       </body>

@@ -88,7 +88,7 @@ const LangContext = createContext<{ lang: Language; setLang: (lang: Language) =>
   undefined,
 );
 
-export function LangProvider({ children, initialLang = 'en' }: { children: ReactNode; initialLang?: Language }) {
+export function LangProvider({ children, initialLang = 'pt' }: { children: ReactNode; initialLang?: Language }) {
   const [lang, setLang] = React.useState<Language>(initialLang);
   return React.createElement(
     LangContext.Provider,
@@ -101,9 +101,9 @@ export function useLang() {
   const context = useContext(LangContext);
   if (!context) {
     return {
-      lang: 'en' as Language,
+      lang: 'pt' as Language,
       setLang: () => {},
-      t: (key: TranslationKey) => dict.en[key],
+      t: (key: TranslationKey) => dict.pt[key],
     };
   }
   const { lang, setLang } = context;

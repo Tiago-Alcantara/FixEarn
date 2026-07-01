@@ -265,7 +265,7 @@ export default function DashboardPage() {
   const isMobile = useIsMobile();
   const router = useRouter();
 
-  const [lang, setLang] = useState<Lang>('en');
+  const [lang, setLang] = useState<Lang>('pt');
   const [nav, setNav] = useState('overview');
   const [tab, setTab] = useState('all');
 
