@@ -49,13 +49,15 @@ export class LedgerService {
   }
 
   async computeSpendable(companyId: string) {
-    // getAddress e principal são consultas independentes ao DB → rodam em
+    // findAddress e principal são consultas independentes ao DB → rodam em
     // paralelo. getPositionValue depende do address, então vem depois.
     const [address, principal] = await Promise.all([
-      this.wallet.getAddress(companyId),
+      this.wallet.findAddress(companyId),
       this.principal(companyId),
     ]);
-    let vaultValue = await this.vault.getPositionValue(address);
+    // Sem carteira ainda (primeiro login, provisionamento em paralelo): sem
+    // posição no vault → vaultValue 0. Não pode lançar 404 e quebrar o dashboard.
+    let vaultValue = address ? await this.vault.getPositionValue(address) : 0n;
     // Demo: injeta rendimento sintético quando DEMO_YIELD_BPS > 0, para
     // demonstrar rendimento já no primeiro mês (depósito recém-feito ainda
     // não rendeu). Em produção a flag fica 0 e nada muda.

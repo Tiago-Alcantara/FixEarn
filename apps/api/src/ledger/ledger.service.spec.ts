@@ -3,7 +3,7 @@ import { LedgerService } from './ledger.service';
 function makeDeps(opts: {
   deposits: bigint[];
   vaultValue: bigint;
-  address?: string;
+  address?: string | null;
   demoYieldBps?: number;
   demoReturnsChangePercent?: string;
   baselineSpendable?: bigint | null;
@@ -24,8 +24,10 @@ function makeDeps(opts: {
       ),
     },
   } as any;
+  const resolvedAddress = opts.address === undefined ? 'GADDR' : opts.address;
   const wallet = {
-    getAddress: vi.fn().mockResolvedValue(opts.address ?? 'GADDR'),
+    findAddress: vi.fn().mockResolvedValue(resolvedAddress),
+    getAddress: vi.fn().mockResolvedValue(resolvedAddress),
   } as any;
   const vault = {
     getPositionValue: vi.fn().mockResolvedValue(opts.vaultValue),
@@ -49,6 +51,17 @@ describe('LedgerService', () => {
     expect(r.principal).toBe(1000000n);
     expect(r.vaultValue).toBe(1075000n);
     expect(r.spendable).toBe(75000n);
+  });
+
+  it('sem carteira registrada: retorna zeros (usuário recém-criado)', async () => {
+    // Primeiro login: company já existe (AuthGuard.findOrCreate), mas a carteira
+    // ainda está sendo provisionada em paralelo. O dashboard não pode quebrar.
+    const { svc, vault } = makeDeps({ deposits: [], vaultValue: 999n, address: null });
+    const r = await svc.computeSpendable('co_new');
+    expect(r.vaultValue).toBe(0n);
+    expect(r.principal).toBe(0n);
+    expect(r.spendable).toBe(0n);
+    expect(vault.getPositionValue).not.toHaveBeenCalled();
   });
 
   it('spendable clamps to 0 when vaultValue < principal', async () => {

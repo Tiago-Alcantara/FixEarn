@@ -11,7 +11,10 @@ function deps(findResult: any = null) {
       findUnique: vi.fn().mockResolvedValue(findResult),
     },
   } as any;
-  const stellar = { ensureAccountFunded: vi.fn().mockResolvedValue(undefined) } as any;
+  const stellar = {
+    ensureAccountFunded: vi.fn().mockResolvedValue(undefined),
+    getNativeBalance: vi.fn().mockResolvedValue(0n),
+  } as any;
   return { prisma, stellar };
 }
 
@@ -48,7 +51,7 @@ it('getBalance: retorna balance e spendable (balance − reserva)', async () => 
   const prisma = {} as any;
   const stellar = { getNativeBalance: vi.fn().mockResolvedValue(120_0000000n) }; // 120 XLM
   const svc = new WalletService(prisma, stellar as any);
-  vi.spyOn(svc, 'getAddress').mockResolvedValue('GADDR');
+  vi.spyOn(svc, 'findAddress').mockResolvedValue('GADDR');
 
   const r = await svc.getBalance('co_1');
   expect(stellar.getNativeBalance).toHaveBeenCalledWith('GADDR');
@@ -59,9 +62,19 @@ it('getBalance: retorna balance e spendable (balance − reserva)', async () => 
 it('getBalance: spendable nunca é negativo (saldo abaixo da reserva)', async () => {
   const stellar = { getNativeBalance: vi.fn().mockResolvedValue(5_000000n) }; // 0.5 XLM
   const svc = new WalletService({} as any, stellar as any);
-  vi.spyOn(svc, 'getAddress').mockResolvedValue('GADDR');
+  vi.spyOn(svc, 'findAddress').mockResolvedValue('GADDR');
 
   const r = await svc.getBalance('co_1');
   expect(r.balance).toBe('5000000');
   expect(r.spendable).toBe('0');
+});
+
+it('getBalance: sem carteira registrada retorna zeros (não lança 404)', async () => {
+  const { prisma, stellar } = deps(null); // findUnique → null
+  const svc = new WalletService(prisma, stellar);
+
+  const r = await svc.getBalance('co_new');
+  expect(r.balance).toBe('0');
+  expect(r.spendable).toBe('0');
+  expect(stellar.getNativeBalance).not.toHaveBeenCalled();
 });
