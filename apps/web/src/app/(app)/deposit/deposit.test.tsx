@@ -9,9 +9,11 @@ import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 // --- mock useStellarTx ---
-const mockDeposit = vi.fn();
+// "Deposit" agora funda a carteira do cliente (sponsor → carteira), NÃO aporta
+// no vault. Por isso a página chama `fund`, não `deposit`.
+const mockFund = vi.fn();
 vi.mock('@/lib/useStellarTx', () => ({
-  useStellarTx: () => ({ deposit: mockDeposit }),
+  useStellarTx: () => ({ fund: mockFund }),
 }));
 
 // --- mock next/navigation (App Router) ---
@@ -28,7 +30,7 @@ function setup() {
 
 describe('Deposit onboarding flow', () => {
   beforeEach(() => {
-    mockDeposit.mockReset();
+    mockFund.mockReset();
   });
 
   // ── Step 1: Amount entry ──────────────────────────────────────────────────
@@ -126,7 +128,7 @@ describe('Deposit onboarding flow', () => {
   });
 
   it('calls deposit with base-unit string (toBaseUnits applied) on Confirm', async () => {
-    mockDeposit.mockResolvedValue('abc123txhash');
+    mockFund.mockResolvedValue('abc123txhash');
     setup();
 
     // Step 1
@@ -143,12 +145,12 @@ describe('Deposit onboarding flow', () => {
 
     await waitFor(() => {
       // toBaseUnits('100') = '1000000000' (100 * 10^7 = 1,000,000,000)
-      expect(mockDeposit).toHaveBeenCalledWith('1000000000');
+      expect(mockFund).toHaveBeenCalledWith('1000000000');
     });
   });
 
   it('shows txHash in success state after confirm', async () => {
-    mockDeposit.mockResolvedValue('abc123txhash');
+    mockFund.mockResolvedValue('abc123txhash');
     setup();
 
     const input = screen.getByLabelText(/deposit amount/i);
@@ -164,7 +166,7 @@ describe('Deposit onboarding flow', () => {
   });
 
   it('shows error state when deposit throws', async () => {
-    mockDeposit.mockRejectedValue(new Error('Network error'));
+    mockFund.mockRejectedValue(new Error('Network error'));
     setup();
 
     const input = screen.getByLabelText(/deposit amount/i);

@@ -21,6 +21,11 @@ import { toStellarAmount } from '../common/format-amount';
 // trustline). Revisit if a deposit ever adds subentries/trustlines.
 const STARTING_BALANCE = '2'; // base reserve + buffer for future trustlines
 
+// Soroban RPC devolve TRY_AGAIN_LATER quando está congestionado/throttled — é
+// transiente e retryável. Retentamos o send com backoff linear antes de desistir.
+const MAX_SEND_ATTEMPTS = 4;
+const SEND_RETRY_DELAY_MS = 1500;
+
 @Injectable()
 export class StellarService {
   private readonly passphrase: string;
@@ -62,8 +67,9 @@ export class StellarService {
    * confirmation. Used to simulate the client funding their own deposit on
    * testnet — replaced by a real on-ramp on mainnet.
    * Callers MUST bound `amountBaseUnits` — the sponsor pays it out (see MAX_DEPOSIT_BASE_UNITS in DepositService).
+   * Returns the confirmed transaction hash.
    */
-  async fundClient(clientAddress: string, amountBaseUnits: bigint): Promise<void> {
+  async fundClient(clientAddress: string, amountBaseUnits: bigint): Promise<string> {
     const source = await this.server.getAccount(this.sponsor.publicKey());
     const tx = new TransactionBuilder(source, {
       fee: BASE_FEE,
@@ -79,7 +85,7 @@ export class StellarService {
       .setTimeout(30)
       .build();
     tx.sign(this.sponsor);
-    await this.submit(tx);
+    return this.submit(tx);
   }
 
   /**
@@ -141,15 +147,37 @@ export class StellarService {
     }
   }
 
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Sends the tx, retrying on the transient TRY_AGAIN_LATER throttle with linear
+   * backoff. Returns the accepted (PENDING) send response. Throws on ERROR or
+   * after exhausting retries.
+   */
+  private async sendWithRetry(tx: Transaction | FeeBumpTransaction) {
+    for (let attempt = 1; ; attempt++) {
+      const sent = await this.server.sendTransaction(tx);
+      if (sent.status === 'ERROR') {
+        throw new Error(`submit rejected by RPC: ${JSON.stringify(sent.errorResult)}`);
+      }
+      if (sent.status === 'TRY_AGAIN_LATER') {
+        if (attempt >= MAX_SEND_ATTEMPTS) {
+          throw new Error(
+            `submit throttled by RPC (TRY_AGAIN_LATER) after ${attempt} attempts`,
+          );
+        }
+        await this.sleep(SEND_RETRY_DELAY_MS * attempt); // backoff linear
+        continue;
+      }
+      return sent; // PENDING
+    }
+  }
+
   /** Sends a signed tx, polls to a terminal ledger state, returns the hash. */
   private async submit(tx: Transaction | FeeBumpTransaction): Promise<string> {
-    const sent = await this.server.sendTransaction(tx);
-    if (sent.status === 'ERROR') {
-      throw new Error(`submit rejected by RPC: ${JSON.stringify(sent.errorResult)}`);
-    }
-    if (sent.status === 'TRY_AGAIN_LATER') {
-      throw new Error('submit throttled by RPC (TRY_AGAIN_LATER); retry later');
-    }
+    const sent = await this.sendWithRetry(tx);
     const final = await this.server.pollTransaction(sent.hash, { attempts: 30 });
     if (final.status === rpc.Api.GetTransactionStatus.NOT_FOUND) {
       throw new Error(

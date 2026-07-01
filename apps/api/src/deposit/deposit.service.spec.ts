@@ -38,6 +38,43 @@ it('build: rejeita quando amount > spendable (saldo insuficiente)', async () => 
   expect(vault.buildDeposit).not.toHaveBeenCalled();
 });
 
+it('build: traduz InsufficientBalance da simulação do vault em 400 saldo insuficiente', async () => {
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
+  // A simulação da DeFindex lança quando o SAC não tem saldo suficiente (deixa
+  // menos que a reserva base). O erro chega como objeto do SDK, não Error.
+  const vault = {
+    buildDeposit: vi.fn().mockRejectedValue({
+      message: 'VaultErrors.InsufficientBalance',
+      errorCode: 111,
+      error: 'Simulation Failed',
+    }),
+  };
+  const stellar = {
+    getNativeBalance: vi.fn().mockResolvedValue(BigInt(BIG_BALANCE)),
+    hashForSigning: vi.fn(),
+    fundClient: vi.fn(),
+  };
+  const ledger = { recordDeposit: vi.fn() };
+  const svc = new DepositService(vault as any, stellar as any, ledger as any, wallet as any);
+
+  await expect(svc.build('co_1', 1_000_000n)).rejects.toThrow(BadRequestException);
+  await expect(svc.build('co_1', 1_000_000n)).rejects.toThrow('saldo insuficiente');
+});
+
+it('build: repassa erros do vault que não são InsufficientBalance', async () => {
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
+  const vault = { buildDeposit: vi.fn().mockRejectedValue(new Error('depositToVault returned null xdr')) };
+  const stellar = {
+    getNativeBalance: vi.fn().mockResolvedValue(BigInt(BIG_BALANCE)),
+    hashForSigning: vi.fn(),
+    fundClient: vi.fn(),
+  };
+  const ledger = { recordDeposit: vi.fn() };
+  const svc = new DepositService(vault as any, stellar as any, ledger as any, wallet as any);
+
+  await expect(svc.build('co_1', 1_000_000n)).rejects.toThrow('null xdr');
+});
+
 it('build: rejeita amount acima do teto MAX_DEPOSIT', async () => {
   const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
   const vault = { buildDeposit: vi.fn() };
@@ -47,6 +84,36 @@ it('build: rejeita amount acima do teto MAX_DEPOSIT', async () => {
 
   await expect(svc.build('co_1', 100_000_000_001n)).rejects.toThrow(BadRequestException);
   expect(vault.buildDeposit).not.toHaveBeenCalled();
+});
+
+it('fund: funda a carteira do cliente via sponsor e retorna o txHash', async () => {
+  const wallet = { getAddress: vi.fn().mockResolvedValue('GADDR') };
+  const vault = { buildDeposit: vi.fn() };
+  const stellar = {
+    fundClient: vi.fn().mockResolvedValue('FUNDTX'),
+    getNativeBalance: vi.fn(),
+  };
+  const ledger = { recordDeposit: vi.fn() };
+  const svc = new DepositService(vault as any, stellar as any, ledger as any, wallet as any);
+
+  const r = await svc.fund('co_1', 1_000_000_000n); // 100 XLM
+
+  expect(stellar.fundClient).toHaveBeenCalledWith('GADDR', 1_000_000_000n);
+  expect(vault.buildDeposit).not.toHaveBeenCalled(); // funda a carteira, NÃO aporta no vault
+  expect(ledger.recordDeposit).not.toHaveBeenCalled();
+  expect(r).toEqual({ txHash: 'FUNDTX' });
+});
+
+it('fund: rejeita amount acima do teto MAX_DEPOSIT (protege o sponsor)', async () => {
+  const wallet = { getAddress: vi.fn() };
+  const vault = { buildDeposit: vi.fn() };
+  const stellar = { fundClient: vi.fn(), getNativeBalance: vi.fn() };
+  const ledger = { recordDeposit: vi.fn() };
+  const svc = new DepositService(vault as any, stellar as any, ledger as any, wallet as any);
+
+  await expect(svc.fund('co_1', 100_000_000_001n)).rejects.toThrow(BadRequestException);
+  expect(wallet.getAddress).not.toHaveBeenCalled();
+  expect(stellar.fundClient).not.toHaveBeenCalled();
 });
 
 it('submit: attaches sig, submits, records deposit', async () => {

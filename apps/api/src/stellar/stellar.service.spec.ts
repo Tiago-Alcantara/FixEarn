@@ -140,8 +140,9 @@ it('fundClient envia um payment nativo do sponsor para o cliente e espera confir
   } as unknown as rpc.Server;
 
   const client = Keypair.random().publicKey();
-  await new StellarService(cfg, server).fundClient(client, 100000000n); // 10 XLM
+  const txHash = await new StellarService(cfg, server).fundClient(client, 100000000n); // 10 XLM
 
+  expect(txHash).toBe('pay1'); // retorna o hash da tx confirmada
   expect(server.getAccount).toHaveBeenCalledWith(SPONSOR_KP.publicKey());
   expect(server.sendTransaction).toHaveBeenCalledTimes(1);
 
@@ -168,6 +169,47 @@ it('fundClient lança quando o payment não confirma', async () => {
   await expect(
     new StellarService(cfg, server).fundClient(Keypair.random().publicKey(), 100000000n),
   ).rejects.toThrow('failed on-chain');
+});
+
+// ── submit: retry em TRY_AGAIN_LATER (throttle transiente do RPC) ──────────────
+
+it('retenta o send quando o RPC responde TRY_AGAIN_LATER e então confirma', async () => {
+  const sendTransaction = vi
+    .fn()
+    .mockResolvedValueOnce({ status: 'TRY_AGAIN_LATER' })
+    .mockResolvedValueOnce({ status: 'PENDING', hash: 'pay3' });
+  const server = {
+    getAccount: vi.fn().mockResolvedValue(new Account(SPONSOR_KP.publicKey(), '10')),
+    sendTransaction,
+    pollTransaction: vi.fn().mockResolvedValue({ status: rpc.Api.GetTransactionStatus.SUCCESS }),
+  } as unknown as rpc.Server;
+
+  const svc = new StellarService(cfg, server);
+  vi.spyOn(svc as any, 'sleep').mockResolvedValue(undefined); // sem espera real no teste
+
+  const txHash = await svc.fundClient(Keypair.random().publicKey(), 100000000n);
+
+  expect(txHash).toBe('pay3');
+  expect(sendTransaction).toHaveBeenCalledTimes(2); // 1 throttle + 1 sucesso
+});
+
+it('desiste após esgotar as tentativas se o RPC continua em TRY_AGAIN_LATER', async () => {
+  const sendTransaction = vi.fn().mockResolvedValue({ status: 'TRY_AGAIN_LATER' });
+  const pollTransaction = vi.fn();
+  const server = {
+    getAccount: vi.fn().mockResolvedValue(new Account(SPONSOR_KP.publicKey(), '10')),
+    sendTransaction,
+    pollTransaction,
+  } as unknown as rpc.Server;
+
+  const svc = new StellarService(cfg, server);
+  vi.spyOn(svc as any, 'sleep').mockResolvedValue(undefined);
+
+  await expect(
+    svc.fundClient(Keypair.random().publicKey(), 100000000n),
+  ).rejects.toThrow('TRY_AGAIN_LATER');
+  expect(sendTransaction.mock.calls.length).toBeGreaterThan(1); // tentou mais de uma vez
+  expect(pollTransaction).not.toHaveBeenCalled();
 });
 
 // ── getNativeBalance ──────────────────────────────────────────────────────────

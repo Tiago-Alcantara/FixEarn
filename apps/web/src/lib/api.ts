@@ -23,6 +23,7 @@ type GetToken = () => Promise<string | null>;
 
 interface ApiMethods {
   registerWallet(body: RegisterWalletDto): Promise<void>;
+  fundWallet(amount: string): Promise<SubmitTxResponse>;
   buildDeposit(amount: string): Promise<BuildTxResponse>;
   submitDeposit(body: SubmitTxDto): Promise<SubmitTxResponse>;
   buildWithdraw(amount: string): Promise<BuildTxResponse>;
@@ -77,6 +78,9 @@ export function createApi(getToken: GetToken): ApiMethods {
   return {
     registerWallet: (body: RegisterWalletDto) =>
       request('/wallet', 'POST', body),
+
+    fundWallet: (amount: string) =>
+      request('/deposit/fund', 'POST', { amount }),
 
     buildDeposit: (amount: string) =>
       request('/deposit/build', 'POST', { amount }),

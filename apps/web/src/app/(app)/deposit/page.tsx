@@ -175,7 +175,9 @@ function CurrencySelect({ value, onChange }: { value: string; onChange: (v: stri
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function DepositPage() {
-  const { deposit } = useStellarTx();
+  // "Deposit" aqui abastece a carteira do cliente com XLM (sponsor → carteira).
+  // O aporte no vault é um passo separado ("Aportar no vault" no dashboard).
+  const { fund } = useStellarTx();
   const isMobile = useIsMobile();
 
   const [step, setStep] = useState(0);
@@ -200,7 +202,7 @@ export default function DepositPage() {
     setTxError(null);
     try {
       const baseUnits = toBaseUnits(amountRaw);
-      const hash = await deposit(baseUnits);
+      const hash = await fund(baseUnits);
       setTxHash(hash);
     } catch (err) {
       setTxError(getErrorMessage(err));

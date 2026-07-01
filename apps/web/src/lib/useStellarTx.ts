@@ -21,6 +21,7 @@ import { usePrivy } from '@privy-io/react-auth';
  * Errors propagate to the caller (UI catches them).
  */
 export function useStellarTx(): {
+  fund(amountBaseUnits: string): Promise<string>;
   deposit(amountBaseUnits: string): Promise<string>;
   withdraw(amountBaseUnits: string): Promise<string>;
 } {
@@ -59,7 +60,20 @@ export function useStellarTx(): {
     return txHash;
   }
 
+  /**
+   * "Deposit" = abastece a carteira do cliente com XLM (sponsor → carteira).
+   * O sponsor assina no servidor, então NÃO há passo de assinatura Privy aqui:
+   * só garante a wallet registrada e chama o endpoint de fund. Distingue-se do
+   * `deposit` (aporte no vault), que monta/assina/submete um XDR.
+   */
+  async function fund(amountBaseUnits: string): Promise<string> {
+    await ensureWallet();
+    const { txHash } = await api.fundWallet(amountBaseUnits);
+    return txHash;
+  }
+
   return {
+    fund,
     deposit: (amountBaseUnits) =>
       runStellarTx(api.buildDeposit, api.submitDeposit, amountBaseUnits),
     withdraw: (amountBaseUnits) =>

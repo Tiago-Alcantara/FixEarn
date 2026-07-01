@@ -10,6 +10,14 @@ import type { SubmitTxDto } from '@yield2pay/shared';
 export class DepositController {
   constructor(private readonly depositService: DepositService) {}
 
+  @Post('fund')
+  fund(@Req() req: AuthenticatedRequest, @Body() body: { amount: string }) {
+    return this.depositService.fund(
+      req.companyId,
+      parseBaseUnits(body.amount),
+    );
+  }
+
   @Post('build')
   build(@Req() req: AuthenticatedRequest, @Body() body: { amount: string }) {
     return this.depositService.build(
