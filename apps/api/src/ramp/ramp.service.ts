@@ -167,10 +167,27 @@ export class RampService {
 
   async simulateFiatReceived(companyId: string, orderId: string): Promise<void> {
     await this.requireOwnOrder(companyId, orderId);
-    await this.ef.simulateFiatReceived(orderId);
+
+    // fiat_received só é aceito enquanto a order está em `created`. Se ela já
+    // progrediu (funded/completed) — ex.: clique duplo no "Simular Pix" — a
+    // Etherfuse responde 404/400. Tratamos como no-op idempotente e apenas
+    // ressincronizamos o status local.
+    const current = await this.ef.getOrder(orderId);
+    let status = current.status;
+    if (current.status === 'created') {
+      try {
+        await this.ef.simulateFiatReceived(orderId);
+        status = 'funded';
+      } catch (err) {
+        // Corrida: outra chamada já avançou a order. Repassa só erros não-4xx.
+        if (!(err instanceof HttpException) || err.getStatus() >= 500) throw err;
+        status = (await this.ef.getOrder(orderId)).status;
+      }
+    }
+
     await this.prisma.rampOrder.update({
       where: { orderId },
-      data: { status: 'funded' },
+      data: { status },
     });
   }
 

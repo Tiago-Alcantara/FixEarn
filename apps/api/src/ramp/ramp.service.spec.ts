@@ -169,3 +169,47 @@ it('startOnramp: 409 sem order própria cancelável → BadRequest (conflito de 
   expect(ef.cancelOrder).not.toHaveBeenCalled();
   expect(ef.createOrder).toHaveBeenCalledTimes(1);
 });
+
+// ── simulateFiatReceived: idempotência (clique duplo) ───────────────────────
+
+function makeSimulate(efStatus: string) {
+  const prisma = {
+    rampOrder: {
+      findUnique: vi
+        .fn()
+        .mockResolvedValue({ orderId: 'o1', companyId: 'co_1', status: 'created' }),
+      update: vi.fn().mockResolvedValue(undefined),
+    },
+  };
+  const ef = {
+    getOrder: vi.fn().mockResolvedValue({ orderId: 'o1', status: efStatus }),
+    simulateFiatReceived: vi.fn().mockResolvedValue(undefined),
+  };
+  const svc = new RampService(
+    prisma as any,
+    {} as any,
+    {} as any,
+    ef as any,
+  );
+  return { svc, prisma, ef };
+}
+
+it('simulateFiatReceived: order em created → chama fiat_received e marca funded', async () => {
+  const { svc, prisma, ef } = makeSimulate('created');
+  await svc.simulateFiatReceived('co_1', 'o1');
+  expect(ef.simulateFiatReceived).toHaveBeenCalledWith('o1');
+  expect(prisma.rampOrder.update).toHaveBeenCalledWith({
+    where: { orderId: 'o1' },
+    data: { status: 'funded' },
+  });
+});
+
+it('simulateFiatReceived: order já completed → no-op idempotente, sem 404', async () => {
+  const { svc, prisma, ef } = makeSimulate('completed');
+  await svc.simulateFiatReceived('co_1', 'o1');
+  expect(ef.simulateFiatReceived).not.toHaveBeenCalled();
+  expect(prisma.rampOrder.update).toHaveBeenCalledWith({
+    where: { orderId: 'o1' },
+    data: { status: 'completed' },
+  });
+});
